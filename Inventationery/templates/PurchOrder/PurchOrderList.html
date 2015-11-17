@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+	
+	<div class="col-md-12 col-sm-12 col-xs-12"> <!-- Purch order list -->
+        <div class="x_panel tile">
+            <div class="x_title">
+                <h2>Ordenes de compra</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+        	</div>
+            <div class="x_content table responsive">
+                <a class='btn btn-primary btn-lg btn-xs pull-right' href="{% url "purch:new" %}">
+				<span class="lnr lnr-pencil"></span> Nueva orden de compra
+				</a>
+				<table id="PurchOrderListTableId" class="display table table-hover">
+				    <thead>
+				        <tr>
+				            <th>Orden de compra</th>
+				            <th>Cuenta de proveedor</th>
+				            <th>Nombre</th>
+				            <th>Cuenta de facturación</th>
+				            <th>Tipo de compra</th>
+				            <th>Estado de aprobación</th>
+				            <th>Estado</th>
+				            <th>Acciones</th>
+				        </tr>
+				    </thead>
+				    <tbody>
+				    	{% for order in orders %}
+				    		<tr>
+					            <td>{{ order.PurchId }}</td>
+					            <td>{{ order.OrderAccount }}</td>
+					            <td>{{ order.PurchName }}</td>
+					            <td>{{ order.InvoiceAccount }}</td>
+					            <td>{{ order.PurchaseType }}</td>
+					            <td> DocumentStatus </td>
+					            <td>{{ order.PurchStatus }}</td>
+					            <td class="text-center">
+									<a class='btn btn-info btn-xs' href="#">
+										<span class="lnr lnr-pencil"></span> Editar
+									</a> 
+									<a href="#" class="btn btn-danger btn-xs">
+										<span class="lnr lnr-cross"></span> Eliminar
+									</a>
+								</td>
+					        </tr>
+				    	{% endfor %}
+				        
+				    </tbody>
+				</table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

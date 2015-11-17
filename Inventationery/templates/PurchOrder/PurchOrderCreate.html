@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block panel_title%}
+	<h2><strong>Nuevo proveedor</strong></h2>
+{% endblock %}
+
+{% block content %}
+	{% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+	<form action="" method="POST" id="PurchOrderForm"> {% csrf_token %}
+
+		{% if purch_form.errors %}
+		    {% for field in purch_form %}
+		        {% for error in field.errors %}
+		        	<style>
+						#{{ field.id_for_label }} {
+							border: 1px solid #f64747;
+							border-radius: 3px;
+						}
+		        	</style>				            
+		        {% endfor %}
+		    {% endfor %}
+		    {% for error in purch_form.non_field_errors %}
+		        <div class="alert alert-error">
+		            <strong> {{ error|escape }}</strong>
+		        </div>
+		    {% endfor %}
+		{% endif %}
+
+		<div class="row">
+			<div class="col-md-6">
+				<h3>Nueva orden de compra {{ object.AccountNum }}</h3>	
+			</div>
+			<div class="col-md-3">
+			</div>
+			<div class="col-md-3">
+				<button type="submit" class="btn btn-success btn-block">Registrar orden de compra</button>
+			</div>
+		</div>
+		
+		<div class="col-md-12 col-sm-12 col-xs-12"> <!-- General info -->
+	        <div class="x_panel tile">
+	            <div class="x_title">
+	                <h2>General</h2>
+	                <ul class="nav navbar-right panel_toolbox">
+	                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+	                    </li>
+	                </ul>
+	                <div class="clearfix"></div>
+            	</div>
+	            <div class="x_content">
+	                
+					<div class="row">
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<!-- Orden de compra -->
+							<h4><strong>Orden de compra</strong></h4>
+							<div class="form-group">
+								{{ purch_form.PurchId.errors }}
+								<label for="{{ purch_form.PurchId.id_for_label }}">*Orden de compra (OC)</label>
+								{% render_field purch_form.PurchId|append_attr:"readonly" class+="form-control" %}
+							</div>
+							<div class="form-group">
+								{{ purch_form.PurchName.errors }}
+								<label for="{{ purch_form.PurchName.id_for_label }}">*Nombre (OC)</label>
+								{% render_field purch_form.PurchName class+="form-control" %}
+							</div>
+							<div class="form-group">
+								{{ purch_form.PurchaseType.errors }}
+								<label for="{{ purch_form.PurchaseType.id_for_label }}">Tipo de orden</label>
+								{% render_field purch_form.PurchaseType class+="form-control" %}
+							</div>
+						</div>
+
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<!-- Proveedor -->
+							<h4><strong>Proveedor</strong></h4>
+							<div class="form-group">
+								<label for="">Proveedor de una sola vez</label>
+								<input id="OneTimeVendor" type="Checkbox" class="form-control" readonly="True" disabled="True">
+							</div>
+							<div class="form-group">
+								{{ purch_form.OrderAccount.errors }}
+								<label for="{{ purch_form.OrderAccount.id_for_label }}">*Cuenta de proveedor</label>
+								{% render_field purch_form.OrderAccount class+="form-control" %}
+							</div>
+							<div class="form-group">
+								{{ purch_form.InvoiceAccount.errors }}
+								<label for="{{ purch_form.InvoiceAccount.id_for_label }}">*Cuenta de facturación</label>
+								{% render_field purch_form.InvoiceAccount class+="form-control" %}
+							</div>
+						</div>
+
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<!-- Estado -->
+							<h4><strong>Estado</strong></h4>
+							<div class="form-group">
+								<label for="">Estado de la orden</label>
+								{% render_field purch_form.PurchStatus class+="form-control" %}
+							</div>
+							<div class="form-group">
+								{{ purch_form.DocumentStatus.errors }}
+								<label for="{{ purch_form.DocumentStatus.id_for_label }}">Estado del documento</label>
+								{% render_field purch_form.DocumentStatus class+="form-control" %}
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="row col-md-12">
+							<h2>Configurar</h2>
+						</div>
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<div class="form-group">
+								<label for="">RFC</label>
+								<input id="VATNum" type="text" class="form-control" readonly>
+							</div>
+						</div>
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<div class="form-group">
+								{{ purch_form.WorkerPurchPlacer.errors }}
+								<label for="{{ purch_form.WorkerPurchPlacer.id_for_label }}">Nombre del proveedor</label>
+								{% render_field purch_form.WorkerPurchPlacer|append_attr:"readonly" class+="form-control" %}
+							</div>
+						</div>
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<div class="row col-md-6 col-sm-6 col-xs-6">
+								<div class="form-group">
+									{{ purch_form.CurrencyCode.errors }}
+									<label for="{{ purch_form.CurrencyCode.id_for_label }}">Moneda</label>
+									{% render_field purch_form.CurrencyCode class+="form-control" %}
+								</div>
+							</div>
+							<div class="row col-md-6 col-sm-6 col-xs-6">
+								<div class="form-group">
+									{{ purch_form.LanguageCode.errors }}
+									<label for="{{ purch_form.LanguageCode.id_for_label }}">Lenguaje</label>
+									{% render_field purch_form.LanguageCode|append_attr:"readonly" class+="form-control" %}
+								</div>
+							</div>
+						</div>
+					</div>
+	            </div>
+	        </div>
+	    </div>
+		
+		<div class="col-md-12 col-sm-12 col-xs-12"> <!-- Postal and delivery info -->
+	        <div class="x_panel tile">
+	            <div class="x_title">
+	                <h2>Condiciones de entrega y pago</h2>
+	                <ul class="nav navbar-right panel_toolbox">
+	                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+	                    </li>
+	                </ul>
+	                <div class="clearfix"></div>
+            	</div>
+	            <div class="x_content">
+					<div class="row">
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<!-- Dirección -->
+							<h4><strong>Dirección</strong></h4>
+							<div class="form-group">
+								<label for="{{ purch_form.DeliveryName.id_for_label }}">*Dirección de entrega</label>
+								<textarea readonly name="" id="{{ purch_form.DeliveryName.id_for_label }}" rows="3" class="form-control">
+									
+								</textarea>
+							</div>
+						</div>
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<!-- Entrega -->
+							<h4><strong>Entrega</strong></h4>
+							<div class="form-group">
+								{{ purch_form.DeliveryDate.errors }}
+								<label for="{{ purch_form.DeliveryDate.id_for_label }}">Fecha de entrega</label>
+								{% render_field purch_form.DeliveryDate class+="form-control" %}
+							</div>
+							<div class="form-group">
+								{{ purch_form.DeliveryDate.errors }}
+								<label for="{{ purch_form.DeliveryDate.id_for_label }}">Fecha de confirmación</label>
+								{% render_field purch_form.DeliveryDate class+="form-control" %}
+							</div>
+							<div class="form-group">
+								{{ purch_form.DlvMode.errors }}
+								<label for="{{ purch_form.DlvMode.id_for_label }}">Modo de entrega</label>
+								{% render_field purch_form.DlvMode class+="form-control" %}
+							</div>
+						</div>
+
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<!-- Pago -->
+							<h4><strong>Pago</strong></h4>
+							<div class="form-group">
+								{{ purch_form.Payment.errors }}
+								<label for="{{ purch_form.Payment.id_for_label }}">Condición de pago</label>
+								{% render_field purch_form.Payment class+="form-control" %}
+							</div>
+							<div class="form-group">
+								{{ purch_form.PaymMode.errors }}
+								<label for="{{ purch_form.PaymMode.id_for_label }}">Método de pago</label>
+								{% render_field purch_form.PaymMode class+="form-control" %}
+							</div>
+							<h4><strong>Descuento</strong></h4>
+							<div class="form-group">
+								{{ purch_form.CashDisc.errors }}
+								<label for="{{ purch_form.CashDisc.id_for_label }}">Descuento en número</label>
+								{% render_field purch_form.CashDisc class+="form-control" %}
+							</div>
+							<div class="form-group">
+								{{ purch_form.CashDiscPercent.errors }}
+								<label for="{{ purch_form.CashDiscPercent.id_for_label }}">Descuento en porcentaje</label>
+								{% render_field purch_form.CashDiscPercent class+="form-control" %}
+							</div>
+						</div>
+					</div>
+	            </div>
+	        </div>
+	    </div>
+		
+	    <div class="col-md-12 col-sm-12 col-xs-12">
+	        <div class="x_panel tile">
+	            <div class="x_title">
+	                <h2>Lineas de la orden</h2>
+	                <ul class="nav navbar-right panel_toolbox">
+	                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+	                    </li>
+	                </ul>
+	                <div class="clearfix"></div>
+            	</div>
+	            <div class="x_content table-responsive">
+				    <table border="0" cellpadding="0" cellspacing="0" class="table table-condensed table-hover table-striped" id="purchline_table">
+					    <thead>
+					        <tr>
+					            <th id="item_id_h">Código de artículo</th>
+					            <th id="item_name_h">Nombre de artículo</th>
+					            <th id="item_qty_h">Cantidad</th>
+					            <th id="item_unit_h">Unidad</th>
+					            <th id="item_price_h">$ Precio</th>
+					            <th id="item_disc_h">$ Descuento</th>
+					            <th id="item_percent_h">Descuento %</th>
+					            <th id="item_total_h">$ Total linea</th>
+					            <th>Accion</th>
+					        </tr>
+					    </thead>
+					    <tbody>
+				            {% for purchline_form in purchline_formset.forms %}
+					            <tr class="purchline_formset">
+									<td class="purchline_formset_td">{% render_field purchline_form.ItemId class+="form-control" %}</td>
+									<td class="purchline_formset_td">{% render_field purchline_form.ItemName class+="form-control" %}</td>
+									<td class="purchline_formset_td">{% render_field purchline_form.PurchQty class+="form-control" %}</td>
+									<td class="purchline_formset_td">{% render_field purchline_form.PurchUnit class+="form-control" %}</td>
+									<td class="purchline_formset_td">{% render_field purchline_form.PurchPrice class+="form-control" %}</td>
+									<td class="purchline_formset_td">{% render_field purchline_form.LineDisc class+="form-control" %}</td>
+									<td class="purchline_formset_td">{% render_field purchline_form.LinePercent class+="form-control" %}</td>
+									<td class="purchline_formset_td">{% render_field purchline_form.LineAmount class+="form-control" %}</td>
+									<td class="purchline_formset_td"></td>
+					            </tr>
+				            {% endfor %}
+				            {{ purchline_formset.management_form }}
+
+					    </tbody>
+					    
+					</table>
+				    
+	            </div>
+	        </div>
+	    </div>
+
+	</form>
+</div>
+{% endblock %}

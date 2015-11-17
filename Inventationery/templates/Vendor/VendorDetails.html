@@ -1,0 +1,310 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+	
+	<form action="" method="POST"> {% csrf_token %}
+		<div class="row">
+			<div class="col-md-6">
+				<h1>Proveedor {{ object.AccountNum }}</h1>	
+			</div>
+			<div class="col-md-3">
+				<button type="submit" class="btn btn-info btn-block">Nuevo Proveedor</button>
+			</div>
+			<div class="col-md-3">
+				<button type="submit" class="btn btn-success btn-block">Guardar</button>
+			</div>
+		</div>
+		
+		<div class="col-md-6 col-sm-6 col-xs-12"> <!-- Vendor info -->
+	        <div class="x_panel tile">
+	            <div class="x_title">
+	                <h2>Información de proveedor</h2>
+	                <ul class="nav navbar-right panel_toolbox">
+	                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+	                    </li>
+	                </ul>
+	                <div class="clearfix"></div>
+            	</div>
+	            <div class="x_content">
+	                {% if form.errors %}
+					    {% for field in form %}
+					        {% for error in field.errors %}
+					        	<style>
+									#{{ field.id_for_label }} {
+										border: 1px solid #f64747;
+										border-radius: 3px;
+									}
+					        	</style>				            
+					        {% endfor %}
+					    {% endfor %}
+					    {% for error in vendor_form.non_field_errors %}
+					        <div class="alert alert-error">
+					            <strong> {{ error|escape }}</strong>
+					        </div>
+					    {% endfor %}
+					{% endif %}
+					<div class="form-group">
+						{{ vendor_form.AccountNum.errors }}
+						<label for="{{ vendor_form.AccountNum.id_for_label }}">Número de cuenta</label>
+						{% render_field vendor_form.AccountNum class+="form-control" %}
+					</div>
+					<div class="form-group">
+						{{ vendor_form.AccountType.errors }}
+						<label for="{{ vendor_form.AccountType.id_for_label }}">Tipo de registro</label>
+						{% render_field vendor_form.AccountType|append_attr:"id:OneTimeVendor_Id" class+="form-control" %}
+					</div>
+					<div class="form-group">
+						{{ vendor_form.OneTimeVendor.errors }}
+						<label for="{{ vendor_form.OneTimeVendor.id_for_label }}">Proveedor de una sola vez</label>
+						{% render_field vendor_form.OneTimeVendor class+="form-control" %}
+					</div>
+					<div class="form-group">
+						{{ vendor_form.VendGroup.errors }}
+						<label for="{{ vendor_form.VendGroup.id_for_label }}">Grupo de proveedor</label>
+						{% render_field vendor_form.VendGroup class+="form-control" %}
+					</div>
+					<div class="form-group">
+						{{ vendor_form.CreditLimit.errors }}
+						<label for="{{ vendor_form.CreditLimit.id_for_label }}">Límite de crédito</label>
+						{% render_field vendor_form.CreditLimit class+="form-control" %}
+					</div>
+					<div class="form-group">
+						{{ vendor_form.CurrencyCode.errors }}
+						<label for="{{ vendor_form.CurrencyCode.id_for_label }}">Moneda</label>
+						{% render_field vendor_form.CurrencyCode class+="form-control" %}
+					</div>
+					<div class="form-group">
+						{{ vendor_form.VATNum.errors }}
+						<label for="{{ vendor_form.VATNum.id_for_label }}">RFC</label>
+						{% render_field vendor_form.VATNum class+="form-control" %}
+					</div>
+					<div class="form-group">
+						{{ vendor_form.Notes.errors }}
+						<label for="{{ vendor_form.Notes.id_for_label }}">Comentarios</label>
+						{% render_field vendor_form.Notes|attr:"rows:3" class+="form-control" %}
+					</div>
+	            </div>
+	        </div>
+	    </div>
+
+	    <div class="col-md-6 col-sm-6 col-xs-12"> <!-- General info -->
+	        <div class="x_panel tile">
+	            <div class="x_title">
+	                <h2>General</h2>
+	                <ul class="nav navbar-right panel_toolbox">
+	                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+	                    </li>
+	                </ul>
+	                <div class="clearfix"></div>
+	            	</div>
+	            <div class="x_content">
+	                {% if party_form.errors %}
+					    {% for field in party_form %}
+					        {% for error in field.errors %}
+					        	<style>
+									#{{ field.id_for_label }} {
+										border: 1px solid #f64747;
+										border-radius: 3px;
+									}
+					        	</style>				            
+					        {% endfor %}
+					    {% endfor %}
+					    {% for error in party_form.non_field_errors %}
+					        <div class="alert alert-error">
+					            <strong> {{ error|escape }}</strong>
+					        </div>
+					    {% endfor %}
+					{% endif %}
+					<div class="form-group">
+						{{ party_form.Name.errors }}
+						<label for="{{ party_form.Name.id_for_label }}">*Nombre</label>
+						{% render_field party_form.Name class+="form-control" %}
+					</div>
+					<div class="form-group person-info">
+						{{ party_form.SecondName.errors }}
+						<label for="{{ party_form.SecondName.id_for_label }}">Segundo nombre</label>
+						{% render_field party_form.SecondName class+="form-control" %}
+					</div>
+					<div class="form-group person-info">
+						{{ party_form.FirstLastName.errors }}
+						<label for="{{ party_form.FirstLastName.id_for_label }}">*Apellido paterno</label>
+						{% render_field party_form.FirstLastName class+="form-control" %}
+					</div>
+					<div class="form-group person-info">
+						{{ party_form.SecondLastName.errors }}
+						<label for="{{ party_form.SecondLastName.id_for_label }}">Apellido materno</label>
+						{% render_field party_form.SecondLastName class+="form-control" %}
+					</div>
+					<div class="form-group">
+						{{ party_form.NameAlias.errors }}
+						<label for="{{ party_form.NameAlias.id_for_label }}">Nombre de búsqueda</label>
+						{% render_field party_form.NameAlias class+="form-control" %}
+					</div>
+					<div class="form-group person-info">
+						{{ party_form.LanguageCode.errors }}
+						<label for="{{ party_form.LanguageCode.id_for_label }}">Lenguaje</label>
+						{% render_field party_form.LanguageCode class+="form-control" %}
+					</div>
+					<div class="form-group person-info">
+						{{ party_form.Gender.errors }}
+						<label{{ party_form.Gender.id_for_label }} for="">Género</label>
+						{% render_field party_form.Gender class+="form-control" %}
+					</div>
+	            </div>
+	        </div>
+	    </div>
+		
+		<div> <!-- Electronic info -->
+	        <div class="x_panel tile">
+	            <div class="x_title">
+	                <h2>Contacto</h2>
+	                <ul class="nav navbar-right panel_toolbox">
+	                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+	                    </li>
+	                </ul>
+	                <div class="clearfix"></div>
+	            </div>
+	            <div class="x_content">
+					{{ electronic_formset.management_form }}
+		            <table border="0" cellpadding="0" cellspacing="0" class="table table-condensed electronic_formset table-hover table-striped">
+		            	<thead>
+					        <tr>
+					            <th>*Descripción</th>
+					            <th>Tipo</th>
+					            <th>*Contacto</th>
+					            <th>Principal</th>
+					            <th>Accion</th>
+					        </tr>
+					    </thead>
+				        <tbody>
+				            {% for electronic_form in electronic_formset.forms %}
+					            <tr>
+					               <td>{% render_field electronic_form.Description class+="form-control" %}</td>
+					               <td>{% render_field electronic_form.Type class+="form-control" %}</td>
+					               <td>{% render_field electronic_form.Contact class+="form-control" %}</td>
+					               <td>{% render_field electronic_form.IsPrimary class+="form-control" %}</td>
+					               <td></td>
+					            </tr>
+				            {% endfor %}
+				        </tbody>
+				    </table>
+	            </div>
+	        </div>
+	    </div>
+
+		<div class="col-md-12"><!-- Postal info -->
+			{{ postal_formset.management_form }}
+			{% for postal_form in postal_formset %}
+		    <div class="col-md-4 col-sm-4 col-xs-12 party_formset"> 
+		        <div class="x_panel tile">
+		            <div class="x_title">
+		                <h2>Dirección</h2>
+		                <ul class="nav navbar-right panel_toolbox">
+		                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+		                    </li>
+		                </ul>
+		                <div class="clearfix"></div>
+		            </div>
+		            <div class="x_content">
+		                {% if postal_form.errors %}
+						    {% for field in postal_form %}
+						        {% for error in field.errors %}
+						        	<style>
+										#{{ field.id_for_label }} {
+											border: 1px solid #f64747;
+											border-radius: 3px;
+										}
+						        	</style>				            
+						        {% endfor %}
+						    {% endfor %}
+						    {% for error in postal_form.non_field_errors %}
+						        <div class="alert alert-error">
+						            <strong> {{ error|escape }}</strong>
+						        </div>
+						    {% endfor %}
+						{% endif %}
+						<div class="form-group postal-info">
+							{{ postal_form.Description.errors }}
+							<label{{ postal_form.Description.id_for_label }} for="">*Descripción</label>
+							{% render_field postal_form.Description class+="form-control" %}
+						</div>
+						<div class="row">
+							<div class="col-md-9 col-sm-9 col-xs-12">
+								<div class="form-group postal-info">
+									{{ postal_form.Purpose.errors }}
+									<label{{ postal_form.Purpose.id_for_label }} for="">Propósito</label>
+									{% render_field postal_form.Purpose class+="form-control" %}
+								</div>
+							</div>
+							<div class="col-md-3 col-sm-3 col-xs-6">
+								<div class="form-group postal-info">
+									{{ postal_form.IsPrimary.errors }}
+									<label{{ postal_form.IsPrimary.id_for_label }} for="">Principal</label>
+									{% render_field postal_form.IsPrimary class+="form-control pull-right" %}
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 col-sm-6 col-xs-12">
+								<div class="form-group postal-info">
+									{{ postal_form.CountryRegionId.errors }}
+									<label{{ postal_form.CountryRegionId.id_for_label }} for="">*País</label>
+									{% render_field postal_form.CountryRegionId class+="form-control" %}
+								</div>
+							</div>
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="form-group postal-info">
+									{{ postal_form.ZipCode.errors }}
+									<label{{ postal_form.ZipCode.id_for_label }} for="">Código postal</label>
+									{% render_field postal_form.ZipCode class+="form-control" %}
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-8 col-sm-8 col-xs-12">
+								<div class="form-group postal-info">
+									{{ postal_form.Street.errors }}
+									<label{{ postal_form.Street.id_for_label }} for="">Calle</label>
+									{% render_field postal_form.Street class+="form-control" %}
+								</div>
+							</div>
+							<div class="col-md-4 col-sm-4 col-xs-6">
+								<div class="form-group postal-info">
+									{{ postal_form.StreetNumber.errors }}
+									<label{{ postal_form.StreetNumber.id_for_label }} for="">Número</label>
+									{% render_field postal_form.StreetNumber class+="form-control" %}
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-3 col-sm-3 col-xs-12">
+								<div class="form-group postal-info">
+									{{ postal_form.BuildingCompliment.errors }}
+									<label{{ postal_form.BuildingCompliment.id_for_label }} for="">Interior</label>
+									{% render_field postal_form.BuildingCompliment class+="form-control" %}
+								</div>
+							</div>
+							<div class="col-md-9 col-sm-9 col-xs-6">
+								<div class="form-group postal-info">
+									{{ postal_form.City.errors }}
+									<label{{ postal_form.City.id_for_label }} for="">Ciudad</label>
+									{% render_field postal_form.City class+="form-control" %}
+								</div>
+							</div>
+						</div>
+						<div class="form-group postal-info">
+							{{ postal_form.State.errors }}
+							<label{{ postal_form.State.id_for_label }} for="">Estado</label>
+							{% render_field postal_form.State class+="form-control" %}
+						</div>
+		            </div>
+		        </div>
+		    </div>
+			{% endfor %}
+		</div>
+
+		
+	</form>
+
+{% endblock %}
