@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='VendModel',
+            name='VendorModel',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
@@ -24,9 +24,12 @@ class Migration(migrations.Migration):
                 ('VendGroup', models.CharField(default=b'Loc', max_length=3, choices=[(b'Loc', b'Local'), (b'Nat', b'Nacional'), (b'Int', b'Internacional')])),
                 ('CreditLimit', models.DecimalField(null=True, max_digits=15, decimal_places=2, blank=True)),
                 ('CurrencyCode', models.CharField(default=b'MXN', max_length=3)),
-                ('VATNum', models.CharField(max_length=13, null=True, blank=True)),
-                ('Notes', models.TextField(max_length=200, null=True, blank=True)),
-                ('Party', models.OneToOneField(null=True, default=None, blank=True, to='DirParty.DirPartyModel')),
+                ('VATNum', models.CharField(max_length=13, blank=True)),
+                ('Notes', models.TextField(max_length=200, blank=True)),
+                ('Party', models.OneToOneField(related_name='VendorParty', null=True, default=None, blank=True, to='DirParty.DirPartyModel')),
             ],
+            options={
+                'abstract': False,
+            },
         ),
     ]

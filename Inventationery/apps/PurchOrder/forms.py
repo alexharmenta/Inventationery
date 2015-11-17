@@ -2,20 +2,20 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:16:42
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-16 20:03:06
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-17 13:11:10
 from django import forms
 from django.forms.formsets import BaseFormSet
 from .models import PurchOrderModel, PurchLineModel
-from Inventationery.apps.Vendor.models import VendModel
+from Inventationery.apps.Vendor.models import VendorModel
 from Inventationery.apps.Inventory.models import InventModel
 
 
 class PurchOrderForm(forms.ModelForm):
-    OrderAccount = forms.ModelChoiceField(queryset=VendModel.objects.all())
-    queryset = VendModel.objects.all()
+    OrderAccount = forms.ModelChoiceField(queryset=VendorModel.objects.all())
+    queryset = VendorModel.objects.all()
     print queryset
-    InvoiceAccount = forms.ModelChoiceField(queryset=VendModel.objects.all())
+    InvoiceAccount = forms.ModelChoiceField(queryset=VendorModel.objects.all())
 
     def __init__(self, *args, **kwargs):
         super(PurchOrderForm, self).__init__(*args, **kwargs)

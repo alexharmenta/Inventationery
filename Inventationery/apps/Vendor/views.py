@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:22:12
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-16 20:16:49
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-17 17:51:10
 # views.py
 from django.shortcuts import render_to_response
 from django.forms.formsets import formset_factory
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.views.generic import ListView, DeleteView, UpdateView
-from .models import VendModel
+from .models import VendorModel
 from Inventationery.apps.LogisticsPostalAddress.models import (
     LogisticsPostalAddressModel)
 from Inventationery.apps.LogisticsElectronicAddress.models import (
@@ -24,13 +24,13 @@ from .forms import (VendorForm,
 
 
 class VendorList(ListView):
-    model = VendModel
-    template_name = 'Vendor/VendorsList.html'
+    model = VendorModel
+    template_name = 'Vendor/VendorList.html'
     context_object_name = 'vendors'
 
     def get_queryset(self):
         queryset = super(VendorList, self).get_queryset()
-        queryset = VendModel.objects.all().order_by('AccountNum')
+        queryset = VendorModel.objects.all().order_by('AccountNum')
         return queryset
 
 
@@ -52,31 +52,54 @@ def createVendorView(request):
         postal_formset = PostalFormSet(request.POST, prefix='pfs')
         electronic_formset = ElectronicFormSet(request.POST, prefix='efs')
 
+        vendor_valid = False
+        party_valid = False
+        postal_valid = False
+        electronic_valid = False
+
         if vendor_form.is_valid() and party_form.is_valid():
+            vendor_valid = True
+            party_valid = True
+            
             Party = party_form.save()
             vendor = vendor_form.save(commit=False)
             vendor.Party = Party
             vendor.save()
-            for postal_form in postal_formset:
-                if postal_form.is_valid():
-                    Postal = postal_form.save(commit=False)
-                    Postal.Party = Party
-                    Postal.save()
-                else:
-                    Party.delete()
-                    vendor.delete()
-            for electronic_form in electronic_formset:
-                if electronic_form.is_valid():
-                    description = postal_form.cleaned_data.get('Description')
-                    contact = electronic_form.cleaned_data.get('Contact')
-                    if description and contact:
+
+            if postal_formset.is_valid():
+                for postal_form in postal_formset:
+                    if postal_form.is_valid():
+                        Postal = postal_form.save(commit=False)
+                        Postal.Party = Party
+                        Postal.save()
+                        postal_valid = True
+                    else:
+                        Party.delete()
+                        vendor.delete()
+                        postal_valid = False
+            else:
+                Party.delete()
+                vendor.delete()
+                postal_valid = False
+
+            if electronic_formset.is_valid():
+                for electronic_form in electronic_formset:
+                    if electronic_form.is_valid():
                         Electronic = electronic_form.save(commit=False)
                         Electronic.Party = Party
                         Electronic.save()
-                else:
-                    Party.delete()
-                    vendor.delete()
+                        electronic_valid = True
+                    else:
+                        Party.delete()
+                        vendor.delete()
+                        electronic_valid = False
+            else:
+                Party.delete()
+                vendor.delete()
+                electronic_valid = False
 
+
+        if vendor_valid and party_valid and postal_valid and electronic_valid:
             redirect_url = "/vendor/update/" + str(vendor.pk)
             return HttpResponseRedirect(redirect_url)
 
@@ -96,7 +119,7 @@ def createVendorView(request):
 
 
 class DeleteVendorView(DeleteView):
-    model = VendModel
+    model = VendorModel
     template_name = 'Vendor/DeleteVendor.html'
     success_url = '/vendor'
     success_message = 'Proveedor eliminado correctamente'
@@ -105,7 +128,7 @@ class DeleteVendorView(DeleteView):
 class UpdateVendorView(UpdateView):
     form_class = VendorForm
     template_name = 'Vendor/VendorDetails.html'
-    model = VendModel
+    model = VendorModel
 
     def get_context_data(self, **kwargs):
         context = super(UpdateVendorView, self).get_context_data(**kwargs)
@@ -117,7 +140,7 @@ class UpdateVendorView(UpdateView):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         vendor_form = self.get_form()
-        Vend = VendModel.objects.get(pk=kwargs['pk'])
+        Vend = VendorModel.objects.get(pk=kwargs['pk'])
         Party = Vend.Party
         party_form = PartyForm(instance=Party)
 
@@ -173,7 +196,7 @@ class UpdateVendorView(UpdateView):
         self.object = self.get_object()
         self.context = self.get_context_data()
         vendor_form = self.get_form()
-        Vend = VendModel.objects.get(pk=kwargs['pk'])
+        Vend = VendorModel.objects.get(pk=kwargs['pk'])
         Party = Vend.Party
         party_form = PartyForm(request.POST, instance=Party)
         valid = True

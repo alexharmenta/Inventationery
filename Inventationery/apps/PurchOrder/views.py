@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-16 20:05:25
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-17 13:13:53
 # from django.shortcuts import render
 from django.views.generic import ListView, CreateView
 from django.forms.formsets import formset_factory
 from django.http import JsonResponse
 from .models import PurchOrderModel
 from .forms import PurchOrderForm, PurchOrderLinesForm, BasePurchLineFormSet
-from Inventationery.apps.Vendor.models import VendModel
+from Inventationery.apps.Vendor.models import VendorModel
 from Inventationery.apps.Inventory.models import InventModel
 # Create your views here.
 
@@ -56,7 +56,7 @@ class PurchOrderCreateView(CreateView):
             if action == 'get_purch_data':
                 AccountNum = request.POST.get('AccountNum', '')
                 try:
-                    Vendor = VendModel.objects.get(AccountNum=AccountNum)
+                    Vendor = VendorModel.objects.get(AccountNum=AccountNum)
                     response_dict = {
                         'NameAlias': Vendor.Party.NameAlias,
                         'VATNum': Vendor.VATNum,

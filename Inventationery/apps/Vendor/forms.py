@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:22:39
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-16 19:36:15
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-17 16:39:32
 from django import forms
 from django.forms.formsets import BaseFormSet
-from .models import VendModel
+from .models import VendorModel
 from Inventationery.apps.DirParty.models import DirPartyModel
 from Inventationery.apps.LogisticsPostalAddress.models import (
     LogisticsPostalAddressModel)
@@ -17,7 +17,7 @@ from Inventationery.apps.LogisticsElectronicAddress.models import (
 class VendorForm(forms.ModelForm):
 
     class Meta:
-        model = VendModel
+        model = VendorModel
         fields = ('AccountNum',
                   'AccountType',
                   'OneTimeVendor',
@@ -68,24 +68,40 @@ class LogisticsPostalForm(forms.ModelForm):
 class BasePostalFormSet(BaseFormSet):
 
     def clean(self):
-        """Checks that no two articles have the same title."""
+        """Adds validation to know if an address
+        is already a primary address"""
         if any(self.errors):
-            # Don't bother validating the formset unless each form is valid on
-            # its own
             return
-        descriptions = []
+
         primarys = []
+        descriptions = []
+        duplicates = False
+
         for form in self.forms:
-            description = form.cleaned_data['Description']
-            primary = form.cleaned_data['IsPrimary']
-            if description in descriptions:
-                raise forms.ValidationError(
-                    "No repita el nombre de las direcciones")
-            if primary in primarys:
-                raise forms.ValidationError(
-                    "Solo debe haber una dirección principal"
-                )
-            descriptions.append(description)
+            if form.cleaned_data:
+                IsPrimary = form.cleaned_data['IsPrimary']
+                Description = form.cleaned_data['Description']
+
+                if IsPrimary and Description:
+                    if IsPrimary in primarys:
+                        duplicates = True
+                    primarys.append(IsPrimary)
+
+                    if Description in descriptions:
+                        duplicates = True
+                    descriptions.append(Description)
+
+                if duplicates:
+                    raise forms.ValidationError(
+                        'Solo una dirección puede ser principal y no debe repetirse la descripción',
+                        code='duplicate_postal',
+                    )
+
+                if not IsPrimary:
+                    raise forms.ValidationError(
+                        'Selecciona una dirección como principal',
+                        code='missing_postal_primary',
+                    )
 
 
 class LogisticsElectronicForm(forms.ModelForm):
@@ -106,26 +122,32 @@ class BaseElectronicFormSet(BaseFormSet):
         if any(self.errors):
             return
 
-        IsPrimarys = []
+        primarys = []
+        descriptions = []
         duplicates = False
 
         for form in self.forms:
             if form.cleaned_data:
                 IsPrimary = form.cleaned_data['IsPrimary']
+                Description = form.cleaned_data['Description']
 
-                if IsPrimary:
-                    if IsPrimary in IsPrimarys:
+                if IsPrimary and Description:
+                    if IsPrimary in primarys:
                         duplicates = True
-                    IsPrimarys.append(IsPrimary)
+                    primarys.append(IsPrimary)
+
+                    if Description in descriptions:
+                        duplicates = True
+                    descriptions.append(Description)
 
                 if duplicates:
                     raise forms.ValidationError(
-                        'Solo un contacto puede ser principal.',
-                        code='duplicate_primary',
+                        'Solo un contacto puede ser principal y no debe repetirse la descripción',
+                        code='duplicate_electronic',
                     )
 
                 if not IsPrimary:
                     raise forms.ValidationError(
                         'Selecciona un contacto como principal',
-                        code='missing_primary',
+                        code='missing_electronic_primary',
                     )

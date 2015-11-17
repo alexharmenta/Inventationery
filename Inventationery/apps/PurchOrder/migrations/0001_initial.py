@@ -17,11 +17,10 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('modified', models.DateTimeField(auto_now=True)),
-                ('PurchId', models.CharField(default=Inventationery.apps.PurchOrder.models.Get_PurchId, unique=True, max_length=45)),
                 ('ItemId', models.CharField(max_length=20)),
                 ('ItemName', models.CharField(max_length=50)),
                 ('PurchQty', models.PositiveIntegerField()),
-                ('PurchUnit', models.CharField(max_length=20)),
+                ('PurchUnit', models.CharField(max_length=10)),
                 ('PurchPrice', models.FloatField()),
                 ('LineDisc', models.DecimalField(max_digits=10, decimal_places=2)),
                 ('LinePercent', models.DecimalField(max_digits=10, decimal_places=2)),
@@ -29,6 +28,9 @@ class Migration(migrations.Migration):
                 ('PurchLineStatus', models.CharField(default=b'BAC', max_length=100, choices=[(b'BAC', b'Back order'), (b'REC', b'Recibido'), (b'INV', b'Facturado'), (b'CAN', b'Cancelado')])),
                 ('LineNum', models.PositiveSmallIntegerField()),
             ],
+            options={
+                'abstract': False,
+            },
         ),
         migrations.CreateModel(
             name='PurchOrderModel',
@@ -39,7 +41,7 @@ class Migration(migrations.Migration):
                 ('PurchId', models.CharField(default=Inventationery.apps.PurchOrder.models.Get_PurchId, unique=True, max_length=45)),
                 ('PurchName', models.CharField(max_length=100)),
                 ('PurchaseType', models.CharField(default=b'PO', max_length=50, choices=[(b'PO', b'Orden de compra'), (b'RO', b'Orden devuelta')])),
-                ('OrderAccount', models.CharField(default=None, max_length=50)),
+                ('OrderAccount', models.CharField(max_length=100)),
                 ('InvoiceAccount', models.CharField(default=None, max_length=50, null=True, blank=True)),
                 ('PurchStatus', models.CharField(default=b'BAC', max_length=100, choices=[(b'BAC', b'Back order'), (b'REC', b'Recibido'), (b'INV', b'Facturado'), (b'CAN', b'Cancelado')])),
                 ('WorkerPurchPlacer', models.CharField(max_length=100, null=True, blank=True)),
@@ -54,10 +56,13 @@ class Migration(migrations.Migration):
                 ('CashDisc', models.DecimalField(null=True, max_digits=10, decimal_places=2, blank=True)),
                 ('CashDiscPercent', models.DecimalField(null=True, max_digits=4, decimal_places=2, blank=True)),
             ],
+            options={
+                'abstract': False,
+            },
         ),
         migrations.AddField(
             model_name='purchlinemodel',
             name='PurchOrder',
-            field=models.ForeignKey(default=None, blank=True, to='PurchOrder.PurchOrderModel', null=True),
+            field=models.ForeignKey(default=Inventationery.apps.PurchOrder.models.Get_PurchId, blank=True, to='PurchOrder.PurchOrderModel', null=True),
         ),
     ]

@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-16 20:04:31
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-17 13:26:13
 """Inventationery URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:

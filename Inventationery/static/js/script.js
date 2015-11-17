@@ -1,32 +1,17 @@
 /* 
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
-* @Last Modified by:   Alex
-* @Last Modified time: 2015-11-16 18:59:30
+* @Last Modified by:   harmenta
+* @Last Modified time: 2015-11-17 17:36:24
 */
 
 'use strict';
 // A $( document ).ready() block.
 $( document ).ready(function() {
-    //For getting CSRF token
-    function getCookie(name) {
-              var cookieValue = null;
-              if (document.cookie && document.cookie != '') {
-                    var cookies = document.cookie.split(';');
-              for (var i = 0; i < cookies.length; i++) {
-                   var cookie = jQuery.trim(cookies[i]);
-              // Does this cookie string begin with the name we want?
-              if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                  break;
-                 }
-              }
-          }
-     return cookieValue;
-    }
-
-   	// Llenar información de proveedores
-   	$("#id_Name").keyup(function () {
+    
+   	/* ----- Vendor ----- */
+    // Fill NameAlias
+   	$("#id_Name").focusout(function () {
         var Name = $(this).val();
         var FirstLastName = "";
         if ($("#OneTimeVendor_Id").val() == 'PER') {
@@ -35,7 +20,7 @@ $( document ).ready(function() {
         var NameAlias = Name + " " + FirstLastName;
         $("#id_NameAlias").val(NameAlias);
     });
-    $("#id_FirstLastName").keyup(function () {
+    $("#id_FirstLastName").focusout(function () {
         var Name = $("#id_Name").val();
         var FirstLastName = $(this).val();
         if ($("#OneTimeVendor_Id").val() == 'PER') {
@@ -54,41 +39,28 @@ $( document ).ready(function() {
 		$('.person-info').show();
    	}
 
-   $( "#OneTimeVendor_Id" ).change(function() {
-	  	if ($('#OneTimeVendor_Id').val() === 'PAR') {
-	  		$(".fill-person").val("xxxxx");
-	  		$("#id_NameAlias").val("");
-			$('.person-info').hide();
-	   	}
-	   	if ($('#OneTimeVendor_Id').val() === 'PER') {
-	   		$(".fill-person").val("");
-	   		$("#id_NameAlias").val("");
-			$('.person-info').show();
-	   }
-	 });
-   	// Llenar información de proveedores
-   	
-   	// Vendor table initialize
+    $( "#OneTimeVendor_Id" ).change(function() {
+  	  	if ($('#OneTimeVendor_Id').val() === 'PAR') {
+  	  		$(".fill-person").val("xxxxx");
+  	  		$("#id_NameAlias").val("");
+  			$('.person-info').hide();
+  	   	}
+  	   	if ($('#OneTimeVendor_Id').val() === 'PER') {
+  	   		$(".fill-person").val("");
+  	   		$("#id_NameAlias").val("");
+  			$('.person-info').show();
+  	   }
+  	});
 
+   	// Vendor table list initialize plugin
     $('#VendorsListTableId').DataTable(
       {
       
       }
     );
 
-    /* Postal formset validation logic */
-    $('.party_formset').formset({
-        prefix: 'pfs',
-        formCssClass: 'party-formset',
-        addText: 'Agregar dirección',
-        deleteText: 'Eliminar dirección',
-        addCssClass: 'btn btn-success btn-xs',
-        deleteCssClass: 'btn btn-warning btn-xs',
-    });
-    /* Postal formset validation logic */
-
-    /* Contact formset validation logic */
-    $('.electronic_formset tbody tr').formset({
+    // Contact formset
+    $('.electronic_formset tbody tr').formset({// Initialize django-formset plugin
         prefix: 'efs',
         formCssClass: 'electronic-formset',
         addText: 'Agregar contacto',
@@ -96,35 +68,45 @@ $( document ).ready(function() {
         addCssClass: 'btn btn-success btn-xs',
         deleteCssClass: 'btn btn-warning btn-xs',
     });
-    /* Contact formset validation logic */
 
-    // PurchOrder table initialize
+    // Postal formset
+    $('.party_formset').formset({ // Initialize django-formset plugin
+        prefix: 'pfs',
+        formCssClass: 'party-formset',
+        addText: 'Agregar dirección',
+        deleteText: 'Eliminar dirección',
+        addCssClass: 'btn btn-success btn-xs',
+        deleteCssClass: 'btn btn-warning btn-xs',
+    });
+    /* ----- Vendor ----- */
 
+    /* ----- Purchase Order ----- */
+    // PurchOrder table list initialize plugin
     $('#PurchOrderListTableId').DataTable(
       {
       
       }
     );
-    /* Purchline formset validation logic */
-    $('#PurchOrderForm tbody tr').formset({
+    // Purchline formset
+    $('#PurchOrderForm tbody tr').formset({ // Initialize django-formset plugin
         prefix: 'plfs',
         addText: 'Agregar linea',
         deleteText: ' X ',
         addCssClass: 'btn btn-success btn-xs',
         deleteCssClass: 'btn btn-danger btn-xs',
     });
-    /* Purchline formset validation logic */
-    // Inventory table initialize
 
-    $('#InventoryListTableId').DataTable(
-      {
-      
-      }
-    );
-
-    /* Get purchase order info with AJAX */
+    // Global variables
+    var qty;
+    var price;
+    var disc;
+    var percent;
+    var total;
+    // Global variables
+    
+    // Get purchase order info with AJAX
     $('#id_OrderAccount').on('change', function(){
-      $('#id_InvoiceAccount').val($(this).val()).change(); //Change invoice value
+      $('#id_InvoiceAccount').val($(this).val()).change(); //Change invoice account value
       var AccountNum = getCharsBefore($('#id_OrderAccount option:selected').text(), ' ');
       var AccountNum = $('#id_OrderAccount option:selected').text();
       // AJAX Code for retrieving data from vendor
@@ -133,8 +115,9 @@ $( document ).ready(function() {
       $.ajax({
         url : window.location.href, // the endpoint,commonly same url
         type: "POST",
-        //This is the dictionary you are SENDING to your Django code. We are sending the 'action':get_data and the 'id: $AccountNum  
-        //which is a variable that contains what car the user selected
+        //This is the dictionary you are SENDING to your Django code. 
+        //We are sending the 'action':get_purch_data and the 'id: $AccountNum  
+        //which is a variable that contains what account user selected
         data: { 
                 action: 'get_purch_data',
                 AccountNum: AccountNum,
@@ -153,15 +136,9 @@ $( document ).ready(function() {
         }
 
       });
-
     });
-    // Global variables
-    var qty;
-    var price;
-    var disc;
-    var percent;
-    var total;
-    // Global variables
+
+    // Get purchase line info with AJAX
     $('.purchline_formset_td').on('change', '*', function(){
       var id = $(this).attr('id');
       var id_lower = id.toLowerCase()
@@ -223,15 +200,43 @@ $( document ).ready(function() {
       $(total_id).val(total);
 
     });
-    /* Get purchase order info with AJAX */
+    
+    /* ----- Purchase Order ----- */
 
-    /* Function to get substring before some given char */
-    function getCharsBefore(str, chr) {
-      var index = str.indexOf(chr);
-      if (index != -1) {
-          return(str.substring(0, index));
+    /* ----- Inventory ----- */
+    // Inventory table list initialize plugin
+    $('#InventoryListTableId').DataTable(
+      {
+      
       }
-      return("");
-    }
+    );
+    /* ----- Inventory ----- */
 
-});
+    /* ----- EXTRA FUNCTIONS ----- */
+    // Function for getting CSRF token
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    // Function to get substring before some given char
+    function getCharsBefore(str, chr) {
+        var index = str.indexOf(chr);
+        if (index != -1) {
+            return(str.substring(0, index));
+        }
+        return("");
+    }
+    /* ----- EXTRA FUNCTIONS ----- */
+
+});/* Document Ending */

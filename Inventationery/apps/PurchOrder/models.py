@@ -2,14 +2,17 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-16 19:26:18
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-17 17:04:46
 from django.db import models
+from Inventationery.core.models import TimeStampedModel
+import re
 # Create your models here.
 
 
+# Function: Get new sequence number for Purchase Order
 def Get_PurchId():
-    prefix = 'OC'
+    prefix = 'OC-'
 
     try:
         last = PurchOrderModel.objects.latest('created')
@@ -17,14 +20,16 @@ def Get_PurchId():
         last = None
 
     if last:
-        no = int(last.PurchId[2:])
-        no = str(no + 1)
-        return prefix + no
+        no = int(filter(unicode.isdigit, last.AccountNum))
+        no = no + 1
+        return prefix + str(no).zfill(5)
     else:
-        return prefix + str(1)
+        return prefix + str(1).zfill(5)
 
 
-class PurchOrderModel(models.Model):
+# Class: Model for Purchase Order
+# ---------------------------------------------------------------------------
+class PurchOrderModel(TimeStampedModel):
 
     # PURCHASE TYPE OPTIONS
     PURCHASE_ORDER = 'PO'
@@ -55,14 +60,12 @@ class PurchOrderModel(models.Model):
         (BRANCH, 'En sucursal'),
     )
 
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
     PurchId = models.CharField(
         max_length=45, default=Get_PurchId, unique=True)
     PurchName = models.CharField(max_length=100)
     PurchaseType = models.CharField(
         max_length=50, choices=PURCHASE_TYPE, default=PURCHASE_ORDER)
-    OrderAccount = models.CharField(max_length=50, default=None, choices=None)
+    OrderAccount = models.CharField(max_length=100)
     InvoiceAccount = models.CharField(
         max_length=50, default=None, blank=True, null=True)
     PurchStatus = models.CharField(
@@ -95,7 +98,9 @@ class PurchOrderModel(models.Model):
         return "{0}".format(self.PurchId)
 
 
-class PurchLineModel(models.Model):
+# Class: Model for Purchase Order
+# ---------------------------------------------------------------------------
+class PurchLineModel(TimeStampedModel):
 
     # PURCHASE STATUS OPTIONS
     BACKORDER = 'BAC'
@@ -110,15 +115,10 @@ class PurchLineModel(models.Model):
         (CANCELED, 'Cancelado'),
     )
 
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-
-    PurchId = models.CharField(
-        max_length=45, default=Get_PurchId, unique=True)
     ItemId = models.CharField(max_length=20)
     ItemName = models.CharField(max_length=50)
     PurchQty = models.PositiveIntegerField()
-    PurchUnit = models.CharField(max_length=20)
+    PurchUnit = models.CharField(max_length=10)
     PurchPrice = models.FloatField()
     LineDisc = models.DecimalField(max_digits=10, decimal_places=2)
     LinePercent = models.DecimalField(max_digits=10, decimal_places=2)
@@ -127,4 +127,4 @@ class PurchLineModel(models.Model):
         max_length=100, default=BACKORDER, choices=PURCH_STATUS)
     LineNum = models.PositiveSmallIntegerField()
     PurchOrder = models.ForeignKey(
-        PurchOrderModel, null=True, blank=True, default=None)
+        PurchOrderModel, null=True, blank=True, default=Get_PurchId)

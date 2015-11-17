@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Author: Alex
+# @Author: Alex Armenta
 # @Date:   2015-11-16 19:08:22
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-16 19:09:36
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-17 13:48:30
 from django.db import models
 
 
+# Class: Model for DirParty
+# ----------------------------------------------------------------------------
 class DirPartyModel(models.Model):
 
     MALE = 'M'

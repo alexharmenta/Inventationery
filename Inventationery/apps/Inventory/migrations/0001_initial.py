@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('Price', models.DecimalField(max_digits=10, decimal_places=2)),
                 ('VendorPrice', models.DecimalField(max_digits=10, decimal_places=2)),
                 ('ItemImage', models.ImageField(default=None, null=True, upload_to=b'ItemTable/', blank=True)),
-                ('PrimaryVendor', models.ForeignKey(default=None, blank=True, to='Vendor.VendModel', null=True)),
+                ('PrimaryVendor', models.ForeignKey(default=None, blank=True, to='Vendor.VendorModel', null=True)),
             ],
         ),
     ]

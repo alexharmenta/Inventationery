@@ -5383,3 +5383,10 @@ input[type=checkbox], input[type=radio] {
 #item_percent_h{
     width: 8%;
 }
+
+label {
+    display: -webkit-inline-box;
+    max-width: 100%;
+    margin-bottom: 0px;
+    font-weight: 500;
+}

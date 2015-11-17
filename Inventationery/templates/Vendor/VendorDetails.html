@@ -6,7 +6,7 @@
 	<form action="" method="POST"> {% csrf_token %}
 		<div class="row">
 			<div class="col-md-6">
-				<h1>Proveedor {{ object.AccountNum }}</h1>	
+				<h3>Proveedor: {{ object.AccountNum }}</h3>	
 			</div>
 			<div class="col-md-3">
 				<button type="submit" class="btn btn-info btn-block">Nuevo Proveedor</button>

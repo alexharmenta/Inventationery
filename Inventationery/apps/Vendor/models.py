@@ -1,35 +1,38 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Author: Alex
-# @Date:   2015-11-16 19:22:12
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-16 20:04:55
+# @Author: Alex Armenta
+# @Date:   2015-11-17 12:15:05
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-17 17:06:16
 from django.db import models
+from Inventationery.core.models import TimeStampedModel
 from Inventationery.apps.DirParty.models import DirPartyModel
 from Inventationery.apps.LogisticsPostalAddress.models import (
     LogisticsPostalAddressModel)
 from Inventationery.apps.LogisticsElectronicAddress.models import (
     LogisticsElectronicAddressModel)
-# Create your models here.
 
 
+# Function: Get new sequence number for vendor AccountNum
 def Get_Account_Num():
-    prefix = 'P'
+    prefix = 'P-'
 
     try:
-        last = VendModel.objects.latest('created')
+        last = VendorModel.objects.latest('created')
     except:
         last = None
 
     if last:
-        no = int(last.AccountNum[1:])
-        no = str(no + 1)
-        return prefix + no
+        no = int(filter(unicode.isdigit, last.AccountNum))
+        no = no + 1
+        return prefix + str(no).zfill(5)
     else:
-        return prefix + str(0001)
+        return prefix + str(1).zfill(5)
 
 
-class VendModel(models.Model):
+# Class: Model for Vendor
+# ----------------------------------------------------------------------------
+class VendorModel(TimeStampedModel):
 
     # Person options
     PERSON_TYPE = 'PER'
@@ -50,12 +53,9 @@ class VendModel(models.Model):
         (INTERNATIONAL_GROUP, 'Internacional'),
     )
 
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-
     AccountNum = models.CharField(default=Get_Account_Num,
                                   unique=True,
-                                  max_length=5)
+                                  max_length=45)
     AccountType = models.CharField(max_length=3,
                                    choices=ACCOUNT_TYPE,
                                    default=PARTY_TYPE)
@@ -68,14 +68,15 @@ class VendModel(models.Model):
                                       blank=True,
                                       null=True)
     CurrencyCode = models.CharField(default='MXN', max_length=3)
-    VATNum = models.CharField(max_length=13, blank=True, null=True)
-    Notes = models.TextField(max_length=200, blank=True, null=True)
+    VATNum = models.CharField(max_length=13, blank=True)
+    Notes = models.TextField(max_length=200, blank=True)
 
     # Relations
     Party = models.OneToOneField(DirPartyModel,
                                  default=None,
                                  null=True,
-                                 blank=True,)
+                                 blank=True,
+                                 related_name='VendorParty',)
 
     def __unicode__(self):
         return "{0}".format(self.AccountNum)
