@@ -32,14 +32,14 @@
 				    <tbody>
 				    	{% for vendor in vendors %}
 				    		<tr>
-					            <td><a href="{% url "vendor:update" pk=vendor.pk %}">{{ vendor.AccountNum }}</a></td>
+					            <td><a href="{% url "vendor:update" AccountNum=vendor.AccountNum %}">{{ vendor.AccountNum }}</a></td>
 					            <td>{{ vendor.Party.Name }}</td>
 					            <td>{{ vendor.CurrencyCode }}</td>
 					            <td>{{ vendor.VATNum }}</td>
 					            <td>{{ vendor.get_PrimaryAddress }}</td>
 					            <td>{{ vendor.get_PrimaryElectronic }}</td>
 					            <td class="text-center">
-									<a class='btn btn-info btn-xs' href="{% url "vendor:update" pk=vendor.pk %}">
+									<a class='btn btn-info btn-xs' href="{% url "vendor:update" AccountNum=vendor.AccountNum %}">
 										<span class="lnr lnr-pencil"></span> Editar
 									</a> 
 									<a href="{% url "vendor:delete" pk=vendor.pk %}" class="btn btn-danger btn-xs">

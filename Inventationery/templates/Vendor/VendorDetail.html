@@ -3,7 +3,7 @@
 
 {% block content %}
 	
-	<form action="" method="POST"> {% csrf_token %}
+	<form action="" method="POST" id="UpdateVendorForm"> {% csrf_token %}
 		<div class="row">
 			<div class="col-md-6">
 				<h3>Proveedor: {{ object.AccountNum }}</h3>	
@@ -186,6 +186,9 @@
 					               <td>{% render_field electronic_form.IsPrimary class+="form-control" %}</td>
 					               <td></td>
 					            </tr>
+					            {% for hidden in electronic_form.hidden_fields %}
+							        {{ hidden }}
+							    {% endfor %}
 				            {% endfor %}
 				        </tbody>
 				    </table>
@@ -196,6 +199,9 @@
 		<div class="col-md-12"><!-- Postal info -->
 			{{ postal_formset.management_form }}
 			{% for postal_form in postal_formset %}
+			{% for hidden in postal_form.hidden_fields %}
+		        {{ hidden }}
+		    {% endfor %}
 		    <div class="col-md-4 col-sm-4 col-xs-12 party_formset"> 
 		        <div class="x_panel tile">
 		            <div class="x_title">

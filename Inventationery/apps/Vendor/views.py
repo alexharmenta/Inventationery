@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:22:12
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-17 22:31:52
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-18 17:46:39
 # views.py
 from django.shortcuts import render_to_response
 from django.forms import inlineformset_factory
@@ -17,9 +17,7 @@ from Inventationery.apps.LogisticsPostalAddress.models import (
 from Inventationery.apps.LogisticsElectronicAddress.models import (
     LogisticsElectronicAddressModel)
 from .forms import (VendorForm,
-                    PartyForm,
-                    LogisticsPostalForm,
-                    LogisticsElectronicForm,)
+                    PartyForm,)
 
 
 class VendorList(ListView):
@@ -84,7 +82,7 @@ def createVendorView(request):
                     party.delete()
                     vendor.delete()
 
-                redirect_url = "/vendor/update/" + str(vendor.pk)
+                redirect_url = "/vendor/update/" + str(vendor.AccountNum)
                 return HttpResponseRedirect(redirect_url)
 
     else:
@@ -113,6 +111,8 @@ class UpdateVendorView(UpdateView):
     form_class = VendorForm
     template_name = 'Vendor/VendorDetail.html'
     model = VendorModel
+    slug_field = 'AccountNum'
+    slug_url_kwarg = 'AccountNum'
 
     ElectronicFormSet = inlineformset_factory(
         DirPartyModel, LogisticsElectronicAddressModel,
@@ -131,7 +131,7 @@ class UpdateVendorView(UpdateView):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         vendor_form = self.get_form()
-        Vend = VendorModel.objects.get(pk=kwargs['pk'])
+        Vend = VendorModel.objects.get(AccountNum=kwargs['AccountNum'])
         Party = Vend.Party
         party_form = PartyForm(instance=Party)
 
@@ -160,38 +160,17 @@ class UpdateVendorView(UpdateView):
             Party.save()
 
             electronic_formset = self.ElectronicFormSet(
-                request.POST, prefix='efs')
+                request.POST, instance=Party, prefix='efs')
             postal_formset = self.PostalFormSet(
-                request.POST, prefix='pfs')
+                request.POST, instance=Party, prefix='pfs')
 
             for electronic_form in electronic_formset:
                 if electronic_form.is_valid():
                     electronic_form.save()
-            """if valid:
-                LogisticsElectronicAddressModel.objects.filter(
-                    Party=Party).delete()
-                for electronic_form in electronic_formset:
-                    description = electronic_form.cleaned_data.get(
-                        'Description')
-                    contact = electronic_form.cleaned_data.get('Contact')
-                    if description and contact:
-                        Electronic = electronic_form.save(commit=False)
-                        Electronic.Party = Party
-                        Electronic.save()"""
 
             for postal_form in postal_formset:
                 if postal_form.is_valid():
                     postal_form.save()
-            """if valid:
-                LogisticsPostalAddressModel.objects.filter(
-                    Party=Party).delete()
-                for postal_form in postal_formset:
-                    description = postal_form.cleaned_data.get(
-                        'Description')
-                    if description:
-                        Postal = postal_form.save(commit=False)
-                        Postal.Party = Party
-                        Postal.save()"""
 
         return render_to_response('Vendor/VendorDetail.html',
                                   {'vendor_form': vendor_form,
