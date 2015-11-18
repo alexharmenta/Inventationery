@@ -2,15 +2,16 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:22:12
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-17 17:51:10
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-11-17 22:31:52
 # views.py
 from django.shortcuts import render_to_response
-from django.forms.formsets import formset_factory
+from django.forms import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.views.generic import ListView, DeleteView, UpdateView
 from .models import VendorModel
+from Inventationery.apps.DirParty.models import DirPartyModel
 from Inventationery.apps.LogisticsPostalAddress.models import (
     LogisticsPostalAddressModel)
 from Inventationery.apps.LogisticsElectronicAddress.models import (
@@ -18,9 +19,7 @@ from Inventationery.apps.LogisticsElectronicAddress.models import (
 from .forms import (VendorForm,
                     PartyForm,
                     LogisticsPostalForm,
-                    LogisticsElectronicForm,
-                    BasePostalFormSet,
-                    BaseElectronicFormSet)
+                    LogisticsElectronicForm,)
 
 
 class VendorList(ListView):
@@ -36,85 +35,70 @@ class VendorList(ListView):
 
 def createVendorView(request):
 
-    PostalFormSet = formset_factory(
-        LogisticsPostalForm, formset=BasePostalFormSet, extra=1, max_num=5)
-    ElectronicFormSet = formset_factory(
-        LogisticsElectronicForm,
-        formset=BaseElectronicFormSet,
-        extra=1,
-        max_num=5)
+    ElectronicFormSet = inlineformset_factory(
+        DirPartyModel, LogisticsElectronicAddressModel,
+        extra=1, max_num=5, fields='__all__')
+    PostalFormSet = inlineformset_factory(
+        DirPartyModel, LogisticsPostalAddressModel,
+        extra=1, max_num=5, fields='__all__')
 
     if request.method == 'POST':
         # formulario enviado
         vendor_form = VendorForm(request.POST)
         party_form = PartyForm(request.POST)
 
+        electronic_formset = ElectronicFormSet(
+            request.POST, prefix='efs')
+        postal_formset = PostalFormSet(
+            request.POST, prefix='pfs')
+
         postal_formset = PostalFormSet(request.POST, prefix='pfs')
         electronic_formset = ElectronicFormSet(request.POST, prefix='efs')
 
-        vendor_valid = False
-        party_valid = False
-        postal_valid = False
-        electronic_valid = False
-
         if vendor_form.is_valid() and party_form.is_valid():
-            vendor_valid = True
-            party_valid = True
-            
-            Party = party_form.save()
+            party = party_form.save(commit=False)
             vendor = vendor_form.save(commit=False)
-            vendor.Party = Party
+            party.save()
+            vendor.Party = party
             vendor.save()
 
-            if postal_formset.is_valid():
-                for postal_form in postal_formset:
-                    if postal_form.is_valid():
-                        Postal = postal_form.save(commit=False)
-                        Postal.Party = Party
-                        Postal.save()
-                        postal_valid = True
-                    else:
-                        Party.delete()
-                        vendor.delete()
-                        postal_valid = False
-            else:
-                Party.delete()
-                vendor.delete()
-                postal_valid = False
-
-            if electronic_formset.is_valid():
-                for electronic_form in electronic_formset:
-                    if electronic_form.is_valid():
+            for electronic_form in electronic_formset:
+                if electronic_form.is_valid():
+                    description = electronic_form.cleaned_data.get(
+                        'Description')
+                    contact = electronic_form.cleaned_data.get('Contact')
+                    if description and contact:
                         Electronic = electronic_form.save(commit=False)
-                        Electronic.Party = Party
+                        Electronic.Party = party
                         Electronic.save()
-                        electronic_valid = True
-                    else:
-                        Party.delete()
-                        vendor.delete()
-                        electronic_valid = False
-            else:
-                Party.delete()
-                vendor.delete()
-                electronic_valid = False
+                else:
+                    party.delete()
+                    vendor.delete()
 
+            for postal_form in postal_formset:
+                if postal_form.is_valid():
+                    Postal = postal_form.save(commit=False)
+                    Postal.Party = party
+                    Postal.save()
+                else:
+                    party.delete()
+                    vendor.delete()
 
-        if vendor_valid and party_valid and postal_valid and electronic_valid:
-            redirect_url = "/vendor/update/" + str(vendor.pk)
-            return HttpResponseRedirect(redirect_url)
+                redirect_url = "/vendor/update/" + str(vendor.pk)
+                return HttpResponseRedirect(redirect_url)
 
     else:
         # formulario inicial
         vendor_form = VendorForm()
         party_form = PartyForm()
-        postal_formset = PostalFormSet(prefix='pfs')
         electronic_formset = ElectronicFormSet(prefix='efs')
+        postal_formset = PostalFormSet(prefix='pfs')
 
     return render_to_response('Vendor/CreateVendor.html',
                               {'vendor_form': vendor_form,
                                'party_form': party_form,
-                               'postal_formset': postal_formset,
-                               'electronic_formset': electronic_formset, },
+                               'electronic_formset': electronic_formset,
+                               'postal_formset': postal_formset, },
                               context_instance=RequestContext(request))
 
 
@@ -127,8 +111,15 @@ class DeleteVendorView(DeleteView):
 
 class UpdateVendorView(UpdateView):
     form_class = VendorForm
-    template_name = 'Vendor/VendorDetails.html'
+    template_name = 'Vendor/VendorDetail.html'
     model = VendorModel
+
+    ElectronicFormSet = inlineformset_factory(
+        DirPartyModel, LogisticsElectronicAddressModel,
+        extra=1, max_num=5, fields='__all__')
+    PostalFormSet = inlineformset_factory(
+        DirPartyModel, LogisticsPostalAddressModel,
+        extra=1, max_num=5, fields='__all__')
 
     def get_context_data(self, **kwargs):
         context = super(UpdateVendorView, self).get_context_data(**kwargs)
@@ -144,102 +135,39 @@ class UpdateVendorView(UpdateView):
         Party = Vend.Party
         party_form = PartyForm(instance=Party)
 
-        PostalFormSet = formset_factory(
-            LogisticsPostalForm,
-            formset=BasePostalFormSet,
-            extra=1,
-            max_num=5,
-            can_delete=True)
-        ElectronicFormSet = formset_factory(
-            LogisticsElectronicForm,
-            formset=BaseElectronicFormSet,
-            extra=1,
-            max_num=5,
-            can_delete=True)
+        electronic_formset = self.ElectronicFormSet(
+            instance=Party, prefix='efs')
+        postal_formset = self.PostalFormSet(instance=Party, prefix='pfs')
 
-        postal_addresses = LogisticsPostalAddressModel.objects.filter(
-            Party=Party).order_by('-IsPrimary')
-        postal_data = [{'Description': p.Description,
-                        'Purpose': p.Purpose,
-                        'CountryRegionId': p.CountryRegionId,
-                        'ZipCode': p.ZipCode,
-                        'Street': p.Street,
-                        'StreetNumber': p.StreetNumber,
-                        'BuildingCompliment': p.BuildingCompliment,
-                        'City': p.City,
-                        'State': p.State,
-                        'IsPrimary': p.IsPrimary,
-                        'Party': p.Party, }
-                       for p in postal_addresses]
-        postal_formset = PostalFormSet(initial=postal_data, prefix='pfs')
-
-        electronic_addresses = LogisticsElectronicAddressModel.objects.filter(
-            Party=Party).order_by('-IsPrimary')
-        electronic_data = [{'Description': e.Description,
-                            'Type': e.Type,
-                            'Contact': e.Contact,
-                            'IsPrimary': e.IsPrimary,
-                            'Party': e.Party, }
-                           for e in electronic_addresses]
-        electronic_formset = ElectronicFormSet(
-            initial=electronic_data, prefix='efs')
-
-        return render_to_response('Vendor/VendorDetails.html',
+        return render_to_response('Vendor/VendorDetail.html',
                                   {'vendor_form': vendor_form,
                                       'party_form': party_form,
-                                      'postal_formset': postal_formset,
                                       'electronic_formset': electronic_formset,
+                                      'postal_formset': postal_formset,
                                    },
                                   context_instance=RequestContext(request))
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.context = self.get_context_data()
+
         vendor_form = self.get_form()
-        Vend = VendorModel.objects.get(pk=kwargs['pk'])
-        Party = Vend.Party
-        party_form = PartyForm(request.POST, instance=Party)
-        valid = True
-
-        PostalFormSet = formset_factory(
-            LogisticsPostalForm, formset=BasePostalFormSet)
-        ElectronicFormSet = formset_factory(
-            LogisticsElectronicForm, formset=BaseElectronicFormSet)
-
-        postal_formset = PostalFormSet(request.POST, prefix='pfs')
-        electronic_formset = ElectronicFormSet(request.POST, prefix='efs')
+        party_form = PartyForm(request.POST, instance=self.object.Party)
 
         if vendor_form.is_valid() and party_form.is_valid():
+            vendor_form.save()
             Party = party_form.save(commit=False)
             Party.save()
-            vendor = vendor_form.save(commit=False)
-            vendor.Party = Party
-            vendor.save()
 
-            for postal_form in postal_formset:
-                if postal_form.is_valid():
-                    valid = True
-                else:
-                    valid = False
-                    break
-            if valid:
-                LogisticsPostalAddressModel.objects.filter(
-                    Party=Party).delete()
-                for postal_form in postal_formset:
-                    description = postal_form.cleaned_data.get(
-                        'Description')
-                    if description:
-                        Postal = postal_form.save(commit=False)
-                        Postal.Party = Party
-                        Postal.save()
+            electronic_formset = self.ElectronicFormSet(
+                request.POST, prefix='efs')
+            postal_formset = self.PostalFormSet(
+                request.POST, prefix='pfs')
 
             for electronic_form in electronic_formset:
                 if electronic_form.is_valid():
-                    valid = True
-                else:
-                    valid = False
-                    break
-            if valid:
+                    electronic_form.save()
+            """if valid:
                 LogisticsElectronicAddressModel.objects.filter(
                     Party=Party).delete()
                 for electronic_form in electronic_formset:
@@ -249,6 +177,26 @@ class UpdateVendorView(UpdateView):
                     if description and contact:
                         Electronic = electronic_form.save(commit=False)
                         Electronic.Party = Party
-                        Electronic.save()
-        redirect_url = "/vendor/update/" + str(vendor.pk)
-        return HttpResponseRedirect(redirect_url)
+                        Electronic.save()"""
+
+            for postal_form in postal_formset:
+                if postal_form.is_valid():
+                    postal_form.save()
+            """if valid:
+                LogisticsPostalAddressModel.objects.filter(
+                    Party=Party).delete()
+                for postal_form in postal_formset:
+                    description = postal_form.cleaned_data.get(
+                        'Description')
+                    if description:
+                        Postal = postal_form.save(commit=False)
+                        Postal.Party = Party
+                        Postal.save()"""
+
+        return render_to_response('Vendor/VendorDetail.html',
+                                  {'vendor_form': vendor_form,
+                                      'party_form': party_form,
+                                      'electronic_formset': electronic_formset,
+                                      'postal_formset': postal_formset,
+                                   },
+                                  context_instance=RequestContext(request))

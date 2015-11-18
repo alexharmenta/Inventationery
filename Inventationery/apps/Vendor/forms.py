@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:22:39
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-17 16:39:32
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-11-17 20:23:38
 from django import forms
-from django.forms.formsets import BaseFormSet
 from .models import VendorModel
 from Inventationery.apps.DirParty.models import DirPartyModel
 from Inventationery.apps.LogisticsPostalAddress.models import (
@@ -64,12 +63,10 @@ class LogisticsPostalForm(forms.ModelForm):
                   'State',
                   'IsPrimary',)
 
-
+"""
 class BasePostalFormSet(BaseFormSet):
 
     def clean(self):
-        """Adds validation to know if an address
-        is already a primary address"""
         if any(self.errors):
             return
 
@@ -102,6 +99,7 @@ class BasePostalFormSet(BaseFormSet):
                         'Selecciona una dirección como principal',
                         code='missing_postal_primary',
                     )
+"""
 
 
 class LogisticsElectronicForm(forms.ModelForm):
@@ -113,12 +111,10 @@ class LogisticsElectronicForm(forms.ModelForm):
                   'Contact',
                   'IsPrimary',)
 
-
+"""
 class BaseElectronicFormSet(BaseFormSet):
 
     def clean(self):
-        """Adds validation to know if an address
-        is already a primary address"""
         if any(self.errors):
             return
 
@@ -151,3 +147,4 @@ class BaseElectronicFormSet(BaseFormSet):
                         'Selecciona un contacto como principal',
                         code='missing_electronic_primary',
                     )
+"""
