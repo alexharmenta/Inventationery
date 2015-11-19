@@ -3,12 +3,14 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:14:39
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-16 19:34:44
+# @Last Modified time: 2015-11-18 21:11:54
 from django.db import models
 from Inventationery.apps.DirParty.models import DirPartyModel
 # Create your models here.
 
 
+# Class: Model for Logistics Postal Address
+# ----------------------------------------------------------------------------
 class LogisticsPostalAddressModel(models.Model):
 
     BUSINESS = 'BUS'

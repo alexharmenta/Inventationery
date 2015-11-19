@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex Armenta
 # @Date:   2015-11-16 19:08:22
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-17 13:48:30
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-11-18 20:22:11
 from django.db import models
 
 

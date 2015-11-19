@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:22:39
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-17 20:23:38
+# @Last Modified time: 2015-11-18 20:58:31
 from django import forms
 from .models import VendorModel
 from Inventationery.apps.DirParty.models import DirPartyModel
@@ -13,6 +13,8 @@ from Inventationery.apps.LogisticsElectronicAddress.models import (
     LogisticsElectronicAddressModel)
 
 
+# Class: Form for VendorModel
+# ----------------------------------------------------------------------------
 class VendorForm(forms.ModelForm):
 
     class Meta:
@@ -32,6 +34,8 @@ class VendorForm(forms.ModelForm):
         self.fields['AccountNum'].widget.attrs['readonly'] = True
 
 
+# Class: Form for DirPartyModel
+# ----------------------------------------------------------------------------
 class PartyForm(forms.ModelForm):
 
     class Meta:
@@ -48,6 +52,8 @@ class PartyForm(forms.ModelForm):
         super(PartyForm, self).__init__(*args, **kwargs)
 
 
+# Class: Form for LogisticsPostalAddressModel
+# ----------------------------------------------------------------------------
 class LogisticsPostalForm(forms.ModelForm):
 
     class Meta:
@@ -63,45 +69,9 @@ class LogisticsPostalForm(forms.ModelForm):
                   'State',
                   'IsPrimary',)
 
-"""
-class BasePostalFormSet(BaseFormSet):
 
-    def clean(self):
-        if any(self.errors):
-            return
-
-        primarys = []
-        descriptions = []
-        duplicates = False
-
-        for form in self.forms:
-            if form.cleaned_data:
-                IsPrimary = form.cleaned_data['IsPrimary']
-                Description = form.cleaned_data['Description']
-
-                if IsPrimary and Description:
-                    if IsPrimary in primarys:
-                        duplicates = True
-                    primarys.append(IsPrimary)
-
-                    if Description in descriptions:
-                        duplicates = True
-                    descriptions.append(Description)
-
-                if duplicates:
-                    raise forms.ValidationError(
-                        'Solo una dirección puede ser principal y no debe repetirse la descripción',
-                        code='duplicate_postal',
-                    )
-
-                if not IsPrimary:
-                    raise forms.ValidationError(
-                        'Selecciona una dirección como principal',
-                        code='missing_postal_primary',
-                    )
-"""
-
-
+# Class: Form for LogisticsElectronicAddressModel
+# ----------------------------------------------------------------------------
 class LogisticsElectronicForm(forms.ModelForm):
 
     class Meta:
@@ -110,41 +80,3 @@ class LogisticsElectronicForm(forms.ModelForm):
                   'Type',
                   'Contact',
                   'IsPrimary',)
-
-"""
-class BaseElectronicFormSet(BaseFormSet):
-
-    def clean(self):
-        if any(self.errors):
-            return
-
-        primarys = []
-        descriptions = []
-        duplicates = False
-
-        for form in self.forms:
-            if form.cleaned_data:
-                IsPrimary = form.cleaned_data['IsPrimary']
-                Description = form.cleaned_data['Description']
-
-                if IsPrimary and Description:
-                    if IsPrimary in primarys:
-                        duplicates = True
-                    primarys.append(IsPrimary)
-
-                    if Description in descriptions:
-                        duplicates = True
-                    descriptions.append(Description)
-
-                if duplicates:
-                    raise forms.ValidationError(
-                        'Solo un contacto puede ser principal y no debe repetirse la descripción',
-                        code='duplicate_electronic',
-                    )
-
-                if not IsPrimary:
-                    raise forms.ValidationError(
-                        'Selecciona un contacto como principal',
-                        code='missing_electronic_primary',
-                    )
-"""

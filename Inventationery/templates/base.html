@@ -54,14 +54,14 @@
                                 <li><a><span class="lnr lnr-users"></span> Cuentas por pagar <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" style="display: none">
                                         <li><a href="{% url "vendor:list" %}">Proveedores</a></li>
-                                        <li><a href="#">Ordenes de compra</a></li>
+                                        <li><a href="{% url "purch:list" %}">Ordenes de compra</a></li>
                                     </ul>
                                 </li>
                             </ul>
                             <ul class="nav side-menu">
                                 <li><a><span class="lnr lnr-users"></span> Inventario <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" style="display: none">
-                                        <li><a href="#">Inventario</a></li>
+                                        <li><a href="{% url "inventory:list" %}">Inventario</a></li>
                                         <li><a href="#">Inventario en existencia</a></li>
                                     </ul>
                                 </li>

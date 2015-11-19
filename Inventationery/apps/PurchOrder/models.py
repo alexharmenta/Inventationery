@@ -2,12 +2,10 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-17 17:04:46
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-11-18 21:22:57
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
-import re
-# Create your models here.
 
 
 # Function: Get new sequence number for Purchase Order

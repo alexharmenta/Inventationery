@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-17 13:13:53
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-11-18 21:23:32
 # from django.shortcuts import render
 from django.views.generic import ListView, CreateView
 from django.forms.formsets import formset_factory
@@ -22,7 +22,7 @@ class PurchOrderListView(ListView):
 
     def get_queryset(self):
         queryset = super(PurchOrderListView, self).get_queryset()
-        queryset = PurchOrderModel.objects.all().order_by('PurchId')
+        queryset = PurchOrderModel.objects.all().order_by('created')
         return queryset
 
 
