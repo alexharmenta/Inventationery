@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:22:12
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-18 21:10:40
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-19 14:06:58
 # views.py
 from django.shortcuts import render_to_response
 from django.forms import inlineformset_factory
@@ -75,9 +75,12 @@ def createVendorView(request):
 
             for postal_form in postal_formset:
                 if postal_form.is_valid():
-                    Postal = postal_form.save(commit=False)
-                    Postal.Party = party
-                    Postal.save()
+                    description = electronic_form.cleaned_data.get(
+                        'Description')
+                    if description:
+                        Postal = postal_form.save(commit=False)
+                        Postal.Party = party
+                        Postal.save()
                 else:
                     party.delete()
                     vendor.delete()

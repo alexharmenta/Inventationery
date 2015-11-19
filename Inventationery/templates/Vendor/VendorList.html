@@ -20,8 +20,8 @@
 				<table id="VendorsListTableId" class="display table table-hover">
 				    <thead>
 				        <tr>
-				            <th>Nombre</th>
 				            <th>Número de cuenta</th>
+				            <th>Nombre</th>
 				            <th>Moneda</th>
 				            <th>RFC</th>
 				            <th>Dirección principal</th>
@@ -33,7 +33,7 @@
 				    	{% for vendor in vendors %}
 				    		<tr>
 					            <td><a href="{% url "vendor:update" AccountNum=vendor.AccountNum %}">{{ vendor.AccountNum }}</a></td>
-					            <td>{{ vendor.Party.Name }}</td>
+					            <td>{{ vendor.Party.NameAlias }}</td>
 					            <td>{{ vendor.CurrencyCode }}</td>
 					            <td>{{ vendor.VATNum }}</td>
 					            <td>{{ vendor.get_PrimaryAddress }}</td>

@@ -172,7 +172,7 @@ body.nav-md .container.body .col-md-3.left_col {
     display: flex;
 }
 body .container.body .right_col {
-    background: #F2F4F8;
+    background: #FAFAFA;
 }
 body.nav-md .container.body .right_col {
     padding: 10px 20px 0;
@@ -181,7 +181,7 @@ body.nav-md .container.body .right_col {
 .nav_title {
     width: 200px;
     float: left;
-    background: #101112;
+    background: #000;
     border-radius: 0;
     height: 57px;
 }
@@ -301,7 +301,18 @@ dark, .dark {
 }
 body {
     color: #333;
-    background: #181818;    /*#ECF0F1; #FCFCFC*/
+    background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0, #000000),
+    color-stop(1, #290004)
+);
+background-image: -o-linear-gradient(bottom, #000000 0%, #290004 100%);
+background-image: -moz-linear-gradient(bottom, #000000 0%, #290004 100%);
+background-image: -webkit-linear-gradient(bottom, #000000 0%, #290004 100%);
+background-image: -ms-linear-gradient(bottom, #000000 0%, #290004 100%);
+background-image: linear-gradient(to bottom, #000000 0%, #290004 100%);
     font-family: 'Lato', sans-serif;
     font-size: 14px;
 }
@@ -798,11 +809,13 @@ h2 {
 .x_panel {
     position: relative;
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
     padding: 10px 17px;
     display: inline-block;
     background: #fff;
-    border: 1px solid #E6E9ED;
+    border: 0;
+    border-radius: 3px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, .05), 0 1px 0 rgba(0, 0, 0, .05);
     -webkit-column-break-inside: avoid;
     -moz-column-break-inside: avoid;
     column-break-inside: avoid;
@@ -815,8 +828,8 @@ h2 {
 }
 .x_title {
     border-bottom: 2px solid #E6E9ED;
-    padding: 1px 5px 6px;
-    margin-bottom: 10px;
+    padding: 0;
+    margin-bottom: 0;
 }
 .x_title .filter {
     width: 40%;
@@ -5389,4 +5402,8 @@ label {
     max-width: 100%;
     margin-bottom: 0px;
     font-weight: 500;
+}
+
+.page_title {
+    margin-left: 10px;
 }

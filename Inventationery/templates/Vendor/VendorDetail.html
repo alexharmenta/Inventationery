@@ -6,7 +6,7 @@
 	<form action="" method="POST" id="UpdateVendorForm"> {% csrf_token %}
 		<div class="row">
 			<div class="col-md-6">
-				<h3>Proveedor: {{ object.AccountNum }}</h3>	
+				<h3 class="page_title">Proveedor: {{ object.AccountNum }}</h3>	
 			</div>
 			<div class="col-md-2">
 				<a href="{% url "vendor:delete" pk=Vendor.pk %}" class="btn btn-danger pull-right">
@@ -126,7 +126,7 @@
 					<div class="form-group">
 						{{ party_form.Name.errors }}
 						<label for="{{ party_form.Name.id_for_label }}">*Nombre</label>
-						{% render_field party_form.Name class+="form-control" %}
+						{% render_field party_form.Name|append_attr:"required" class+="form-control" %}
 					</div>
 					<div class="form-group person-info">
 						{{ party_form.SecondName.errors }}
@@ -136,7 +136,7 @@
 					<div class="form-group person-info">
 						{{ party_form.FirstLastName.errors }}
 						<label for="{{ party_form.FirstLastName.id_for_label }}">*Apellido paterno</label>
-						{% render_field party_form.FirstLastName class+="form-control" %}
+						{% render_field party_form.FirstLastName|append_attr:"required" class+="form-control" %}
 					</div>
 					<div class="form-group person-info">
 						{{ party_form.SecondLastName.errors }}

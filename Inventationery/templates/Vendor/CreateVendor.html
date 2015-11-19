@@ -10,7 +10,7 @@
 	<form action="" method="POST" id="CreateVendor"> {% csrf_token %}
 		<div class="row">
 			<div class="col-md-6">
-				<h3>Nuevo proveedor</h3>	
+				<h3 class="page_title">Nuevo proveedor</h3>	
 			</div>
 			<div class="col-md-3">
 				
@@ -123,7 +123,7 @@
 					<div class="form-group">
 						<label for="{{ party_form.Name.id_for_label }}">*Nombre 
 						<span>&nbsp; {{ party_form.Name.errors }}</span></label>
-						{% render_field party_form.Name class+="form-control" %}
+						{% render_field party_form.Name|append_attr:"required" class+="form-control" %}
 					</div>
 					<div class="form-group person-info">
 						<label for="{{ party_form.SecondName.id_for_label }}">Segundo nombre 
@@ -133,7 +133,7 @@
 					<div class="form-group person-info">
 						<label for="{{ party_form.FirstLastName.id_for_label }}">*Apellido paterno 
 						<span>&nbsp; {{ party_form.FirstLastName.errors }}</span></label>
-						{% render_field party_form.FirstLastName class+="form-control fill-person" %}
+						{% render_field party_form.FirstLastName|append_attr:"required" class+="form-control fill-person" %}
 					</div>
 					<div class="form-group person-info">
 						<label for="{{ party_form.SecondLastName.id_for_label }}">Apellido materno 
