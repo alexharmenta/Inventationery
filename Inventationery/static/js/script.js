@@ -2,7 +2,7 @@
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
 * @Last Modified by:   harmenta
-* @Last Modified time: 2015-11-18 17:28:55
+* @Last Modified time: 2015-11-19 17:06:30
 */
 
 'use strict';
@@ -78,6 +78,26 @@ $( document ).ready(function() {
         addCssClass: 'btn btn-success btn-xs',
         deleteCssClass: 'btn btn-warning btn-xs',
     });
+
+    // Loading content on Ajax GET
+    /*$('#NewVendorBtn').on('click', function(){
+      $.ajax({
+        url: NewVendorURL,
+        type: 'get',
+        success: function(data) {
+            var content = $("#content", data);
+            $('#content').html(content);
+            // Replace url on browser without reloading the entire page
+            // window.history.pushState({"html":data.html,"pageTitle":data.pageTitle},"", NewVendorURL);
+            // Replace url on browser reloading the entire page
+            //window.location = NewVendorURL;
+        },
+        failure: function(data) { 
+            alert('Got an error dude');
+        }
+      });
+    });*/
+
     /* ----- Vendor ----- */
 
     /* ----- Purchase Order ----- */

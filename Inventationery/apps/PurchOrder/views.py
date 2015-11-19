@@ -2,19 +2,24 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-18 21:23:32
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-19 17:50:34
 # from django.shortcuts import render
-from django.views.generic import ListView, CreateView
-from django.forms.formsets import formset_factory
+from django.shortcuts import render_to_response, get_object_or_404
+from django.http import HttpResponseRedirect
+from django.template import RequestContext
+from django.views.generic import ListView
+from django.forms import inlineformset_factory
 from django.http import JsonResponse
-from .models import PurchOrderModel
-from .forms import PurchOrderForm, PurchOrderLinesForm, BasePurchLineFormSet
+from .models import PurchOrderModel, PurchLineModel
+from .forms import PurchOrderForm
 from Inventationery.apps.Vendor.models import VendorModel
 from Inventationery.apps.Inventory.models import InventModel
 # Create your views here.
 
 
+# CBV: View to list all PurchOrders ordered by created
+# ----------------------------------------------------------------------------
 class PurchOrderListView(ListView):
     model = PurchOrderModel
     template_name = 'PurchOrder/PurchOrderList.html'
@@ -26,36 +31,36 @@ class PurchOrderListView(ListView):
         return queryset
 
 
-class PurchOrderCreateView(CreateView):
-    model = PurchOrderModel
-    form_class = PurchOrderForm
-    template_name = 'PurchOrder/PurchOrderCreate.html'
-    success_url = '/purch_orders'
+# FBV: View for create new Purchase Orders
+def createPurchOrderView(request):
 
-    PurchLineFormset = formset_factory(
-        PurchOrderLinesForm, formset=BasePurchLineFormSet)
+    PurchLineFormset = inlineformset_factory(
+        PurchOrderModel, PurchLineModel, extra=1, fields='__all__')
 
-    def get(self, request, *args, **kwargs):
-        """
-        Handles GET requests and instantiates a blank version of the form.
-        """
-        self.object = None
-        purch_form = self.get_form()
-        purchline_formset = self.PurchLineFormset(prefix='plfs')
-        return self.render_to_response(
-            self.get_context_data(purch_form=purch_form,
-                                  purchline_formset=purchline_formset))
+    if request.method == 'POST':
 
-    def post(self, request, *args, **kwargs):
-        """
-        Handles POST requests, instantiating a form instance with the passed
-        POST variables and then checked for validity.
-        """
-        if self.request.is_ajax():
+        purch_form = PurchOrderForm(request.POST)
+        purchline_formset = PurchLineFormset(request.POST, prefix='plfs')
+
+        if purch_form.is_valid():
+            PurchOrder = purch_form.save()
+
+            for purchline_form in purchline_formset:
+                if purchline_form.is_valid():
+                    purchline_form.save(commit=False)
+                    purchline_form.PurchOrder = PurchOrder
+                    purchline_form.save()
+
+            redirect_url = "/purch_orders/update/" + str(PurchOrder.PurchId)
+            return HttpResponseRedirect(redirect_url)
+
+        # Get info to retrieve to template with Ajax
+        if request.is_ajax():
             action = request.POST.get('action', '')
             if action == 'get_purch_data':
                 AccountNum = request.POST.get('AccountNum', '')
                 try:
+                    print 'try'
                     Vendor = VendorModel.objects.get(AccountNum=AccountNum)
                     response_dict = {
                         'NameAlias': Vendor.Party.NameAlias,
@@ -66,6 +71,7 @@ class PurchOrderCreateView(CreateView):
                         'DeliveryName': Vendor.get_PrimaryAddress(),
                     }
                 except:
+                    print 'except'
                     response_dict = {
                         'Name': '',
                         'VATNum': '',
@@ -89,25 +95,89 @@ class PurchOrderCreateView(CreateView):
                         'UnitId': '',
                         'VendorPrice': '',
                     }
-
             return JsonResponse(response_dict)
 
-        self.object = None
-        self.context = self.get_context_data()
+    else:
+        purch_form = PurchOrderForm()
+        purchline_formset = PurchLineFormset(prefix='plfs')
 
-        purch_form = self.get_form()
-        purchline_formset = self.PurchLineFormset(request.POST, prefix='plfs')
+    return render_to_response('PurchOrder/PurchOrderCreate.html',
+                              {'purch_form': purch_form,
+                               'purchline_formset': purchline_formset},
+                              context_instance=RequestContext(request))
+
+
+# FBV: View for update new Purchase Orders
+def updatePurchOrderView(request, PurchId):
+    PurchOrder = get_object_or_404(PurchOrderModel, PurchId=PurchId)
+    PurchLineFormset = inlineformset_factory(
+        PurchOrderModel, PurchLineModel, extra=1, fields='__all__')
+
+    if request.method == 'POST':
+
+        purch_form = PurchOrderForm(request.POST)
+        purchline_formset = PurchLineFormset(request.POST, prefix='plfs')
 
         if purch_form.is_valid():
-
-            purch_form.save()
+            PurchOrder = purch_form.save()
 
             for purchline_form in purchline_formset:
                 if purchline_form.is_valid():
                     purchline_form.save(commit=False)
-                    purchline_form.PurchOrder = purch_form
+                    purchline_form.PurchOrder = PurchOrder
                     purchline_form.save()
 
-            return self.form_valid(self, purch_form)
-        else:
-            return self.form_invalid(purch_form)
+            return HttpResponseRedirect('/purch_orders/')
+
+        # Get info to retrieve to template with Ajax
+        if request.is_ajax():
+            action = request.POST.get('action', '')
+            if action == 'get_purch_data':
+                AccountNum = request.POST.get('AccountNum', '')
+                try:
+                    print 'try'
+                    Vendor = VendorModel.objects.get(AccountNum=AccountNum)
+                    response_dict = {
+                        'NameAlias': Vendor.Party.NameAlias,
+                        'VATNum': Vendor.VATNum,
+                        'CurrencyCode': Vendor.CurrencyCode,
+                        'LanguageCode': Vendor.Party.LanguageCode,
+                        'OneTimeVendor': Vendor.OneTimeVendor,
+                        'DeliveryName': Vendor.get_PrimaryAddress(),
+                    }
+                except:
+                    print 'except'
+                    response_dict = {
+                        'Name': '',
+                        'VATNum': '',
+                        'CurrencyCode': '',
+                        'LanguageCode': '',
+                        'OneTimeVendor': '',
+                        'DeliveryName': '',
+                    }
+            elif action == 'get_purchline_data':
+                ItemId = request.POST.get('ItemId', '')
+                try:
+                    Invent = InventModel.objects.get(ItemId=ItemId)
+                    response_dict = {
+                        'ItemName': Invent.ItemName,
+                        'UnitId': Invent.UnitId,
+                        'VendorPrice': Invent.VendorPrice,
+                    }
+                except:
+                    response_dict = {
+                        'ItemName': '',
+                        'UnitId': '',
+                        'VendorPrice': '',
+                    }
+            return JsonResponse(response_dict)
+
+    else:
+        purch_form = PurchOrderForm(instance=PurchOrder)
+        purchline_formset = PurchLineFormset(
+            instance=PurchOrder, prefix='plfs')
+
+    return render_to_response('PurchOrder/PurchOrderCreate.html',
+                              {'purch_form': purch_form,
+                               'purchline_formset': purchline_formset},
+                              context_instance=RequestContext(request))

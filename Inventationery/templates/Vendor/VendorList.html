@@ -14,9 +14,12 @@
                 <div class="clearfix"></div>
         	</div>
             <div class="x_content table-responsive">
-                <a class='btn btn-primary pull-right' href="{% url "vendor:new" %}">
+                <a class='btn btn-primary pull-right' href="{% url "vendor:new" %}" id="NewVendorBtn">
 					<span class="lnr lnr-pencil"></span> Nuevo proveedor
 				</a>
+				<script>
+					var NewVendorURL = '{% url "vendor:new" %}';
+				</script>
 				<table id="VendorsListTableId" class="display table table-hover">
 				    <thead>
 				        <tr>

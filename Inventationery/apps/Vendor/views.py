@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:22:12
 # @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-19 14:06:58
+# @Last Modified time: 2015-11-19 17:25:23
 # views.py
 from django.shortcuts import render_to_response
 from django.forms import inlineformset_factory
@@ -22,13 +22,13 @@ from .forms import (VendorForm,
 
 # CBV: View to list all vendors ordered by AccountNum
 # ----------------------------------------------------------------------------
-class VendorList(ListView):
+class VendorListView(ListView):
     model = VendorModel
     template_name = 'Vendor/VendorList.html'
     context_object_name = 'vendors'
 
     def get_queryset(self):
-        queryset = super(VendorList, self).get_queryset()
+        queryset = super(VendorListView, self).get_queryset()
         queryset = VendorModel.objects.all().order_by('AccountNum')
         return queryset
 

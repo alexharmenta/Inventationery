@@ -112,15 +112,17 @@
             <!-- /top navigation -->
 
             <!-- page content -->
-            <div class="right_col" role="main" class="slideInRight">
+            <div class="right_col" role="main">
 
                 <div class="row">
-                    {% block content %}
+                    
                     <div class="col-md-12">
-                        
-                        
+                        <div id="content">
+                            {% block content %}
+                            {% endblock %}
+                        </div>
                     </div>
-                    {% endblock %}
+                    
                 </div>
 
                 <!-- footer content -->

@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-18 21:22:57
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-19 17:21:15
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 
@@ -18,7 +18,7 @@ def Get_PurchId():
         last = None
 
     if last:
-        no = int(filter(unicode.isdigit, last.AccountNum))
+        no = int(filter(unicode.isdigit, last.PurchId))
         no = no + 1
         return prefix + str(no).zfill(5)
     else:

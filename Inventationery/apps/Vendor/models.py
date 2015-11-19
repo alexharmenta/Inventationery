@@ -3,7 +3,7 @@
 # @Author: Alex Armenta
 # @Date:   2015-11-17 12:15:05
 # @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-17 17:06:16
+# @Last Modified time: 2015-11-19 17:14:05
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 from Inventationery.apps.DirParty.models import DirPartyModel
@@ -82,11 +82,17 @@ class VendorModel(TimeStampedModel):
         return "{0}".format(self.AccountNum)
 
     def get_PrimaryAddress(self):
-        Address = LogisticsPostalAddressModel.objects.filter(
-            Party=self.Party, IsPrimary=True)[:1].get()
-        return Address.address_info()
+        try:
+            Address = LogisticsPostalAddressModel.objects.filter(
+                Party=self.Party, IsPrimary=True)[:1].get()
+            return Address.address_info()
+        except:
+            return ''
 
     def get_PrimaryElectronic(self):
-        Electronic = LogisticsElectronicAddressModel.objects.filter(
-            Party=self.Party, IsPrimary=True)[:1].get()
-        return Electronic.Contact
+        try:
+            Electronic = LogisticsElectronicAddressModel.objects.filter(
+                Party=self.Party, IsPrimary=True)[:1].get()
+            return Electronic.Contact
+        except:
+            return ''

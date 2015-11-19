@@ -41,7 +41,7 @@
 					            <td> DocumentStatus </td>
 					            <td>{{ order.PurchStatus }}</td>
 					            <td class="text-center">
-									<a class='btn btn-info btn-xs' href="#">
+									<a class='btn btn-info btn-xs' href="{% url "purch:update" PurchId=order.PurchId %}">
 										<span class="lnr lnr-pencil"></span> Editar
 									</a> 
 									<a href="#" class="btn btn-danger btn-xs">

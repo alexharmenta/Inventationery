@@ -66,7 +66,7 @@
 							<div class="form-group">
 								{{ purch_form.PurchName.errors }}
 								<label for="{{ purch_form.PurchName.id_for_label }}">*Nombre (OC)</label>
-								{% render_field purch_form.PurchName class+="form-control" %}
+								{% render_field purch_form.PurchName|append_attr:"required" class+="form-control" %}
 							</div>
 							<div class="form-group">
 								{{ purch_form.PurchaseType.errors }}
@@ -256,6 +256,9 @@
 									<td class="purchline_formset_td">{% render_field purchline_form.LineAmount class+="form-control" %}</td>
 									<td class="purchline_formset_td"></td>
 					            </tr>
+					            {% for hidden in purchline_form.hidden_fields %}
+							        {{ hidden }}
+							    {% endfor %}
 				            {% endfor %}
 				            {{ purchline_formset.management_form }}
 
