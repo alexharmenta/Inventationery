@@ -1,8 +1,8 @@
 /* 
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
-* @Last Modified by:   harmenta
-* @Last Modified time: 2015-11-19 17:06:30
+* @Last Modified by:   Alex
+* @Last Modified time: 2015-11-19 20:55:02
 */
 
 'use strict';
@@ -220,7 +220,7 @@ $( document ).ready(function() {
       $(total_id).val(total);
 
     });
-    
+    $(OrderAccount_id).val(OrderAccountVal).change(); // Update OrderAccount Val
     /* ----- Purchase Order ----- */
 
     /* ----- Inventory ----- */

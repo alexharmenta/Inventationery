@@ -2,17 +2,18 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-19 17:50:34
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-11-19 21:06:56
 # from django.shortcuts import render
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
-from django.views.generic import ListView
+from django.views.generic import ListView, DeleteView
 from django.forms import inlineformset_factory
 from django.http import JsonResponse
+from django import forms
 from .models import PurchOrderModel, PurchLineModel
-from .forms import PurchOrderForm
+from .forms import PurchOrderForm, PurchOrderLinesForm
 from Inventationery.apps.Vendor.models import VendorModel
 from Inventationery.apps.Inventory.models import InventModel
 # Create your views here.
@@ -101,7 +102,7 @@ def createPurchOrderView(request):
         purch_form = PurchOrderForm()
         purchline_formset = PurchLineFormset(prefix='plfs')
 
-    return render_to_response('PurchOrder/PurchOrderCreate.html',
+    return render_to_response('PurchOrder/CreatePurchOrder.html',
                               {'purch_form': purch_form,
                                'purchline_formset': purchline_formset},
                               context_instance=RequestContext(request))
@@ -110,13 +111,20 @@ def createPurchOrderView(request):
 # FBV: View for update new Purchase Orders
 def updatePurchOrderView(request, PurchId):
     PurchOrder = get_object_or_404(PurchOrderModel, PurchId=PurchId)
+
     PurchLineFormset = inlineformset_factory(
-        PurchOrderModel, PurchLineModel, extra=1, fields='__all__')
+        PurchOrderModel,
+        PurchLineModel,
+        extra=10,
+        fields='__all__',
+        form=PurchOrderLinesForm)
 
     if request.method == 'POST':
 
-        purch_form = PurchOrderForm(request.POST)
-        purchline_formset = PurchLineFormset(request.POST, prefix='plfs')
+        purch_form = PurchOrderForm(request.POST, instance=PurchOrder)
+
+        purchline_formset = PurchLineFormset(
+            request.POST, instance=PurchOrder, prefix='plfs')
 
         if purch_form.is_valid():
             PurchOrder = purch_form.save()
@@ -127,15 +135,12 @@ def updatePurchOrderView(request, PurchId):
                     purchline_form.PurchOrder = PurchOrder
                     purchline_form.save()
 
-            return HttpResponseRedirect('/purch_orders/')
-
         # Get info to retrieve to template with Ajax
         if request.is_ajax():
             action = request.POST.get('action', '')
             if action == 'get_purch_data':
                 AccountNum = request.POST.get('AccountNum', '')
                 try:
-                    print 'try'
                     Vendor = VendorModel.objects.get(AccountNum=AccountNum)
                     response_dict = {
                         'NameAlias': Vendor.Party.NameAlias,
@@ -146,7 +151,6 @@ def updatePurchOrderView(request, PurchId):
                         'DeliveryName': Vendor.get_PrimaryAddress(),
                     }
                 except:
-                    print 'except'
                     response_dict = {
                         'Name': '',
                         'VATNum': '',
@@ -175,9 +179,19 @@ def updatePurchOrderView(request, PurchId):
     else:
         purch_form = PurchOrderForm(instance=PurchOrder)
         purchline_formset = PurchLineFormset(
-            instance=PurchOrder, prefix='plfs')
+            instance=PurchOrder, prefix='plfs',)
 
-    return render_to_response('PurchOrder/PurchOrderCreate.html',
+    return render_to_response('PurchOrder/UpdatePurchOrder.html',
                               {'purch_form': purch_form,
-                               'purchline_formset': purchline_formset},
+                               'purchline_formset': purchline_formset,
+                               'PurchOrder': PurchOrder},
                               context_instance=RequestContext(request))
+
+
+# CBV: View to delete an existing Purchase order
+# ----------------------------------------------------------------------------
+class DeletePurchOrderView(DeleteView):
+    model = PurchOrderModel
+    template_name = 'PurchOrder/DeletePurchOrder.html'
+    success_url = '/purch_orders'
+    success_message = 'Orden de compra eliminada correctamente'

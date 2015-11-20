@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:22:12
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-19 17:25:23
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-11-19 19:37:07
 # views.py
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.forms import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
@@ -106,7 +106,7 @@ def createVendorView(request):
 # FBV: View for update an existing Vendor
 def updateVendorView(request, AccountNum):
 
-    Vendor = VendorModel.objects.get(AccountNum=AccountNum)
+    Vendor = get_object_or_404(VendorModel, AccountNum=AccountNum)
 
     ElectronicFormSet = inlineformset_factory(
         DirPartyModel, LogisticsElectronicAddressModel,
@@ -157,7 +157,7 @@ def updateVendorView(request, AccountNum):
         postal_formset = PostalFormSet(
             prefix='pfs', instance=Vendor.Party)
 
-    return render_to_response('Vendor/VendorDetail.html',
+    return render_to_response('Vendor/UpdateVendor.html',
                               {'vendor_form': vendor_form,
                                'party_form': party_form,
                                'electronic_formset': electronic_formset,
