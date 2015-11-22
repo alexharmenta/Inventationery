@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex Armenta
 # @Date:   2015-11-17 12:15:05
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-19 17:14:05
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-11-21 16:43:25
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 from Inventationery.apps.DirParty.models import DirPartyModel
@@ -58,7 +58,7 @@ class VendorModel(TimeStampedModel):
                                   max_length=45)
     AccountType = models.CharField(max_length=3,
                                    choices=ACCOUNT_TYPE,
-                                   default=PARTY_TYPE)
+                                   default=PERSON_TYPE)
     OneTimeVendor = models.BooleanField(default=False)
     VendGroup = models.CharField(max_length=3,
                                  choices=VEND_GROUP,

@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-19 17:21:15
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-11-21 18:18:53
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
+from Inventationery.apps.Vendor.models import VendorModel
 
 
 # Function: Get new sequence number for Purchase Order
@@ -41,12 +42,14 @@ class PurchOrderModel(TimeStampedModel):
     BACKORDER = 'BAC'
     RECEIVED = 'REC'
     INVOICED = 'INV'
+    PAID = 'PAI'
     CANCELED = 'CAN'
 
     PURCH_STATUS = (
         (BACKORDER, 'Back order'),
         (RECEIVED, 'Recibido'),
         (INVOICED, 'Facturado'),
+        (PAID, 'Pagado'),
         (CANCELED, 'Cancelado'),
     )
     # DELIVERY MODE
@@ -63,7 +66,7 @@ class PurchOrderModel(TimeStampedModel):
     PurchName = models.CharField(max_length=100)
     PurchaseType = models.CharField(
         max_length=50, choices=PURCHASE_TYPE, default=PURCHASE_ORDER)
-    OrderAccount = models.CharField(max_length=100)
+    Vendor = models.ForeignKey(VendorModel, default=None)
     InvoiceAccount = models.CharField(
         max_length=50, default=None, blank=True, null=True)
     PurchStatus = models.CharField(
@@ -84,13 +87,6 @@ class PurchOrderModel(TimeStampedModel):
     Payment = models.CharField(max_length=30, blank=True, null=True)
     # Catalogo de tipo de pagos
     PaymMode = models.CharField(max_length=30, blank=True, null=True)
-    CashDisc = models.DecimalField(
-        max_digits=10, decimal_places=2, blank=True, null=True)  # Descuento
-    CashDiscPercent = models.DecimalField(
-        max_digits=4,
-        decimal_places=2,
-        blank=True,
-        null=True)  # Descuento en porcentaje
 
     def __unicode__(self):
         return "{0}".format(self.PurchId)
@@ -104,12 +100,14 @@ class PurchLineModel(TimeStampedModel):
     BACKORDER = 'BAC'
     RECEIVED = 'REC'
     INVOICED = 'INV'
+    PAID = 'PAI'
     CANCELED = 'CAN'
 
     PURCH_STATUS = (
         (BACKORDER, 'Back order'),
         (RECEIVED, 'Recibido'),
         (INVOICED, 'Facturado'),
+        (PAID, 'Pagado'),
         (CANCELED, 'Cancelado'),
     )
 

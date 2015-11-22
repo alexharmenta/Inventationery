@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-19 21:06:56
+# @Last Modified time: 2015-11-21 18:25:36
 # from django.shortcuts import render
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
@@ -11,7 +11,6 @@ from django.template import RequestContext
 from django.views.generic import ListView, DeleteView
 from django.forms import inlineformset_factory
 from django.http import JsonResponse
-from django import forms
 from .models import PurchOrderModel, PurchLineModel
 from .forms import PurchOrderForm, PurchOrderLinesForm
 from Inventationery.apps.Vendor.models import VendorModel
@@ -61,7 +60,6 @@ def createPurchOrderView(request):
             if action == 'get_purch_data':
                 AccountNum = request.POST.get('AccountNum', '')
                 try:
-                    print 'try'
                     Vendor = VendorModel.objects.get(AccountNum=AccountNum)
                     response_dict = {
                         'NameAlias': Vendor.Party.NameAlias,
@@ -72,7 +70,6 @@ def createPurchOrderView(request):
                         'DeliveryName': Vendor.get_PrimaryAddress(),
                     }
                 except:
-                    print 'except'
                     response_dict = {
                         'Name': '',
                         'VATNum': '',

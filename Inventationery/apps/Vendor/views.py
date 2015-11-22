@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:22:12
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-19 19:37:07
+# @Last Modified time: 2015-11-21 17:01:35
 # views.py
 from django.shortcuts import render_to_response, get_object_or_404
 from django.forms import inlineformset_factory
@@ -105,7 +105,6 @@ def createVendorView(request):
 
 # FBV: View for update an existing Vendor
 def updateVendorView(request, AccountNum):
-
     Vendor = get_object_or_404(VendorModel, AccountNum=AccountNum)
 
     ElectronicFormSet = inlineformset_factory(

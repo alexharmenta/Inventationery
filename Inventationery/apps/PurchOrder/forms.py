@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:16:42
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-19 21:02:59
+# @Last Modified time: 2015-11-21 18:08:04
 from django import forms
 from django.forms.formsets import BaseFormSet
 from .models import PurchOrderModel, PurchLineModel
@@ -20,8 +20,7 @@ class PurchOrderForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PurchOrderForm, self).__init__(*args, **kwargs)
-        # Making name require
-        # self.fields['OrderAccount'].required = True
+        self.fields['PurchStatus'].widget.attrs['readonly'] = True
 
     class Meta:
         model = PurchOrderModel

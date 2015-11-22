@@ -2,7 +2,7 @@
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
 * @Last Modified by:   Alex
-* @Last Modified time: 2015-11-19 20:55:02
+* @Last Modified time: 2015-11-21 18:28:30
 */
 
 'use strict';
@@ -14,7 +14,7 @@ $( document ).ready(function() {
    	$("#id_Name").focusout(function () {
         var Name = $(this).val();
         var FirstLastName = "";
-        if ($("#OneTimeVendor_Id").val() == 'PER') {
+        if ($("#id_AccountType").val() == 'PER') {
         	FirstLastName = $("#id_FirstLastName").val();	
         };
         var NameAlias = Name + " " + FirstLastName;
@@ -23,32 +23,35 @@ $( document ).ready(function() {
     $("#id_FirstLastName").focusout(function () {
         var Name = $("#id_Name").val();
         var FirstLastName = $(this).val();
-        if ($("#OneTimeVendor_Id").val() == 'PER') {
+        if ($("#id_AccountType").val() == 'PER') {
         	FirstLastName = $("#id_FirstLastName").val();	
         };
         var NameAlias = Name + " " + FirstLastName;
         $("#id_NameAlias").val(NameAlias);
     });
 
-   	if ($('#OneTimeVendor_Id').val() === 'PAR') {
+   	if ($('#id_AccountType').val() === 'PAR') {
    		$(".fill-person").val("xxxxx");
-		$('.person-info').hide();
+		  $('.person-info').hide();
+      $('.NameDiv').toggleClass('col-md-6 col-sm-6 col-xs-12');
    	}
-   	if ($('#OneTimeVendor_Id').val() === 'PER') {
-   		$(".fill-person").val("");
-		$('.person-info').show();
+   	if ($('#id_AccountType').val() === 'PER') {
+		  $('.person-info').show();
+      $('.NameDiv').toggleClass('col-md-6 col-sm-6 col-xs-12');
    	}
 
-    $( "#OneTimeVendor_Id" ).change(function() {
-  	  	if ($('#OneTimeVendor_Id').val() === 'PAR') {
+    $( "#id_AccountType" ).change(function() {
+  	  	if ($('#id_AccountType').val() === 'PAR') {
   	  		$(".fill-person").val("xxxxx");
   	  		$("#id_NameAlias").val("");
-  			$('.person-info').hide();
+  			  $('.person-info').hide();
+          $('.NameDiv').toggleClass('col-md-6 col-sm-6 col-xs-12');
   	   	}
-  	   	if ($('#OneTimeVendor_Id').val() === 'PER') {
+  	   	if ($('#id_AccountType').val() === 'PER') {
   	   		$(".fill-person").val("");
   	   		$("#id_NameAlias").val("");
-  			$('.person-info').show();
+  			  $('.person-info').show();
+          $('.NameDiv').toggleClass('col-md-6 col-sm-6 col-xs-12');
   	   }
   	});
 
@@ -125,10 +128,10 @@ $( document ).ready(function() {
     // Global variables
     
     // Get purchase order info with AJAX
-    $('#id_OrderAccount').on('change', function(){
+    $('#id_Vendor').on('change', function(){
       $('#id_InvoiceAccount').val($(this).val()).change(); //Change invoice account value
-      var AccountNum = getCharsBefore($('#id_OrderAccount option:selected').text(), ' ');
-      var AccountNum = $('#id_OrderAccount option:selected').text();
+      
+      var AccountNum = $('#id_Vendor option:selected').text();
       // AJAX Code for retrieving data from vendor
       var csrftoken = getCookie('csrftoken');
 
@@ -220,7 +223,7 @@ $( document ).ready(function() {
       $(total_id).val(total);
 
     });
-    $(OrderAccount_id).val(OrderAccountVal).change(); // Update OrderAccount Val
+    //$(OrderAccount_id).val(OrderAccountVal).change(); // Update OrderAccount Val
     /* ----- Purchase Order ----- */
 
     /* ----- Inventory ----- */
