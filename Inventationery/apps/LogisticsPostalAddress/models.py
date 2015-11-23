@@ -2,16 +2,16 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:14:39
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-18 21:11:54
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-23 10:54:45
 from django.db import models
 from Inventationery.apps.DirParty.models import DirPartyModel
-# Create your models here.
+from Inventationery.core.models import TimeStampedModel
 
 
 # Class: Model for Logistics Postal Address
 # ----------------------------------------------------------------------------
-class LogisticsPostalAddressModel(models.Model):
+class LogisticsPostalAddressModel(TimeStampedModel):
 
     BUSINESS = 'BUS'
     DELIVERY = 'DEL'
@@ -30,9 +30,6 @@ class LogisticsPostalAddressModel(models.Model):
         ('SERVICE', 'Servicio'),
         ('OTHER', 'Otro'),
     )
-
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
 
     Description = models.CharField(max_length=30, blank=True, null=True)
     Purpose = models.CharField(

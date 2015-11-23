@@ -2,16 +2,16 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:13:48
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-18 21:12:03
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-23 10:53:52
 from django.db import models
 from Inventationery.apps.DirParty.models import DirPartyModel
-# Create your models here.
+from Inventationery.core.models import TimeStampedModel
 
 
 # Class: Model for Logistics Electronic Address
 # ----------------------------------------------------------------------------
-class LogisticsElectronicAddressModel(models.Model):
+class LogisticsElectronicAddressModel(TimeStampedModel):
 
     TELEPHONE = 'TEL'
     CELLPHONE = 'CEL'
@@ -26,9 +26,6 @@ class LogisticsElectronicAddressModel(models.Model):
         (URL, 'Página web'),
         (FAX, 'Fax'),
     )
-
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
 
     Description = models.CharField(max_length=30, blank=True, null=True)
     Type = models.CharField(max_length=30, choices=TYPE, default=TELEPHONE)

@@ -2,14 +2,15 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex Armenta
 # @Date:   2015-11-16 19:08:22
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-18 20:22:11
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-23 10:54:02
 from django.db import models
+from Inventationery.core.models import TimeStampedModel
 
 
 # Class: Model for DirParty
 # ----------------------------------------------------------------------------
-class DirPartyModel(models.Model):
+class DirPartyModel(TimeStampedModel):
 
     MALE = 'M'
     FEMALE = 'F'
@@ -20,9 +21,6 @@ class DirPartyModel(models.Model):
         (FEMALE, 'Femenino'),
         (NOT_DEFINED, 'No definido'),
     )
-
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
 
     # Party or Person
     Name = models.CharField(max_length=60)

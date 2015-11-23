@@ -23,5 +23,8 @@ class Migration(migrations.Migration):
                 ('IsPrimary', models.BooleanField(default=False)),
                 ('Party', models.ForeignKey(to='DirParty.DirPartyModel')),
             ],
+            options={
+                'abstract': False,
+            },
         ),
     ]

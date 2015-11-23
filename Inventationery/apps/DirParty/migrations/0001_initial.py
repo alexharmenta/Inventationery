@@ -24,5 +24,8 @@ class Migration(migrations.Migration):
                 ('SecondLastName', models.CharField(max_length=30, null=True, blank=True)),
                 ('Gender', models.CharField(default=b'N', max_length=1, choices=[(b'M', b'Masculino'), (b'F', b'Femenino'), (b'N', b'No definido')])),
             ],
+            options={
+                'abstract': False,
+            },
         ),
     ]

@@ -1,8 +1,8 @@
 /* 
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
-* @Last Modified by:   Alex
-* @Last Modified time: 2015-11-22 21:48:56
+* @Last Modified by:   harmenta
+* @Last Modified time: 2015-11-23 13:38:25
 */
 
 'use strict';
@@ -113,6 +113,7 @@ $( document ).ready(function() {
     // Purchline formset
     $('#PurchOrderForm tbody tr').formset({ // Initialize django-formset plugin
         prefix: 'plfs',
+        formCssClass: 'purchline-formset',
         addText: 'Agregar linea',
         deleteText: ' X ',
         addCssClass: 'btn btn-success btn-xs',

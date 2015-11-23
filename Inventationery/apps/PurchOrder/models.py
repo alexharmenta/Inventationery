@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-22 22:22:39
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-23 10:57:42
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 from Inventationery.apps.Vendor.models import VendorModel
@@ -22,9 +22,9 @@ def Get_PurchId():
     if last:
         no = int(filter(unicode.isdigit, last.PurchId))
         no = no + 1
-        return prefix + str(no).zfill(5)
+        return str(prefix + str(no).zfill(5))
     else:
-        return prefix + str(1).zfill(5)
+        return str(prefix + str(1).zfill(5))
 
 
 # Class: Model for Purchase Order
@@ -65,7 +65,7 @@ class PurchOrderModel(TimeStampedModel):
     )
 
     PurchId = models.CharField(
-        max_length=45, default=Get_PurchId, unique=True)
+        max_length=45, default='0', unique=True)
     PurchName = models.CharField(max_length=100)
     PurchaseType = models.CharField(
         max_length=50, choices=PURCHASE_TYPE, default=PURCHASE_ORDER)
@@ -137,4 +137,4 @@ class PurchLineModel(TimeStampedModel):
         max_length=100, default=BACKORDER, choices=PURCH_STATUS)
     LineNum = models.PositiveSmallIntegerField(blank=True, null=True)
     PurchOrder = models.ForeignKey(
-        PurchOrderModel, null=True, blank=True, default=Get_PurchId)
+        PurchOrderModel, null=True, blank=True, default='0')

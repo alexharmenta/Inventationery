@@ -2,19 +2,16 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:10:36
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-18 21:13:03
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-23 10:54:27
 from django.db import models
 from Inventationery.apps.Vendor.models import VendorModel
-# Create your models here.
+from Inventationery.core.models import TimeStampedModel
 
 
 # Class: Model for Inventory item
 # ----------------------------------------------------------------------------
-class InventModel(models.Model):
-
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
+class InventModel(TimeStampedModel):
 
     ItemId = models.CharField(max_length=20, unique=True)
     ItemName = models.CharField(max_length=50)

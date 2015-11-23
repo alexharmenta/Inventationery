@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
 # @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-17 13:53:58
+# @Last Modified time: 2015-11-23 11:05:22
 """
 Django settings for Inventationery project.
 
