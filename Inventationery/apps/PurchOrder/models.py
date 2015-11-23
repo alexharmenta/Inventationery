@@ -3,10 +3,11 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-21 18:18:53
+# @Last Modified time: 2015-11-22 22:22:39
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 from Inventationery.apps.Vendor.models import VendorModel
+from Inventationery.apps.Inventory.models import InventModel
 
 
 # Function: Get new sequence number for Purchase Order
@@ -39,6 +40,7 @@ class PurchOrderModel(TimeStampedModel):
         (RESTORED_ORDER, 'Orden devuelta'),
     )
     # PURCHASE STATUS OPTIONS
+    OPEN = 'OPE'
     BACKORDER = 'BAC'
     RECEIVED = 'REC'
     INVOICED = 'INV'
@@ -46,6 +48,7 @@ class PurchOrderModel(TimeStampedModel):
     CANCELED = 'CAN'
 
     PURCH_STATUS = (
+        (OPEN, 'Abierta'),
         (BACKORDER, 'Back order'),
         (RECEIVED, 'Recibido'),
         (INVOICED, 'Facturado'),
@@ -66,11 +69,8 @@ class PurchOrderModel(TimeStampedModel):
     PurchName = models.CharField(max_length=100)
     PurchaseType = models.CharField(
         max_length=50, choices=PURCHASE_TYPE, default=PURCHASE_ORDER)
-    Vendor = models.ForeignKey(VendorModel, default=None)
-    InvoiceAccount = models.CharField(
-        max_length=50, default=None, blank=True, null=True)
     PurchStatus = models.CharField(
-        max_length=100, default=BACKORDER, choices=PURCH_STATUS)
+        max_length=100, default=OPEN, choices=PURCH_STATUS)
     # DocumentStatus //Pendiente
     WorkerPurchPlacer = models.CharField(
         max_length=100, blank=True, null=True)  # DirParty-Name
@@ -87,6 +87,18 @@ class PurchOrderModel(TimeStampedModel):
     Payment = models.CharField(max_length=30, blank=True, null=True)
     # Catalogo de tipo de pagos
     PaymMode = models.CharField(max_length=30, blank=True, null=True)
+    Remarks = models.TextField(
+        default=None, blank=True, null=True)
+    SubTotal = models.DecimalField(
+        max_digits=20, decimal_places=2, blank=True, null=True)
+    Total = models.DecimalField(
+        max_digits=20, decimal_places=2, blank=True, null=True)
+    Paid = models.DecimalField(
+        max_digits=20, decimal_places=2, blank=True, null=True)
+    Balance = models.DecimalField(
+        max_digits=20, decimal_places=2, blank=True, null=True)
+
+    Vendor = models.ForeignKey(VendorModel, default=None)
 
     def __unicode__(self):
         return "{0}".format(self.PurchId)
@@ -111,16 +123,18 @@ class PurchLineModel(TimeStampedModel):
         (CANCELED, 'Cancelado'),
     )
 
-    ItemId = models.CharField(max_length=20)
+    ItemId = models.ForeignKey(InventModel)
     ItemName = models.CharField(max_length=50)
     PurchQty = models.PositiveIntegerField()
     PurchUnit = models.CharField(max_length=10)
     PurchPrice = models.FloatField()
-    LineDisc = models.DecimalField(max_digits=10, decimal_places=2)
-    LinePercent = models.DecimalField(max_digits=10, decimal_places=2)
+    LineDisc = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True)
+    LinePercent = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True)
     LineAmount = models.DecimalField(max_digits=20, decimal_places=2)
     PurchLineStatus = models.CharField(
         max_length=100, default=BACKORDER, choices=PURCH_STATUS)
-    LineNum = models.PositiveSmallIntegerField()
+    LineNum = models.PositiveSmallIntegerField(blank=True, null=True)
     PurchOrder = models.ForeignKey(
         PurchOrderModel, null=True, blank=True, default=Get_PurchId)

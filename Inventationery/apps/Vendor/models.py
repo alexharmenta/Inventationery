@@ -3,7 +3,7 @@
 # @Author: Alex Armenta
 # @Date:   2015-11-17 12:15:05
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-21 16:43:25
+# @Last Modified time: 2015-11-22 12:51:16
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 from Inventationery.apps.DirParty.models import DirPartyModel
@@ -74,12 +74,10 @@ class VendorModel(TimeStampedModel):
     # Relations
     Party = models.OneToOneField(DirPartyModel,
                                  default=None,
-                                 null=True,
-                                 blank=True,
                                  related_name='VendorParty',)
 
     def __unicode__(self):
-        return "{0}".format(self.AccountNum)
+        return self.AccountNum + " - " + self.Party.NameAlias
 
     def get_PrimaryAddress(self):
         try:

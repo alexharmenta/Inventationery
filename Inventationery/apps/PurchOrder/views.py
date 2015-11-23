@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-21 18:25:36
+# @Last Modified time: 2015-11-22 21:50:59
 # from django.shortcuts import render
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
@@ -11,6 +11,7 @@ from django.template import RequestContext
 from django.views.generic import ListView, DeleteView
 from django.forms import inlineformset_factory
 from django.http import JsonResponse
+from datetime import date
 from .models import PurchOrderModel, PurchLineModel
 from .forms import PurchOrderForm, PurchOrderLinesForm
 from Inventationery.apps.Vendor.models import VendorModel
@@ -33,18 +34,24 @@ class PurchOrderListView(ListView):
 
 # FBV: View for create new Purchase Orders
 def createPurchOrderView(request):
+    PurchOrder = VendorModel()
 
     PurchLineFormset = inlineformset_factory(
-        PurchOrderModel, PurchLineModel, extra=1, fields='__all__')
+        PurchOrderModel,
+        PurchLineModel,
+        extra=10,
+        fields='__all__',
+        form=PurchOrderLinesForm)
 
     if request.method == 'POST':
 
         purch_form = PurchOrderForm(request.POST)
-        purchline_formset = PurchLineFormset(request.POST, prefix='plfs')
-
+        purchline_formset = PurchLineFormset(
+            request.POST, prefix='plfs')
         if purch_form.is_valid():
             PurchOrder = purch_form.save()
-
+            purchline_formset = PurchLineFormset(
+                request.POST, instance=PurchOrder, prefix='plfs')
             for purchline_form in purchline_formset:
                 if purchline_form.is_valid():
                     purchline_form.save(commit=False)
@@ -58,9 +65,9 @@ def createPurchOrderView(request):
         if request.is_ajax():
             action = request.POST.get('action', '')
             if action == 'get_purch_data':
-                AccountNum = request.POST.get('AccountNum', '')
+                Vendor_pk = request.POST.get('Vendor_pk', '')
                 try:
-                    Vendor = VendorModel.objects.get(AccountNum=AccountNum)
+                    Vendor = VendorModel.objects.get(pk=Vendor_pk)
                     response_dict = {
                         'NameAlias': Vendor.Party.NameAlias,
                         'VATNum': Vendor.VATNum,
@@ -96,12 +103,14 @@ def createPurchOrderView(request):
             return JsonResponse(response_dict)
 
     else:
-        purch_form = PurchOrderForm()
-        purchline_formset = PurchLineFormset(prefix='plfs')
-
+        purch_form = PurchOrderForm(instance=PurchOrder)
+        purchline_formset = PurchLineFormset(
+            instance=PurchOrder, prefix='plfs')
     return render_to_response('PurchOrder/CreatePurchOrder.html',
                               {'purch_form': purch_form,
-                               'purchline_formset': purchline_formset},
+                               'purchline_formset': purchline_formset,
+                               'PurchOrder': PurchOrder,
+                               'Today': date.today(), },
                               context_instance=RequestContext(request))
 
 
@@ -117,7 +126,6 @@ def updatePurchOrderView(request, PurchId):
         form=PurchOrderLinesForm)
 
     if request.method == 'POST':
-
         purch_form = PurchOrderForm(request.POST, instance=PurchOrder)
 
         purchline_formset = PurchLineFormset(
@@ -128,6 +136,7 @@ def updatePurchOrderView(request, PurchId):
 
             for purchline_form in purchline_formset:
                 if purchline_form.is_valid():
+                    print 'is_valid'
                     purchline_form.save(commit=False)
                     purchline_form.PurchOrder = PurchOrder
                     purchline_form.save()
@@ -136,9 +145,9 @@ def updatePurchOrderView(request, PurchId):
         if request.is_ajax():
             action = request.POST.get('action', '')
             if action == 'get_purch_data':
-                AccountNum = request.POST.get('AccountNum', '')
+                Vendor_pk = request.POST.get('Vendor_pk', '')
                 try:
-                    Vendor = VendorModel.objects.get(AccountNum=AccountNum)
+                    Vendor = VendorModel.objects.get(pk=Vendor_pk)
                     response_dict = {
                         'NameAlias': Vendor.Party.NameAlias,
                         'VATNum': Vendor.VATNum,

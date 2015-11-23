@@ -2,7 +2,7 @@
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
 * @Last Modified by:   Alex
-* @Last Modified time: 2015-11-21 18:28:30
+* @Last Modified time: 2015-11-22 21:48:56
 */
 
 'use strict';
@@ -118,20 +118,10 @@ $( document ).ready(function() {
         addCssClass: 'btn btn-success btn-xs',
         deleteCssClass: 'btn btn-danger btn-xs',
     });
-
-    // Global variables
-    var qty;
-    var price;
-    var disc;
-    var percent;
-    var total;
-    // Global variables
     
     // Get purchase order info with AJAX
     $('#id_Vendor').on('change', function(){
-      $('#id_InvoiceAccount').val($(this).val()).change(); //Change invoice account value
-      
-      var AccountNum = $('#id_Vendor option:selected').text();
+      var Vendor_pk = $('#id_Vendor option:selected').val();
       // AJAX Code for retrieving data from vendor
       var csrftoken = getCookie('csrftoken');
 
@@ -139,11 +129,11 @@ $( document ).ready(function() {
         url : window.location.href, // the endpoint,commonly same url
         type: "POST",
         //This is the dictionary you are SENDING to your Django code. 
-        //We are sending the 'action':get_purch_data and the 'id: $AccountNum  
+        //We are sending the 'action':get_purch_data and the 'id: $Vendor_pk  
         //which is a variable that contains what account user selected
         data: { 
                 action: 'get_purch_data',
-                AccountNum: AccountNum,
+                Vendor_pk: Vendor_pk,
                 csrfmiddlewaretoken : csrftoken, 
               },// data sent with the post request
 
@@ -161,6 +151,16 @@ $( document ).ready(function() {
       });
     });
 
+    // Global variables
+    var qty;
+    var price;
+    var disc;
+    var percent;
+    var total;
+    var Purch_SubTotal = 0;
+    var LineAmount = 0.0;
+    // Global variables
+
     // Get purchase line info with AJAX
     $('.purchline_formset_td').on('change', '*', function(){
       var id = $(this).attr('id');
@@ -169,6 +169,10 @@ $( document ).ready(function() {
       var ItemName_id = '#id_plfs-'+ rownum + '-ItemName'
       var PurchUnit_id = '#id_plfs-'+ rownum + '-PurchUnit'
       var PurchPrice_id = '#id_plfs-'+ rownum + '-PurchPrice'
+      var PurchQty_id = '#id_plfs-'+ rownum + '-PurchQty'
+      var LineDisc_id = '#id_plfs-'+ rownum + '-LineDisc'
+      var LinePercent_id = '#id_plfs-'+ rownum + '-LinePercent'
+      var Total_id = '#id_plfs-'+ rownum + '-LineAmount'
 
       if(id_lower.indexOf('itemid') != -1) {
         var ItemId = getCharsBefore($('#'+ id + ' option:selected').text(), ' ');
@@ -193,18 +197,30 @@ $( document ).ready(function() {
             $(ItemName_id).val(data.ItemName);
             $(PurchUnit_id).val(data.UnitId);
             $(PurchPrice_id).val(data.VendorPrice);
+            price = data.VendorPrice;
           }
         });
       }
+
       // Calc data from purch lines
-      if(id_lower.indexOf('qty') != -1) {
-        qty = $(this).val();
-      } else if(id_lower.indexOf('price') != -1) {
-        price = $(this).val();
-      } else if(id_lower.indexOf('disc') != -1) {
-         disc = $(this).val();
+      qty = $(PurchQty_id).val();
+      price = $(PurchPrice_id).val();
+      disc = $(LineDisc_id).val();
+      percent = $(LinePercent_id).val();
+      total = $(Total_id).val();
+      
+      if(id_lower.indexOf('disc') != -1) {
+         if(disc){
+            $(LinePercent_id).prop('readonly', true);
+         } else {
+            $(LinePercent_id).prop('readonly', false);
+         }
       } else if(id_lower.indexOf('percent') != -1) {
-         percent = $(this).val();
+         if(percent){
+            $(LineDisc_id).prop('readonly', true);
+         } else {
+            $(LineDisc_id).prop('readonly', false);
+         }
       }
 
       if(qty && price) {
@@ -219,11 +235,10 @@ $( document ).ready(function() {
         }
       }
       total = parseFloat(total);
-      var total_id = '#id_plfs-'+ rownum + '-LineAmount'
-      $(total_id).val(total);
+      $(Total_id).val(total);
 
     });
-    //$(OrderAccount_id).val(OrderAccountVal).change(); // Update OrderAccount Val
+    
     /* ----- Purchase Order ----- */
 
     /* ----- Inventory ----- */
@@ -262,4 +277,13 @@ $( document ).ready(function() {
     }
     /* ----- EXTRA FUNCTIONS ----- */
 
+
+    $('.datepicker').datepicker({
+        todayBtn: "",
+        clearBtn: true,
+        language: "es",
+        daysOfWeekHighlighted: "1,2,3,4,5",
+        autoclose: true,
+        todayHighlight: true
+    });
 });/* Document Ending */

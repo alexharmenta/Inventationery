@@ -74,18 +74,42 @@
 								{% render_field purch_form.Vendor class+="form-control" %}
 							</div>
 							<div class="form-group">
-								{{ purch_form.InvoiceAccount.errors }}
-								<label for="{{ purch_form.InvoiceAccount.id_for_label }}">*Cuenta de facturación</label>
-								{% render_field purch_form.InvoiceAccount class+="form-control" %}
+								{{ purch_form.WorkerPurchPlacer.errors }}
+								<label for="{{ purch_form.WorkerPurchPlacer.id_for_label }}">Nombre del proveedor</label>
+								{% render_field purch_form.WorkerPurchPlacer|append_attr:"readonly" class+="form-control" %}
 							</div>
 						</div>
 
 						<div class="col-md-4 col-sm-4 col-xs-12">
 							<!-- Estado -->
 							<h4><strong>Estado</strong></h4>
+							<div class="row">
+								<div class="col-md-6 col-sm-6 col-xs12">
+									<div class="form-group">
+									<label for="">Estado de la orden</label>
+									{% render_field purch_form.PurchStatus class+="form-control" %}
+								</div>
+								</div>
+								<div class="col-md-6 col-sm-6 col-xs12">
+									<div class="form-group">
+										<label for="">Fecha</label>
+										<div class="inner-addon right-addon">
+											<span class="lnr lnr-calendar-full"></span>
+											<input readonly class="form-control" type="text" {% if PurchOrder.pk %}
+												value="{{ PurchOrder.created|date:"d/m/y" }}"
+												{% else %}
+												value="{{ Today|date:"d/m/y" }}"
+											{% endif %}>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- Observaciones -->
+							<h4><strong>Observaciones</strong></h4>
 							<div class="form-group">
-								<label for="">Estado de la orden</label>
-								{% render_field purch_form.PurchStatus class+="form-control" %}
+								{{ purch_form.Remarks.errors }}
+								{% render_field purch_form.Remarks|attr:"rows:4" class+="form-control" %}
 							</div>
 						</div>
 					</div>
@@ -95,15 +119,8 @@
 						</div>
 						<div class="col-md-4 col-sm-4 col-xs-12">
 							<div class="form-group">
-								<label for="">RFC</label>
-								<input id="VATNum" type="text" class="form-control" readonly>
-							</div>
-						</div>
-						<div class="col-md-4 col-sm-4 col-xs-12">
-							<div class="form-group">
-								{{ purch_form.WorkerPurchPlacer.errors }}
-								<label for="{{ purch_form.WorkerPurchPlacer.id_for_label }}">Nombre del proveedor</label>
-								{% render_field purch_form.WorkerPurchPlacer|append_attr:"readonly" class+="form-control" %}
+								<label for="VATNum">RFC</label>
+								<input id="VATNum" type="text" class="form-control" readonly value="{{ PurchOrder.Vendor.VATNum }}">
 							</div>
 						</div>
 						<div class="col-md-4 col-sm-4 col-xs-12">
@@ -143,10 +160,15 @@
 							<!-- Dirección -->
 							<h4><strong>Dirección</strong></h4>
 							<div class="form-group">
-								<label for="{{ purch_form.DeliveryName.id_for_label }}">*Dirección de entrega</label>
-								<textarea readonly name="" id="{{ purch_form.DeliveryName.id_for_label }}" rows="3" class="form-control">
-									
+								<label for="{{ purch_form.DeliveryName.id_for_label }}">Dirección de entrega</label>
+								<textarea readonly name="" id="{{ purch_form.DeliveryName.id_for_label }}" rows="3" class="form-control">{{ PurchOrder.Vendor.get_PrimaryAddress }}
 								</textarea>
+							</div>
+							<!-- Contacto -->
+							<h4><strong>Contacto</strong></h4>
+							<div class="form-group">
+								<label for="">Contacto de entrega</label>
+								<input readonly type="text" class="form-control" value="{{ PurchOrder.Vendor.get_PrimaryElectronic }}">
 							</div>
 						</div>
 						<div class="col-md-4 col-sm-4 col-xs-12">
@@ -155,12 +177,18 @@
 							<div class="form-group">
 								{{ purch_form.DeliveryDate.errors }}
 								<label for="{{ purch_form.DeliveryDate.id_for_label }}">Fecha de entrega</label>
-								{% render_field purch_form.DeliveryDate class+="form-control" %}
+								<div class="inner-addon right-addon">
+									<span class="lnr lnr-calendar-full"></span>
+									{% render_field purch_form.DeliveryDate class+="datepicker form-control" %}
+								</div>
 							</div>
 							<div class="form-group">
-								{{ purch_form.DeliveryDate.errors }}
-								<label for="{{ purch_form.DeliveryDate.id_for_label }}">Fecha de confirmación</label>
-								{% render_field purch_form.DeliveryDate class+="form-control" %}
+								{{ purch_form.ConfirmedDlv.errors }}
+								<label for="{{ purch_form.ConfirmedDlv.id_for_label }}">Fecha de confirmación</label>
+								<div class="inner-addon right-addon">
+									<span class="lnr lnr-calendar-full"></span>
+									{% render_field purch_form.ConfirmedDlv class+="datepicker form-control" %}
+								</div>
 							</div>
 							<div class="form-group">
 								{{ purch_form.DlvMode.errors }}
@@ -220,10 +248,19 @@
 									<td class="purchline_formset_td">{% render_field purchline_form.ItemName class+="form-control" %}</td>
 									<td class="purchline_formset_td">{% render_field purchline_form.PurchQty class+="form-control" %}</td>
 									<td class="purchline_formset_td">{% render_field purchline_form.PurchUnit class+="form-control" %}</td>
-									<td class="purchline_formset_td">{% render_field purchline_form.PurchPrice class+="form-control" %}</td>
-									<td class="purchline_formset_td">{% render_field purchline_form.LineDisc class+="form-control" %}</td>
-									<td class="purchline_formset_td">{% render_field purchline_form.LinePercent class+="form-control" %}</td>
-									<td class="purchline_formset_td">{% render_field purchline_form.LineAmount class+="form-control" %}</td>
+									<td class="purchline_formset_td">{% render_field purchline_form.PurchPrice class+="form-control amount" %}</td>
+									{% if purchline_form.LineDisc %}
+										<td class="purchline_formset_td">{% render_field purchline_form.LineDisc class+="form-control amount" %}</td>
+										{% else %}
+										<td class="purchline_formset_td">{% render_field purchline_form.LineDisc|append_attr:'readonly' class+="form-control amount" %}</td>
+									{% endif %}
+									{% if purchline_form.LinePercent %}
+										<td class="purchline_formset_td">{% render_field purchline_form.LinePercent class+="form-control" %}</td>
+										{% else %}
+										<td class="purchline_formset_td">{% render_field purchline_form.LinePercent|append_attr:'readonly' class+="form-control" %}</td>
+									{% endif %}
+									
+									<td class="purchline_formset_td">{% render_field purchline_form.LineAmount|append_attr:'readonly' class+="form-control amount total_amount" %}</td>
 									<td class="purchline_formset_td"></td>
 					            </tr>
 					            {% for hidden in purchline_form.hidden_fields %}
@@ -233,9 +270,49 @@
 				            {{ purchline_formset.management_form }}
 
 					    </tbody>
-					    
 					</table>
-				    
+				    <div class="row">
+				    	<div class="col-md-4 col-sm-4 col-xs-12 pull-right">
+				    		<div class="form-group">
+				    			<div class="col-md-4 col-sm-4 col-xs 12">
+					    			<label for="{{ purch_form.SubTotal.id_for_label }}" class="pull-right"><strong>SubTotal</strong></label>
+					    		</div>
+					    		<div class="col-md-8 col-sm-8 col-xs-12">
+					    			<div class="inner-addon left-addon">
+					    				<i class="lnr">$</i>
+					    				{% render_field purch_form.SubTotal|append_attr:'readonly' class+="form-control amount" %}
+					    			</div>
+					    		</div>
+					    		<div class="col-md-4 col-sm-4 col-xs 12">
+					    			<label for="{{ purch_form.Total.id_for_label }}" class="pull-right"><strong>Total</strong></label>
+					    		</div>
+					    		<div class="col-md-8 col-sm-8 col-xs-12">
+					    			<div class="inner-addon left-addon">
+					    				<i class="lnr">$</i>
+					    				{% render_field purch_form.Total|append_attr:'readonly' class+="form-control amount" %}
+					    			</div>
+					    		</div>
+					    		<div class="col-md-4 col-sm-4 col-xs 12">
+					    			<label for="{{ purch_form.Paid.id_for_label }}" class="pull-right"><strong>Pagado</strong></label>
+					    		</div>
+					    		<div class="col-md-8 col-sm-8 col-xs-12">
+					    			<div class="inner-addon left-addon">
+					    				<i class="lnr">$</i>
+					    				{% render_field purch_form.Paid class+="form-control amount" %}
+					    			</div>
+					    		</div>
+					    		<div class="col-md-4 col-sm-4 col-xs 12">
+					    			<label for="{{ purch_form.Balance.id_for_label }}" class="pull-right"><strong>Balance</strong></label>
+					    		</div>
+					    		<div class="col-md-8 col-sm-8 col-xs-12">
+					    			<div class="inner-addon left-addon">
+					    				<i class="lnr">$</i>
+					    				{% render_field purch_form.Balance|append_attr:'readonly' class+="form-control amount" %}
+					    			</div>
+					    		</div>
+				    		</div>
+				    	</div>
+				    </div>
 	            </div>
 	        </div>
 	    </div>
