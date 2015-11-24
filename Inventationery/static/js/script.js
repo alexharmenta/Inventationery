@@ -2,7 +2,7 @@
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
 * @Last Modified by:   harmenta
-* @Last Modified time: 2015-11-23 13:38:25
+* @Last Modified time: 2015-11-23 17:21:19
 */
 
 'use strict';
@@ -176,8 +176,8 @@ $( document ).ready(function() {
       var Total_id = '#id_plfs-'+ rownum + '-LineAmount'
 
       if(id_lower.indexOf('itemid') != -1) {
-        var ItemId = getCharsBefore($('#'+ id + ' option:selected').text(), ' ');
-        var ItemId = $('#'+ id + ' option:selected').text();
+        var Item_pk = getCharsBefore($('#'+ id + ' option:selected').val(), ' ');
+        var Item_pk = $('#'+ id + ' option:selected').val();
         // AJAX Code for retrieving data from vendor
         var csrftoken = getCookie('csrftoken');
 
@@ -188,7 +188,7 @@ $( document ).ready(function() {
           //which is a variable that contains what car the user selected
           data: { 
                   action: 'get_purchline_data',
-                  ItemId: ItemId,
+                  Item_pk: Item_pk,
                   csrfmiddlewaretoken : csrftoken, 
                 },// data sent with the post request
 

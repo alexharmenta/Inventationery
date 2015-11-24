@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex Armenta
 # @Date:   2015-11-17 12:15:05
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-22 12:51:16
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-23 14:24:28
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 from Inventationery.apps.DirParty.models import DirPartyModel
@@ -74,7 +74,9 @@ class VendorModel(TimeStampedModel):
     # Relations
     Party = models.OneToOneField(DirPartyModel,
                                  default=None,
-                                 related_name='VendorParty',)
+                                 related_name='VendorParty',
+                                 null=True,
+                                 blank=True)
 
     def __unicode__(self):
         return self.AccountNum + " - " + self.Party.NameAlias

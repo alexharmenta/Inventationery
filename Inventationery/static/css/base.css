@@ -326,6 +326,7 @@ background-image: linear-gradient(to bottom, #000000 0%, #290004 100%);
     margin-left: 210px;
 }
 .main_container {
+    margin-top: -10px;
 }
 .no-padding {
     padding: 0 !important;

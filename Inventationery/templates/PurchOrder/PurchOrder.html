@@ -243,6 +243,13 @@
 					    </thead>
 					    <tbody>
 				            {% for purchline_form in purchline_formset.forms %}
+				            	{% if purchline_form.non_field_errors %}
+								  <div class="non-field-errors">
+								    {% for err in purchline_form.non_field_errors %}
+								      <p class="purchline_form-error">{{ err }}</p>
+								    {% endfor %}
+								  </div>
+								{% endif %}
 					            <tr class="purchline_formset">
 									<td class="purchline_formset_td">{% render_field purchline_form.ItemId class+="form-control" %}</td>
 									<td class="purchline_formset_td">{% render_field purchline_form.ItemName class+="form-control" %}</td>

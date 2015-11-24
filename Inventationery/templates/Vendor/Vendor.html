@@ -6,7 +6,7 @@
 
 		{% block page_title %}
 		{% endblock %}
-
+		
 		<div class="col-md-6 col-sm-6 col-xs-6"> <!-- Vendor info -->
 	        <div class="x_panel tile">
 	            <div class="x_title">
@@ -18,8 +18,8 @@
 	                <div class="clearfix"></div>
             	</div>
 	            <div class="x_content">
-	                {% if form.errors %}
-					    {% for field in form %}
+	                {% if vendor_form.errors %}
+					    {% for field in vendor_form %}
 					        {% for error in field.errors %}
 					        	<style>
 									#{{ field.id_for_label }} {

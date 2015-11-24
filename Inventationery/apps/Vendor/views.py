@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:22:12
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-21 17:01:35
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-23 16:46:09
 # views.py
 from django.shortcuts import render_to_response, get_object_or_404
 from django.forms import inlineformset_factory
@@ -36,6 +36,9 @@ class VendorListView(ListView):
 # FBV: View for create new Vendor
 def createVendorView(request):
 
+    vendor = VendorModel()
+    party = DirPartyModel()
+
     ElectronicFormSet = inlineformset_factory(
         DirPartyModel, LogisticsElectronicAddressModel,
         extra=1, max_num=5, fields='__all__')
@@ -49,11 +52,17 @@ def createVendorView(request):
         party_form = PartyForm(request.POST)
 
         electronic_formset = ElectronicFormSet(
-            request.POST, prefix='efs')
+            request.POST, instance=party, prefix='efs')
         postal_formset = PostalFormSet(
-            request.POST, prefix='pfs')
+            request.POST, instance=party, prefix='pfs')
 
         if vendor_form.is_valid() and party_form.is_valid():
+
+            electronic_formset = ElectronicFormSet(
+                request.POST, instance=party, prefix='efs')
+            postal_formset = PostalFormSet(
+                request.POST, instance=party, prefix='pfs')
+
             party = party_form.save(commit=False)
             vendor = vendor_form.save(commit=False)
             party.save()
@@ -75,7 +84,7 @@ def createVendorView(request):
 
             for postal_form in postal_formset:
                 if postal_form.is_valid():
-                    description = electronic_form.cleaned_data.get(
+                    description = postal_form.cleaned_data.get(
                         'Description')
                     if description:
                         Postal = postal_form.save(commit=False)
@@ -90,10 +99,11 @@ def createVendorView(request):
 
     else:
         # formulario inicial
-        vendor_form = VendorForm()
-        party_form = PartyForm()
-        electronic_formset = ElectronicFormSet(prefix='efs')
-        postal_formset = PostalFormSet(prefix='pfs')
+        vendor_form = VendorForm(instance=vendor)
+        party_form = PartyForm(instance=party)
+        electronic_formset = ElectronicFormSet(
+            prefix='efs', instance=party)
+        postal_formset = PostalFormSet(prefix='pfs', instance=party)
 
     return render_to_response('Vendor/CreateVendor.html',
                               {'vendor_form': vendor_form,
@@ -114,20 +124,21 @@ def updateVendorView(request, AccountNum):
         DirPartyModel, LogisticsPostalAddressModel,
         extra=1, max_num=5, fields='__all__')
 
+    electronic_formset = ElectronicFormSet(
+        request.POST, prefix='efs', instance=Vendor.Party)
+    postal_formset = PostalFormSet(
+        request.POST, prefix='pfs', instance=Vendor.Party)
+
     if request.method == 'POST':
         # formulario enviado
         vendor_form = VendorForm(request.POST, instance=Vendor)
         party_form = PartyForm(request.POST, instance=Vendor.Party)
 
-        electronic_formset = ElectronicFormSet(
-            request.POST, prefix='efs', instance=Vendor.Party)
-        postal_formset = PostalFormSet(
-            request.POST, prefix='pfs', instance=Vendor.Party)
-
         if vendor_form.is_valid() and party_form.is_valid():
             party = party_form.save()
             vendor = vendor_form.save(commit=False)
             vendor.Party = party
+            vendor.save()
 
             for electronic_form in electronic_formset.forms:
                 if electronic_form.is_valid():
@@ -137,10 +148,11 @@ def updateVendorView(request, AccountNum):
                     if description and contact:
                         electronic = electronic_form.save(commit=False)
                         electronic.Party = party
+                        electronic.save()
 
             for postal_form in postal_formset:
                 if postal_form.is_valid():
-                    description = electronic_form.cleaned_data.get(
+                    description = postal_form.cleaned_data.get(
                         'Description')
                     if description:
                         postal = postal_form.save(commit=False)

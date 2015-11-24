@@ -113,7 +113,11 @@
 
             </div>
             <!-- /top navigation -->
-
+            <ul>
+                {% for message in messages.errors %}
+                    {% if 'error' in message.tags %}<li>{{ message }}</li>{% endif %}
+                {% endfor %}
+            </ul>
             <!-- page content -->
             <div class="right_col" role="main">
 

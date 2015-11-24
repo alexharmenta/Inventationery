@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:22:39
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-21 17:47:20
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-23 14:13:37
 from django import forms
 from .models import VendorModel
 from Inventationery.apps.DirParty.models import DirPartyModel
@@ -19,15 +19,7 @@ class VendorForm(forms.ModelForm):
 
     class Meta:
         model = VendorModel
-        fields = ('AccountNum',
-                  'AccountType',
-                  'OneTimeVendor',
-                  'VendGroup',
-                  'CreditLimit',
-                  'CurrencyCode',
-                  'VATNum',
-                  'Notes',
-                  'Party')
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(VendorForm, self).__init__(*args, **kwargs)
@@ -39,10 +31,9 @@ class VendorForm(forms.ModelForm):
     def clean_sku(self):
         instance = getattr(self, 'instance', None)
         if instance and instance.pk:
-            return instance.AccountNum + instance.AccountType
+            return instance.AccountNum
         else:
             return self.cleaned_data['AccountNum']
-            + self.cleaned_data['AccountType']
 
 
 # Class: Form for DirPartyModel
@@ -51,13 +42,7 @@ class PartyForm(forms.ModelForm):
 
     class Meta:
         model = DirPartyModel
-        fields = ('Name',
-                  'NameAlias',
-                  'LanguageCode',
-                  'SecondName',
-                  'FirstLastName',
-                  'SecondLastName',
-                  'Gender')
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(PartyForm, self).__init__(*args, **kwargs)
@@ -69,16 +54,7 @@ class LogisticsPostalForm(forms.ModelForm):
 
     class Meta:
         model = LogisticsPostalAddressModel
-        fields = ('Description',
-                  'Purpose',
-                  'CountryRegionId',
-                  'ZipCode',
-                  'Street',
-                  'StreetNumber',
-                  'BuildingCompliment',
-                  'City',
-                  'State',
-                  'IsPrimary',)
+        fields = '__all__'
 
 
 # Class: Form for LogisticsElectronicAddressModel
@@ -87,7 +63,4 @@ class LogisticsElectronicForm(forms.ModelForm):
 
     class Meta:
         model = LogisticsElectronicAddressModel
-        fields = ('Description',
-                  'Type',
-                  'Contact',
-                  'IsPrimary',)
+        fields = '__all__'
