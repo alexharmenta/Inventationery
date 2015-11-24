@@ -2,7 +2,7 @@
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
 * @Last Modified by:   harmenta
-* @Last Modified time: 2015-11-23 17:21:19
+* @Last Modified time: 2015-11-24 17:32:42
 */
 
 'use strict';
@@ -161,7 +161,7 @@ $( document ).ready(function() {
     var Purch_SubTotal = 0;
     var LineAmount = 0.0;
     // Global variables
-
+    
     // Get purchase line info with AJAX
     $('.purchline_formset_td').on('change', '*', function(){
       var id = $(this).attr('id');

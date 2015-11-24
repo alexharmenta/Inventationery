@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-23 17:04:58
+# @Last Modified time: 2015-11-24 14:29:02
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 from Inventationery.apps.Vendor.models import VendorModel
@@ -123,18 +123,19 @@ class PurchLineModel(TimeStampedModel):
         (CANCELED, 'Cancelado'),
     )
 
-    ItemId = models.ForeignKey(InventModel)
-    ItemName = models.CharField(max_length=50)
-    PurchQty = models.PositiveIntegerField()
-    PurchUnit = models.CharField(max_length=10)
-    PurchPrice = models.FloatField()
+    ItemId = models.ForeignKey(InventModel, blank=True, null=True)
+    ItemName = models.CharField(max_length=50, blank=True, null=True)
+    PurchQty = models.PositiveIntegerField(blank=True, null=True)
+    PurchUnit = models.CharField(max_length=10, blank=True, null=True)
+    PurchPrice = models.FloatField(blank=True, null=True)
     LineDisc = models.DecimalField(
         max_digits=10, decimal_places=2, blank=True, null=True)
     LinePercent = models.DecimalField(
         max_digits=10, decimal_places=2, blank=True, null=True)
-    LineAmount = models.DecimalField(max_digits=20, decimal_places=2)
+    LineAmount = models.DecimalField(
+        max_digits=20, decimal_places=2, blank=True, null=True)
     PurchLineStatus = models.CharField(
-        max_length=100, default=BACKORDER, choices=PURCH_STATUS)
+        max_length=100, default=BACKORDER, choices=PURCH_STATUS, blank=True, null=True)
     LineNum = models.PositiveSmallIntegerField(blank=True, null=True)
     PurchOrder = models.ForeignKey(
         PurchOrderModel, null=True, blank=True)

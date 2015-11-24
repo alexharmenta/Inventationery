@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-23 17:41:04
+# @Last Modified time: 2015-11-24 17:11:25
 # from django.shortcuts import render
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
@@ -38,7 +38,7 @@ def createPurchOrderView(request):
     PurchLineFormset = inlineformset_factory(
         PurchOrderModel,
         PurchLineModel,
-        extra=10,
+        extra=1,
         fields='__all__',
         form=PurchOrderLinesForm)
 
@@ -49,13 +49,17 @@ def createPurchOrderView(request):
             request.POST, prefix='plfs')
 
         if purch_form.is_valid():
-            PurchOrder = purch_form.save()
+            PurchOrder = purch_form.save(commit=False)
+            PurchOrder.save()
+
+            purchline_formset = PurchLineFormset(
+                request.POST, instance=PurchOrder, prefix='plfs')
 
             for purchline_form in purchline_formset:
                 if purchline_form.is_valid():
-                    purchline_form.save(commit=False)
-                    purchline_form.PurchOrder = PurchOrder
-                    purchline_form.save()
+                    itemid = purchline_form.cleaned_data.get('ItemId')
+                    if itemid:
+                        purchline_form.save()
 
             redirect_url = "/purch_orders/update/" + str(PurchOrder.PurchId)
             return HttpResponseRedirect(redirect_url)
@@ -114,11 +118,11 @@ def createPurchOrderView(request):
 # FBV: View for update new Purchase Orders
 def updatePurchOrderView(request, PurchId):
     PurchOrder = get_object_or_404(PurchOrderModel, PurchId=PurchId)
-    PurchLine = PurchLineModel.objects.filter(PurchOrder=PurchOrder)
+
     PurchLineFormset = inlineformset_factory(
         PurchOrderModel,
         PurchLineModel,
-        extra=10,
+        extra=1,
         fields='__all__',
         form=PurchOrderLinesForm)
 
@@ -126,16 +130,16 @@ def updatePurchOrderView(request, PurchId):
         purch_form = PurchOrderForm(request.POST, instance=PurchOrder)
 
         purchline_formset = PurchLineFormset(
-            request.POST, prefix='plfs')
+            request.POST, instance=PurchOrder, prefix='plfs')
 
         if purch_form.is_valid():
-            PurchOrder = purch_form.save()
+            purch_form.save()
 
             for purchline_form in purchline_formset:
                 if purchline_form.is_valid():
-                    purchline_form.save(commit=False)
-                    purchline_form.PurchOrder = PurchOrder
-                    purchline_form.save()
+                    itemid = purchline_form.cleaned_data.get('ItemId')
+                    if itemid:
+                        purchline_form.save()
 
         # Get info to retrieve to template with Ajax
         if request.is_ajax():
@@ -181,7 +185,7 @@ def updatePurchOrderView(request, PurchId):
     else:
         purch_form = PurchOrderForm(instance=PurchOrder)
         purchline_formset = PurchLineFormset(
-            initial=PurchLine, prefix='plfs',)
+            instance=PurchOrder, prefix='plfs',)
 
     return render_to_response('PurchOrder/UpdatePurchOrder.html',
                               {'purch_form': purch_form,
