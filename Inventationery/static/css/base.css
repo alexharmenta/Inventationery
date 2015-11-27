@@ -5445,3 +5445,15 @@ label {
 .amount {
     text-align: right;
 }
+
+ul li {
+    list-style: none;
+}
+ul.purch_options {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+ul.purch_options li {
+    display: inline-block;
+}

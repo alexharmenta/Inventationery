@@ -281,6 +281,14 @@
 					    </tbody>
 					</table>
 				    <div class="row">
+				    	{% if PurchOrder.pk %}
+				    		<div class="form-group pull-left">
+						    	<ul class="purch_options">
+						    		<li><div id="cancel-order" class="btn btn-block btn-warning">Cancelar pedido</div></li>
+						    		<li><div class="btn btn-block btn-info">Recibir y pagar</div></li>
+						    	</ul>				    			
+				    		</div>
+					    {% endif %}
 				    	<div class="col-md-4 col-sm-4 col-xs-12 pull-right">
 				    		<div class="form-group">
 				    			<div class="col-md-4 col-sm-4 col-xs 12">
@@ -320,7 +328,7 @@
 					    			</div>
 					    		</div>
 				    		</div>
-				    	</div>
+				    	</div>				    	
 				    </div>
 	            </div>
 	        </div>

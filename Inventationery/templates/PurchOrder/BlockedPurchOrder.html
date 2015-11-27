@@ -1,0 +1,24 @@
+{% extends 'PurchOrder/PurchOrder.html' %}
+{% load widget_tweaks %}
+
+{% block page_title%}
+	<div class="row">
+		<div class="col-md-6 page_title">
+			<strong><h4>{{ PurchOrder.PurchId }} | &nbsp; </h4></strong>
+			<span> <h5> Última vez modificado: {{ PurchOrder.modified|date:"D d M Y" }} {{ PurchOrder.modified|time:"H:i" }}</h5> </span>
+		</div>
+		<div class="col-md-2">
+			<a href="{% url "purch:delete" pk=PurchOrder.pk %}" class="btn btn-danger btn-block pull-right">
+				<span class="lnr lnr-cross"></span> Eliminar
+			</a>
+		</div>
+		<div class="col-md-2">
+			<a class='btn btn-primary btn-block pull-right' href="{% url "purch:new" %}">
+				<span class="lnr lnr-pencil"></span> Nueva (OC)
+			</a>
+		</div>
+		<div class="col-md-2">
+			<button type="submit" class="btn btn-success btn-block pull-right">Guardar</button>
+		</div>
+	</div>
+{% endblock %}

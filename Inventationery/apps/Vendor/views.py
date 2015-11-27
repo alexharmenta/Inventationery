@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:22:12
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-23 16:46:09
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-11-26 20:16:40
 # views.py
 from django.shortcuts import render_to_response, get_object_or_404
 from django.forms import inlineformset_factory
@@ -116,6 +116,9 @@ def createVendorView(request):
 # FBV: View for update an existing Vendor
 def updateVendorView(request, AccountNum):
     Vendor = get_object_or_404(VendorModel, AccountNum=AccountNum)
+    Party = Vendor.Party
+    EA_list = []
+    PA_list = []
 
     ElectronicFormSet = inlineformset_factory(
         DirPartyModel, LogisticsElectronicAddressModel,
@@ -124,15 +127,10 @@ def updateVendorView(request, AccountNum):
         DirPartyModel, LogisticsPostalAddressModel,
         extra=1, max_num=5, fields='__all__')
 
-    electronic_formset = ElectronicFormSet(
-        request.POST, prefix='efs', instance=Vendor.Party)
-    postal_formset = PostalFormSet(
-        request.POST, prefix='pfs', instance=Vendor.Party)
-
     if request.method == 'POST':
         # formulario enviado
         vendor_form = VendorForm(request.POST, instance=Vendor)
-        party_form = PartyForm(request.POST, instance=Vendor.Party)
+        party_form = PartyForm(request.POST, instance=Party)
 
         if vendor_form.is_valid() and party_form.is_valid():
             party = party_form.save()
@@ -140,24 +138,35 @@ def updateVendorView(request, AccountNum):
             vendor.Party = party
             vendor.save()
 
+            electronic_formset = ElectronicFormSet(
+                request.POST, prefix='efs', instance=Party)
+            postal_formset = PostalFormSet(
+                request.POST, prefix='pfs', instance=Party)
+
             for electronic_form in electronic_formset.forms:
                 if electronic_form.is_valid():
                     description = electronic_form.cleaned_data.get(
                         'Description')
                     contact = electronic_form.cleaned_data.get('Contact')
                     if description and contact:
-                        electronic = electronic_form.save(commit=False)
-                        electronic.Party = party
-                        electronic.save()
+                        EA = electronic_form.save()
+                        EA_list.append(EA.pk)
+
+            if electronic_formset.is_valid():
+                LogisticsElectronicAddressModel.objects.exclude(
+                    pk__in=list(EA_list)).delete()
 
             for postal_form in postal_formset:
                 if postal_form.is_valid():
                     description = postal_form.cleaned_data.get(
                         'Description')
                     if description:
-                        postal = postal_form.save(commit=False)
-                        postal.Party = party
-                        postal.save()
+                        PA = postal_form.save()
+                        PA_list.append(PA.pk)
+
+            if postal_formset.is_valid():
+                LogisticsPostalAddressModel.objects.exclude(
+                    pk__in=list(PA_list)).delete()
 
     else:
         # formulario inicial
@@ -180,7 +189,7 @@ def updateVendorView(request, AccountNum):
 # CBV: View to delete an existing vendor
 # ----------------------------------------------------------------------------
 class DeleteVendorView(DeleteView):
-    model = VendorModel
+    model = DirPartyModel
     template_name = 'Vendor/DeleteVendor.html'
     success_url = '/vendor'
     success_message = 'Proveedor eliminado correctamente'

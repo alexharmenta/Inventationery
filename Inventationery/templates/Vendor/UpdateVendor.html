@@ -8,7 +8,7 @@
 		<span> <h5> Última vez modificado: {{ Vendor.modified|date:"D d M Y" }} {{ Vendor.modified|time:"H:i" }}</h5> </span>
 	</div>
 	<div class="col-md-2">
-		<a href="{% url "vendor:delete" pk=Vendor.pk %}" class="btn btn-danger btn-block pull-right">
+		<a href="{% url "vendor:delete" pk=Vendor.Party.pk %}" class="btn btn-danger btn-block pull-right">
 			<span class="lnr lnr-cross"></span> Eliminar
 		</a>
 	</div>

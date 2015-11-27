@@ -1,8 +1,8 @@
 /* 
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
-* @Last Modified by:   harmenta
-* @Last Modified time: 2015-11-24 17:32:42
+* @Last Modified by:   Alex
+* @Last Modified time: 2015-11-26 22:14:40
 */
 
 'use strict';
@@ -133,10 +133,10 @@ $( document ).ready(function() {
         //We are sending the 'action':get_purch_data and the 'id: $Vendor_pk  
         //which is a variable that contains what account user selected
         data: { 
-                action: 'get_purch_data',
-                Vendor_pk: Vendor_pk,
-                csrfmiddlewaretoken : csrftoken, 
-              },// data sent with the post request
+          action: 'get_purch_data',
+          Vendor_pk: Vendor_pk,
+          csrfmiddlewaretoken : csrftoken, 
+        },// data sent with the post request
 
         // handle a successful response
         success: function(data){
@@ -240,6 +240,37 @@ $( document ).ready(function() {
 
     });
     
+    var can_cancel = true;
+    // Cancel button function
+    $('#cancel-order').on('click',function(){
+      // AJAX Code for retrieving data from vendor
+      var csrftoken = getCookie('csrftoken');
+
+      $.ajax({
+        url : window.location.href,
+        type: "get",
+        data: { 
+                action: 'can_cancel',
+                can_cancel: can_cancel,
+                csrfmiddlewaretoken : csrftoken, 
+              },// data sent with the post request
+
+        // handle a successful response
+        success: function(data) {
+            var content = $("#content", data);
+            $('#content').html(content);
+            // Replace url on browser without reloading the entire page
+            // window.history.pushState({"html":data.html,"pageTitle":data.pageTitle},"", NewVendorURL);
+            // Replace url on browser reloading the entire page
+            //window.location = NewVendorURL;
+        },
+        failure: function(data) { 
+            alert('Got an error dude');
+        },
+
+      });
+    });
+
     /* ----- Purchase Order ----- */
 
     /* ----- Inventory ----- */
