@@ -1,8 +1,8 @@
 /* 
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
-* @Last Modified by:   Alex
-* @Last Modified time: 2015-11-26 22:14:40
+* @Last Modified by:   harmenta
+* @Last Modified time: 2015-11-27 17:54:45
 */
 
 'use strict';
@@ -95,8 +95,8 @@ $( document ).ready(function() {
             // Replace url on browser reloading the entire page
             //window.location = NewVendorURL;
         },
-        failure: function(data) { 
-            alert('Got an error dude');
+        error: function(xhr, textStatus, errorThrown) {
+            alert("Please report this error: "+errorThrown+xhr.status+xhr.responseText);
         }
       });
     });*/
@@ -163,7 +163,7 @@ $( document ).ready(function() {
     // Global variables
     
     // Get purchase line info with AJAX
-    $('.purchline_formset_td').on('change', '*', function(){
+    $('.purchline_formset').on('change', 'tr', function(){
       var id = $(this).attr('id');
       var id_lower = id.toLowerCase()
       var rownum = id.replace(/\D/g,'');
@@ -240,35 +240,48 @@ $( document ).ready(function() {
 
     });
     
-    var can_cancel = true;
+    // Check if PurchOrder is enabled
+    if (purch_enabled == 'False') {
+      $('#PurchOrderForm').find('input button select textarea').attr('disabled','diabled');
+      purch_enabled = false;
+    } else {
+      purch_enabled = true;
+    }
+
+
     // Cancel button function
-    $('#cancel-order').on('click',function(){
+    $('ul.purch_options li').on('click', '#cancel-order', function(){
+      if(purch_enabled) {
+        $('#PurchOrderForm').find('input, textarea, button, select').attr('disabled','disabled');
+        purch_enabled = !purch_enabled;
+      } else {
+        l
+      }
+      
       // AJAX Code for retrieving data from vendor
       var csrftoken = getCookie('csrftoken');
 
       $.ajax({
-        url : window.location.href,
-        type: "get",
+        url : window.location.href, // the endpoint,commonly same url
+        type: "POST",
+        //This is the dictionary you are SENDING to your Django code. We are sending the 'action':get_data and the 'id: $AccountNum  
+        //which is a variable that contains what car the user selected
         data: { 
-                action: 'can_cancel',
-                can_cancel: can_cancel,
+                action: 'purch_enabled',
+                purch_enabled: purch_enabled,
                 csrfmiddlewaretoken : csrftoken, 
               },// data sent with the post request
 
         // handle a successful response
         success: function(data) {
-            var content = $("#content", data);
-            $('#content').html(content);
-            // Replace url on browser without reloading the entire page
-            // window.history.pushState({"html":data.html,"pageTitle":data.pageTitle},"", NewVendorURL);
-            // Replace url on browser reloading the entire page
-            //window.location = NewVendorURL;
+          var content = $("#content", data);
+          $('#content').html(content);
         },
-        failure: function(data) { 
-            alert('Got an error dude');
-        },
-
+        error: function(xhr, textStatus, errorThrown) {
+          alert("Please report this error: "+errorThrown+xhr.status+xhr.responseText);
+        }
       });
+      purch_enabled = !purch_enabled;
     });
 
     /* ----- Purchase Order ----- */

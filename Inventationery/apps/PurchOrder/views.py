@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-11-26 22:17:49
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-11-27 13:37:13
 # from django.shortcuts import render
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
@@ -49,22 +49,6 @@ def createPurchOrderView(request):
         purchline_formset = PurchLineFormset(
             request.POST, prefix='plfs')
 
-        if purch_form.is_valid():
-            PurchOrder = purch_form.save(commit=False)
-            PurchOrder.save()
-
-            purchline_formset = PurchLineFormset(
-                request.POST, instance=PurchOrder, prefix='plfs')
-
-            for purchline_form in purchline_formset:
-                if purchline_form.is_valid():
-                    itemid = purchline_form.cleaned_data.get('ItemId')
-                    if itemid:
-                        purchline_form.save()
-
-            redirect_url = "/purch_orders/update/" + str(PurchOrder.PurchId)
-            return HttpResponseRedirect(redirect_url)
-
         # Get info to retrieve to template with Ajax
         if request.is_ajax():
             action = request.POST.get('action', '')
@@ -105,6 +89,22 @@ def createPurchOrderView(request):
                         'VendorPrice': '',
                     }
             return JsonResponse(response_dict)
+
+        if purch_form.is_valid():
+            PurchOrder = purch_form.save(commit=False)
+            PurchOrder.save()
+
+            purchline_formset = PurchLineFormset(
+                request.POST, instance=PurchOrder, prefix='plfs')
+
+            for purchline_form in purchline_formset:
+                if purchline_form.is_valid():
+                    itemid = purchline_form.cleaned_data.get('ItemId')
+                    if itemid:
+                        purchline_form.save()
+
+            redirect_url = "/purch_orders/update/" + str(PurchOrder.PurchId)
+            return HttpResponseRedirect(redirect_url)
 
     else:
         purch_form = PurchOrderForm()
@@ -134,19 +134,6 @@ def updatePurchOrderView(request, PurchId):
         purchline_formset = PurchLineFormset(
             request.POST, instance=PurchOrder, prefix='plfs')
 
-        if purch_form.is_valid():
-            purch_form.save()
-
-            for purchline_form in purchline_formset:
-                if purchline_form.is_valid():
-                    itemid = purchline_form.cleaned_data.get('ItemId')
-                    if itemid:
-                        PL = purchline_form.save()
-                        PL_list.append(PL.pk)
-
-        if purchline_formset.is_valid():
-            PurchLineModel.objects.exclude(pk__in=list(PL_list)).delete()
-
         # Get info to retrieve to template with Ajax
         if request.is_ajax():
             action = request.POST.get('action', '')
@@ -187,19 +174,30 @@ def updatePurchOrderView(request, PurchId):
                         'VendorPrice': '',
                     }
 
+            elif action == 'can_cancel':
+                redirect_url = "/purch_orders/update/" + \
+                    str(PurchOrder.PurchId)
+                return HttpResponseRedirect(redirect_url)
+
             return JsonResponse(response_dict)
+
+        if purch_form.is_valid():
+            purch_form.save()
+
+            for purchline_form in purchline_formset:
+                if purchline_form.is_valid():
+                    itemid = purchline_form.cleaned_data.get('ItemId')
+                    if itemid:
+                        PL = purchline_form.save()
+                        PL_list.append(PL.pk)
+
+        if purchline_formset.is_valid():
+            PurchLineModel.objects.exclude(pk__in=list(PL_list)).delete()
 
     else:
         purch_form = PurchOrderForm(instance=PurchOrder)
         purchline_formset = PurchLineFormset(
             instance=PurchOrder, prefix='plfs',)
-
-        if request.is_ajax():
-            action = request.GET.get('action', '')
-            if action == 'can_cancel':
-                html = render_to_string(
-                    'PurchOrder/CreatePurchOrder.html',)
-                return HttpResponse(html)
 
     return render_to_response('PurchOrder/UpdatePurchOrder.html',
                               {'purch_form': purch_form,

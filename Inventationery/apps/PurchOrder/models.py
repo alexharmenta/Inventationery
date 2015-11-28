@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-24 14:29:02
+# @Last Modified time: 2015-11-27 16:45:24
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 from Inventationery.apps.Vendor.models import VendorModel
@@ -97,6 +97,8 @@ class PurchOrderModel(TimeStampedModel):
         max_digits=20, decimal_places=2, blank=True, null=True)
     Balance = models.DecimalField(
         max_digits=20, decimal_places=2, blank=True, null=True)
+
+    Enabled = models.BooleanField(default=True)
 
     Vendor = models.ForeignKey(VendorModel, default=None)
 

@@ -23,9 +23,7 @@
 				            <th>Orden de compra</th>
 				            <th>Cuenta de proveedor</th>
 				            <th>Nombre</th>
-				            <th>Cuenta de facturación</th>
 				            <th>Tipo de compra</th>
-				            <th>Estado de aprobación</th>
 				            <th>Estado</th>
 				            <th>Acciones</th>
 				        </tr>
@@ -34,11 +32,9 @@
 				    	{% for order in orders %}
 				    		<tr>
 					            <td>{{ order.PurchId }}</td>
-					            <td>{{ order.OrderAccount }}</td>
+					            <td>{{ order.Vendor }}</td>
 					            <td>{{ order.PurchName }}</td>
-					            <td>{{ order.InvoiceAccount }}</td>
 					            <td>{{ order.PurchaseType }}</td>
-					            <td> DocumentStatus </td>
 					            <td>{{ order.PurchStatus }}</td>
 					            <td class="text-center">
 									<a class='btn btn-info btn-xs' href="{% url "purch:update" PurchId=order.PurchId %}">
