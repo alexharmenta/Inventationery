@@ -1,8 +1,8 @@
 /* 
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
-* @Last Modified by:   harmenta
-* @Last Modified time: 2015-11-27 17:54:45
+* @Last Modified by:   Alex
+* @Last Modified time: 2015-11-27 20:26:31
 */
 
 'use strict';
@@ -163,7 +163,7 @@ $( document ).ready(function() {
     // Global variables
     
     // Get purchase line info with AJAX
-    $('.purchline_formset').on('change', 'tr', function(){
+    $('.purchline_formset').on('change', 'tr td select,input', function(){
       var id = $(this).attr('id');
       var id_lower = id.toLowerCase()
       var rownum = id.replace(/\D/g,'');
@@ -241,7 +241,7 @@ $( document ).ready(function() {
     });
     
     // Check if PurchOrder is enabled
-    if (purch_enabled == 'False') {
+    /*if (purch_enabled == 'False') {
       $('#PurchOrderForm').find('input button select textarea').attr('disabled','diabled');
       purch_enabled = false;
     } else {
@@ -283,7 +283,7 @@ $( document ).ready(function() {
       });
       purch_enabled = !purch_enabled;
     });
-
+    */
     /* ----- Purchase Order ----- */
 
     /* ----- Inventory ----- */

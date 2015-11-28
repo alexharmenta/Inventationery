@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-26 17:29:18
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-11-27 20:19:41
 """
 Django settings for Inventationery project.
 
@@ -29,7 +29,6 @@ env = environ.Env()
 # ------------------------------------------------------------------------------
 DJANGO_APPS = (
     # Default Django apps:
-    'suit',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
