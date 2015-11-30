@@ -18,6 +18,8 @@
     <!-- Google Fonts -->
     <!-- Open sans -->
     <link href='https://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>
+    <!-- Source sans -->
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
     <!-- Animate CSS -->
     <link rel="stylesheet" href="{% static "third-party/animate.css/css/animate.min.css" %}">
     <!-- DataTables CSS -->
@@ -114,11 +116,6 @@
 
             </div>
             <!-- /top navigation -->
-            <ul>
-                {% for message in messages.errors %}
-                    {% if 'error' in message.tags %}<li>{{ message }}</li>{% endif %}
-                {% endfor %}
-            </ul>
             <!-- page content -->
             <div class="right_col" role="main">
 
@@ -134,7 +131,13 @@
                 </div>
 
                 <!-- footer content -->
-
+                {% if messages %}
+                <ul class="messages" style="visibility:hidden;">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
                 <footer>
                     <div class="">
                         <p class="pull-right">Inventationery by <a>Alex Armenta</a>.
@@ -161,8 +164,10 @@
     <!-- Boostrap datepicker -->
     <script type="text/javascript" charset="utf8" src="{% static "third-party/bootstrap-datepicker/js/bootstrap-datepicker.min.js" %}"></script>
     <script type="text/javascript" charset="utf8" src="{% static "third-party/bootstrap-datepicker/js/bootstrap-datepicker.es.min.js" %}"></script>
-    <!-- SweetAlert datepicker -->
+    <!-- SweetAlert -->
     <script type="text/javascript" charset="utf8" src="{% static "third-party/sweet-alert/js/sweetalert.min.js" %}"></script>
+    <!-- Notie JS -->
+    <script type="text/javascript" charset="utf8" src="{% static "third-party/notie/js/notie.js" %}"></script>
 
     <script type="text/javascript" charset="utf8" src="{% static "js/script.js" %}"></script>
     <script type="text/javascript" charset="utf8" src="{% static "js/project.js" %}"></script>

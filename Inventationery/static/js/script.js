@@ -2,13 +2,19 @@
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
 * @Last Modified by:   Alex
-* @Last Modified time: 2015-11-29 18:23:08
+* @Last Modified time: 2015-11-29 21:28:38
 */
 
 'use strict';
 // A $( document ).ready() block.
 $( document ).ready(function() {
     
+    $('.success').each(function(index) {
+      notie.alert(1, $(this).text(), 1.5);
+      $(this).fadeOut('fast');
+    });
+    
+
    	/* ----- Vendor ----- */
     // Fill NameAlias
    	$("#id_Name").focusout(function () {
@@ -290,17 +296,18 @@ $( document ).ready(function() {
 
         // handle a successful response
         success : function(json) {
-          console.log(json); // another sanity check
+          //console.log(json); // another sanity check
           //On success show the data posted to server as a message
           purch_enabled = !purch_enabled;
           $('#id_Enabled').prop('checked', purch_enabled);
           if(!purch_enabled){
             $('#PurchOrderForm *').not('purch_disabled').prop('disabled',true);
             $('#cancel_order_btn').text('Reabrir pedido');
-            swal("Pedido cancelado", "La información del pedido no se ha modificado", "success")
+            notie.alert(2, 'Pedido cerrado.', 1.5);
           } else {
             $('#PurchOrderForm *').not('purch_disabled').prop('disabled',false);
             $('#cancel_order_btn').text('Cancelar pedido');
+            notie.alert(4, 'Pedido abierto.', 1.5);
           }
         },
 

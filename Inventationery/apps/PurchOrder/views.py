@@ -3,8 +3,9 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-29 18:09:32
+# @Last Modified time: 2015-11-29 21:07:26
 # from django.shortcuts import render
+from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
@@ -199,6 +200,7 @@ def updatePurchOrderView(request, PurchId):
 
         if purchline_formset.is_valid():
             PurchLineModel.objects.exclude(pk__in=list(PL_list)).delete()
+        messages.success(request, "Orden de compra actualizada")
 
     else:
         purch_form = PurchOrderForm(instance=PurchOrder)

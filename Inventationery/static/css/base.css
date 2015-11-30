@@ -315,8 +315,7 @@ background-image: -moz-linear-gradient(bottom, #000000 0%, #290004 100%);
 background-image: -webkit-linear-gradient(bottom, #000000 0%, #290004 100%);
 background-image: -ms-linear-gradient(bottom, #000000 0%, #290004 100%);
 background-image: linear-gradient(to bottom, #000000 0%, #290004 100%);
-    /* font-family: 'Open Sans', sans-serif; */
-    font-family: 'PT Sans', sans-serif;
+    font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
     font-size: 13px;
 }
 .main_container .top_nav {
@@ -864,7 +863,7 @@ h2 {
     width: 100%;
     float: left;
     clear: both;
-    margin-top: 5px;
+    margin-top: 0px;
 }
 .x_content h4 {
     font-size: 16px;
@@ -1848,7 +1847,7 @@ a.star {
 }
 .buttons, button, .btn {
     margin-bottom: 5px;
-    margin-right: 5px;
+    margin-right: 0px;
 }
 .btn-group-vertical .btn, .btn-group .btn {
     margin-bottom: 0;
@@ -1969,16 +1968,26 @@ span.section {
     border-bottom: 1px solid #e5e5e5;
 }
 .form-control {
-    display: block;
-    width: 100%;
-    height: 34px;
-    padding: 6px 12px;
+    border: 1px solid #d6e1e5;
+    color: #364347;
     font-size: 13px;
-    color: #555;
-    background-color: #fff;
-    background-image: none;
-    border: 1px solid #ccc;
+    line-height: 1.467;
+    padding: 0px 12px;
+    height: 30px;
+    /*-webkit-appearance: none;*/
     border-radius: 2px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    -webkit-transition: border .25s linear, color .25s linear, background-color .25s linear;
+    transition: border .25s linear, color .25s linear, background-color .25s linear;
+}
+.form-control:hover {
+    border-color: #93a4aa;
+}
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+    background-color: #E6E9ED;
+    opacity: 1;
+    border: none;
 }
 .form-horizontal .control-label {
     padding-top: 8px
@@ -1986,8 +1995,6 @@ span.section {
 legend {
     font-size: 18px;
     color: inherit;
-}
-.checkbox {
 }
 .form-horizontal .form-group {
     margin-right: 0;
@@ -2015,7 +2022,7 @@ legend {
     padding-right: 45px;
 }
 .form-group {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 .validate {
     margin-top: 10px;
@@ -2487,8 +2494,14 @@ input.parsley-error, textarea.parsley-error, select.parsley-error {
     padding-right: 12px
 }
 .table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td {
-    padding: 4px;
+    padding: 2px;
     text-align: center;
+}
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    padding: 4px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border: none;
 }
 .daterangepicker table.table-condensed tbody tr:last-child td {
     padding-bottom: 10px;
@@ -3329,17 +3342,36 @@ html > body > .ui-pnotify {
     border-color: #f0ad4e;
 }
 .btn-danger {
-    background: #D64541;
-    border-color: #D64541;
+    background: #f84545;
+    border-color: #f84545;
+}
+.btn-danger:hover {
+    background-color: #cc0000;
+    border-color: #cc0000;
+}
+.btn-primary {
+    background-color: #009dcd;
+    border-color: #009dcd;
+}
+.btn-info {
+    background-color: #02baf2;
+    border-color: #02baf2;
+}
+.btn-info:hover {
+    background-color: #009dcd;
+    border-color: #009dcd;
+}
+.btn-success {
+    background-color: #3eb5ac;
+    border-color: #3eb5ac;
+}
+.btn-success:hover{
+    background-color: #28948c;
+    border-color: #28948c;
 }
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open .dropdown-toggle.btn-primary {
     background-color: #1A82C3;
     border-color: #1A82C3;
-    color: #FFFFFF;
-}
-.btn-success:hover, .btn-success:focus, .btn-success:active, .btn-success.active, .open .dropdown-toggle.btn-success {
-    background-color: #448AFF;
-    border-color: #448AFF;
     color: #FFFFFF;
 }
 .btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active, .open .dropdown-toggle.btn-info {
@@ -5348,7 +5380,7 @@ opacity: 1;
     color: #f64747;
 }
 input[type=checkbox], input[type=radio] {
-    margin: 4px 0 0;
+    margin: 0;
     margin-top: 1px\9;
     line-height: normal;
     width: 30px;
