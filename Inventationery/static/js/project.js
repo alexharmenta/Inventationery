@@ -1,8 +1,8 @@
 /* 
 * @Author: Alex
 * @Date:   2015-11-16 18:47:33
-* @Last Modified by:   Alex
-* @Last Modified time: 2015-11-16 18:47:50
+* @Last Modified by:   harmenta
+* @Last Modified time: 2015-11-30 17:00:00
 */
 
 'use strict';
@@ -107,7 +107,7 @@ $('.collapse-link').click(function () {
     content.slideToggle(200);
     (x_panel.hasClass('fixed_height_390') ? x_panel.toggleClass('').toggleClass('fixed_height_390') : '');
     (x_panel.hasClass('fixed_height_320') ? x_panel.toggleClass('').toggleClass('fixed_height_320') : '');
-    button.toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
+    button.toggleClass('lnr-chevron-up').toggleClass('lnr-chevron-down');
     setTimeout(function () {
         x_panel.resize();
     }, 50);
