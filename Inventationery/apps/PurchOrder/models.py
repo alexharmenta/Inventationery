@@ -2,12 +2,21 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-27 16:45:24
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-11-29 17:59:28
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 from Inventationery.apps.Vendor.models import VendorModel
 from Inventationery.apps.Inventory.models import InventModel
+from Inventationery.core.models import Countries
+
+
+# Function: Get currency codes from Countries model
+def Get_CurrencyCodes():
+    CurrencyCodes = Countries.objects.values('currency_code')
+    Codes_list = ()
+    for Currency in CurrencyCodes:
+        Codes_list.append()
 
 
 # Function: Get new sequence number for Purchase Order
@@ -82,7 +91,8 @@ class PurchOrderModel(TimeStampedModel):
     ConfirmedDlv = models.DateField(blank=True, null=True)
     DlvMode = models.CharField(max_length=20, default=HOME, choices=DLV_MODE)
     CurrencyCode = models.CharField(
-        default='MXN', max_length=3)  # VendModel-CurrencyCode
+        default='MXN',
+        max_length=3)  # VendModel-CurrencyCode
     # Catalogo de pagos a 30 dias
     Payment = models.CharField(max_length=30, blank=True, null=True)
     # Catalogo de tipo de pagos
@@ -129,15 +139,19 @@ class PurchLineModel(TimeStampedModel):
     ItemName = models.CharField(max_length=50, blank=True, null=True)
     PurchQty = models.PositiveIntegerField(blank=True, null=True)
     PurchUnit = models.CharField(max_length=10, blank=True, null=True)
-    PurchPrice = models.FloatField(blank=True, null=True)
+    PurchPrice = models.DecimalField(
+        blank=True, null=True, max_digits=10, decimal_places=2)
     LineDisc = models.DecimalField(
         max_digits=10, decimal_places=2, blank=True, null=True)
     LinePercent = models.DecimalField(
         max_digits=10, decimal_places=2, blank=True, null=True)
     LineAmount = models.DecimalField(
         max_digits=20, decimal_places=2, blank=True, null=True)
-    PurchLineStatus = models.CharField(
-        max_length=100, default=BACKORDER, choices=PURCH_STATUS, blank=True, null=True)
+    PurchLineStatus = models.CharField(max_length=100,
+                                       default=BACKORDER,
+                                       choices=PURCH_STATUS,
+                                       blank=True,
+                                       null=True)
     LineNum = models.PositiveSmallIntegerField(blank=True, null=True)
     PurchOrder = models.ForeignKey(
         PurchOrderModel, null=True, blank=True)

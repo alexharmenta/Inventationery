@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-27 20:19:41
+# @Last Modified time: 2015-11-28 15:04:58
 """
 Django settings for Inventationery project.
 
@@ -53,6 +53,7 @@ LOCAL_APPS = (
     'Inventationery.apps.LogisticsPostalAddress',
     'Inventationery.apps.PurchOrder',
     'Inventationery.apps.Vendor',
+    'Inventationery.core',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

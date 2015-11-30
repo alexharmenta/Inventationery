@@ -7,7 +7,6 @@
 
 {% block content %}
 	<form action="" method="POST" id="PurchOrderForm"> {% csrf_token %}
-		<script>var purch_enabled = '{{ PurchOrder.Enabled }}';</script>
 		{% if purch_form.errors %}
 		    {% for field in purch_form %}
 		        {% for error in field.errors %}
@@ -28,7 +27,6 @@
 
 		{% block page_title %}
 		{% endblock %}
-		
 		<div class="col-md-12 col-sm-12 col-xs-12"> <!-- General info -->
 	        <div class="x_panel tile">
 	            <div class="x_title">
@@ -169,7 +167,7 @@
 							<h4><strong>Contacto</strong></h4>
 							<div class="form-group">
 								<label for="">Contacto de entrega</label>
-								<input readonly type="text" class="form-control purch_disabled" value="{{ PurchOrder.Vendor.get_PrimaryElectronic }}">
+								<input readonly type="text" class="form-control purch_disabled" value="{{ PurchOrder.Vendor.get_PrimaryElectronic }}" id="id_DeliveryContact">
 							</div>
 						</div>
 						<div class="col-md-4 col-sm-4 col-xs-12">
@@ -285,11 +283,16 @@
 				    	{% if PurchOrder.pk %}
 				    		<div class="form-group pull-left">
 						    	<ul class="purch_options">
-						    		<li><div id="cancel-order" class="btn btn-block btn-warning">Cancelar pedido</div></li>
+						    		{% if PurchOrder.Enabled %}
+						    			<li><div id="cancel_order_btn" class="btn btn-block btn-warning">Cancelar pedido</div></li>
+					    			{% else %}
+					    				<li><div id="cancel_order_btn" class="btn btn-block btn-warning">Reabrir pedido</div></li>
+						    		{% endif %}
 						    		<li><div class="btn btn-block btn-info">Recibir y pagar</div></li>
 						    	</ul>				    			
 				    		</div>
 					    {% endif %}
+					    {% render_field purch_form.Enabled|append_attr:"style:visibility:hidden;"%}
 				    	<div class="col-md-4 col-sm-4 col-xs-12 pull-right">
 				    		<div class="form-group">
 				    			<div class="col-md-4 col-sm-4 col-xs 12">
@@ -310,24 +313,26 @@
 					    				{% render_field purch_form.Total|append_attr:'readonly' class+="form-control amount purch_disabled" %}
 					    			</div>
 					    		</div>
-					    		<div class="col-md-4 col-sm-4 col-xs 12">
-					    			<label for="{{ purch_form.Paid.id_for_label }}" class="pull-right"><strong>Pagado</strong></label>
-					    		</div>
-					    		<div class="col-md-8 col-sm-8 col-xs-12">
-					    			<div class="inner-addon left-addon">
-					    				<i class="lnr">$</i>
-					    				{% render_field purch_form.Paid class+="form-control amount" %}
-					    			</div>
-					    		</div>
-					    		<div class="col-md-4 col-sm-4 col-xs 12">
-					    			<label for="{{ purch_form.Balance.id_for_label }}" class="pull-right"><strong>Balance</strong></label>
-					    		</div>
-					    		<div class="col-md-8 col-sm-8 col-xs-12">
-					    			<div class="inner-addon left-addon">
-					    				<i class="lnr">$</i>
-					    				{% render_field purch_form.Balance|append_attr:'readonly' class+="form-control amount purch_disabled" %}
-					    			</div>
-					    		</div>
+					    		{% if PurchOrder.pk  %}
+						    		<div class="col-md-4 col-sm-4 col-xs 12">
+						    			<label for="{{ purch_form.Paid.id_for_label }}" class="pull-right"><strong>Pagado</strong></label>
+						    		</div>
+						    		<div class="col-md-8 col-sm-8 col-xs-12">
+						    			<div class="inner-addon left-addon">
+						    				<i class="lnr">$</i>
+						    				{% render_field purch_form.Paid class+="form-control amount" %}
+						    			</div>
+						    		</div>
+						    		<div class="col-md-4 col-sm-4 col-xs 12">
+						    			<label for="{{ purch_form.Balance.id_for_label }}" class="pull-right"><strong>Balance</strong></label>
+						    		</div>
+						    		<div class="col-md-8 col-sm-8 col-xs-12">
+						    			<div class="inner-addon left-addon">
+						    				<i class="lnr">$</i>
+						    				{% render_field purch_form.Balance|append_attr:'readonly' class+="form-control amount purch_disabled" %}
+						    			</div>
+						    		</div>
+					    		{% endif %}
 				    		</div>
 				    	</div>				    	
 				    </div>

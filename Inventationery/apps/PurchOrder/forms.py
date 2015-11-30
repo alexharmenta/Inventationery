@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:16:42
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-23 17:43:04
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-11-29 17:50:39
 from django import forms
 from .models import PurchOrderModel, PurchLineModel
 

@@ -24,18 +24,24 @@
 				            <th>Cuenta de proveedor</th>
 				            <th>Nombre</th>
 				            <th>Tipo de compra</th>
-				            <th>Estado</th>
+				            <th>Estado de la orden</th>
+				            <th>Pedido</th>
 				            <th>Acciones</th>
 				        </tr>
 				    </thead>
 				    <tbody>
 				    	{% for order in orders %}
 				    		<tr>
-					            <td>{{ order.PurchId }}</td>
-					            <td>{{ order.Vendor }}</td>
+					            <td><a href="{% url "purch:update" PurchId=order.PurchId %}">{{ order.PurchId }}</a></td>
+					            <td><a href="{% url "vendor:update" AccountNum=order.Vendor %}">{{ order.Vendor }}</a></td>
 					            <td>{{ order.PurchName }}</td>
 					            <td>{{ order.PurchaseType }}</td>
 					            <td>{{ order.PurchStatus }}</td>
+					            {% if order.Enabled %}
+					            	<td>Abierto</td>
+				            	{% else %}
+				            		<td>Cerrado</td>
+					            {% endif %}
 					            <td class="text-center">
 									<a class='btn btn-info btn-xs' href="{% url "purch:update" PurchId=order.PurchId %}">
 										<span class="lnr lnr-pencil"></span> Editar

@@ -2,13 +2,12 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-27 13:37:13
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-11-29 18:09:32
 # from django.shortcuts import render
 from django.shortcuts import render_to_response, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.template import RequestContext
-from django.template.loader import render_to_string
 from django.views.generic import ListView, DeleteView
 from django.forms import inlineformset_factory
 from django.http import JsonResponse
@@ -35,7 +34,6 @@ class PurchOrderListView(ListView):
 
 # FBV: View for create new Purchase Orders
 def createPurchOrderView(request):
-
     PurchLineFormset = inlineformset_factory(
         PurchOrderModel,
         PurchLineModel,
@@ -63,6 +61,7 @@ def createPurchOrderView(request):
                         'LanguageCode': Vendor.Party.LanguageCode,
                         'OneTimeVendor': Vendor.OneTimeVendor,
                         'DeliveryName': Vendor.get_PrimaryAddress(),
+                        'DeliveryContact': Vendor.get_PrimaryElectronic(),
                     }
                 except:
                     response_dict = {
@@ -107,7 +106,7 @@ def createPurchOrderView(request):
             return HttpResponseRedirect(redirect_url)
 
     else:
-        purch_form = PurchOrderForm()
+        purch_form = PurchOrderForm(initial={'Enabled': True})
         purchline_formset = PurchLineFormset(prefix='plfs')
     return render_to_response('PurchOrder/CreatePurchOrder.html',
                               {'purch_form': purch_form,
@@ -148,6 +147,7 @@ def updatePurchOrderView(request, PurchId):
                         'LanguageCode': Vendor.Party.LanguageCode,
                         'OneTimeVendor': Vendor.OneTimeVendor,
                         'DeliveryName': Vendor.get_PrimaryAddress(),
+                        'DeliveryContact': Vendor.get_PrimaryElectronic(),
                     }
                 except:
                     response_dict = {
@@ -174,10 +174,16 @@ def updatePurchOrderView(request, PurchId):
                         'VendorPrice': '',
                     }
 
-            elif action == 'can_cancel':
-                redirect_url = "/purch_orders/update/" + \
-                    str(PurchOrder.PurchId)
-                return HttpResponseRedirect(redirect_url)
+            elif action == 'update_enabled':
+                enable = request.POST.get('purch_enabled', '')
+                if enable == 'true':
+                    enable = True
+                else:
+                    enable = False
+                PurchOrderModel.objects.filter(pk=PurchOrder.pk).update(
+                    Enabled=enable)
+                response_dict = {'PurchOrder': PurchOrder.PurchId, }
+                return JsonResponse(response_dict)
 
             return JsonResponse(response_dict)
 

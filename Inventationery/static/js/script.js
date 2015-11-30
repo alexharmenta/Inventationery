@@ -2,7 +2,7 @@
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
 * @Last Modified by:   Alex
-* @Last Modified time: 2015-11-27 20:26:31
+* @Last Modified time: 2015-11-29 18:23:08
 */
 
 'use strict';
@@ -147,6 +147,7 @@ $( document ).ready(function() {
           $("#id_CurrencyCode").val(data.CurrencyCode);
           $("#id_LanguageCode").val(data.LanguageCode);
           $("#id_DeliveryName").val(data.DeliveryName);
+          $("#id_DeliveryContact").val(data.DeliveryContact);
         }
 
       });
@@ -157,11 +158,19 @@ $( document ).ready(function() {
     var price;
     var disc;
     var percent;
-    var total;
+    var total = 0;
     var Purch_SubTotal = 0;
     var LineAmount = 0.0;
     // Global variables
-    
+    $('.total_amount').each(function(index){
+      if($(this).val()) {
+        total += parseFloat($(this).val());
+        total = Math.round(total * 100) / 100;
+        $('#id_SubTotal').val(total);
+        $('#id_Total').val(total);
+        $('#id_Paid').val(0);
+      }
+    });
     // Get purchase line info with AJAX
     $('.purchline_formset').on('change', 'tr td select,input', function(){
       var id = $(this).attr('id');
@@ -235,55 +244,76 @@ $( document ).ready(function() {
           total = qty * price;
         }
       }
-      total = parseFloat(total);
+      total = Math.round(parseFloat(total) * 100) / 100
       $(Total_id).val(total);
 
+      if(total){
+        total = 0;
+        $('.total_amount').each(function(index){
+          total += parseFloat($(this).val());
+          total = Math.round(total * 100) / 100;
+          $('#id_SubTotal').val(total);
+          $('#id_Total').val(total);
+          $('#id_Balance').val($('#id_Total').val() - $('#id_Paid').val());
+        });
+      }
     });
     
-    // Check if PurchOrder is enabled
-    /*if (purch_enabled == 'False') {
-      $('#PurchOrderForm').find('input button select textarea').attr('disabled','diabled');
-      purch_enabled = false;
-    } else {
+    $('#id_Balance').val($('#id_Total').val() - $('#id_Paid').val());
+    $('#id_Paid').on('change', function(){
+      $('#id_Balance').val($('#id_Total').val() - $(this).val());
+    });
+    
+    // Enable/Disable purch order on load
+    var purch_enabled;
+    if ($('#id_Enabled').is(':checked')) {
       purch_enabled = true;
+    } else {
+      purch_enabled = false;
     }
-
-
-    // Cancel button function
-    $('ul.purch_options li').on('click', '#cancel-order', function(){
-      if(purch_enabled) {
-        $('#PurchOrderForm').find('input, textarea, button, select').attr('disabled','disabled');
-        purch_enabled = !purch_enabled;
-      } else {
-        l
-      }
-      
-      // AJAX Code for retrieving data from vendor
+    if(!purch_enabled){
+      $('#PurchOrderForm *').not('purch_disabled').prop('disabled',true);
+    }
+    // Enable/Disable purch order on click
+    $('#cancel_order_btn').on('click', function(){
       var csrftoken = getCookie('csrftoken');
 
       $.ajax({
         url : window.location.href, // the endpoint,commonly same url
         type: "POST",
-        //This is the dictionary you are SENDING to your Django code. We are sending the 'action':get_data and the 'id: $AccountNum  
-        //which is a variable that contains what car the user selected
+
         data: { 
-                action: 'purch_enabled',
-                purch_enabled: purch_enabled,
-                csrfmiddlewaretoken : csrftoken, 
-              },// data sent with the post request
+          action: 'update_enabled',
+          purch_enabled: !purch_enabled,
+          csrfmiddlewaretoken : csrftoken,
+        },// data sent with the post request
 
         // handle a successful response
-        success: function(data) {
-          var content = $("#content", data);
-          $('#content').html(content);
+        success : function(json) {
+          console.log(json); // another sanity check
+          //On success show the data posted to server as a message
+          purch_enabled = !purch_enabled;
+          $('#id_Enabled').prop('checked', purch_enabled);
+          if(!purch_enabled){
+            $('#PurchOrderForm *').not('purch_disabled').prop('disabled',true);
+            $('#cancel_order_btn').text('Reabrir pedido');
+            swal("Pedido cancelado", "La información del pedido no se ha modificado", "success")
+          } else {
+            $('#PurchOrderForm *').not('purch_disabled').prop('disabled',false);
+            $('#cancel_order_btn').text('Cancelar pedido');
+          }
         },
-        error: function(xhr, textStatus, errorThrown) {
-          alert("Please report this error: "+errorThrown+xhr.status+xhr.responseText);
+
+        // handle a non-successful response
+        error : function(xhr,errmsg,err) {
+          console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+          swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
         }
+
       });
-      purch_enabled = !purch_enabled;
+
     });
-    */
+
     /* ----- Purchase Order ----- */
 
     /* ----- Inventory ----- */
@@ -324,11 +354,11 @@ $( document ).ready(function() {
 
 
     $('.datepicker').datepicker({
-        todayBtn: "",
+        //todayBtn: "",
         clearBtn: true,
         language: "es",
-        daysOfWeekHighlighted: "1,2,3,4,5",
+        //daysOfWeekHighlighted: "1,2,3,4,5",
         autoclose: true,
-        todayHighlight: true
+        todayHighlight: true,
     });
 });/* Document Ending */
