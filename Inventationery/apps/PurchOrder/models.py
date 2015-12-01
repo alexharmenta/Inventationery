@@ -3,11 +3,11 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-29 17:59:28
+# @Last Modified time: 2015-11-30 19:38:21
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 from Inventationery.apps.Vendor.models import VendorModel
-from Inventationery.apps.Inventory.models import InventModel
+from Inventationery.apps.Inventory.models import ItemModel
 from Inventationery.core.models import Countries
 
 
@@ -135,7 +135,7 @@ class PurchLineModel(TimeStampedModel):
         (CANCELED, 'Cancelado'),
     )
 
-    ItemId = models.ForeignKey(InventModel, blank=True, null=True)
+    ItemId = models.ForeignKey(ItemModel, blank=True, null=True)
     ItemName = models.CharField(max_length=50, blank=True, null=True)
     PurchQty = models.PositiveIntegerField(blank=True, null=True)
     PurchUnit = models.CharField(max_length=10, blank=True, null=True)

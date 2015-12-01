@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('CurrencyCode', models.CharField(default=b'MXN', max_length=3)),
                 ('VATNum', models.CharField(max_length=13, blank=True)),
                 ('Notes', models.TextField(max_length=200, blank=True)),
-                ('Party', models.OneToOneField(related_name='VendorParty', default=None, to='DirParty.DirPartyModel')),
+                ('Party', models.OneToOneField(related_name='VendorParty', null=True, default=None, blank=True, to='DirParty.DirPartyModel')),
             ],
             options={
                 'abstract': False,

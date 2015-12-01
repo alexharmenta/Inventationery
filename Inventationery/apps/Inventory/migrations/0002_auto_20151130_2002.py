@@ -7,13 +7,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('PurchOrder', '0005_auto_20151128_0950'),
+        ('Inventory', '0001_initial'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='purchordermodel',
-            name='Enabled',
-            field=models.NullBooleanField(default=True),
+            model_name='itemmodel',
+            name='Description',
+            field=models.TextField(max_length=100, null=True, blank=True),
         ),
     ]

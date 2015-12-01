@@ -2,7 +2,7 @@
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
 * @Last Modified by:   Alex
-* @Last Modified time: 2015-11-29 21:28:38
+* @Last Modified time: 2015-11-30 21:52:42
 */
 
 'use strict';
@@ -13,7 +13,10 @@ $( document ).ready(function() {
       notie.alert(1, $(this).text(), 1.5);
       $(this).fadeOut('fast');
     });
-    
+    $('.error').each(function(index) {
+      notie.alert(3, $(this).text(), 1.5);
+      $(this).fadeOut('fast');
+    });
 
    	/* ----- Vendor ----- */
     // Fill NameAlias
@@ -330,6 +333,19 @@ $( document ).ready(function() {
       
       }
     );
+    // Upload image preview
+    $('#id_ItemImage').on('change', function(){
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+          // get loaded data and render thumbnail.
+          document.getElementById("item_image").src = e.target.result;
+      };
+
+      // read the image file as a data URL.
+      reader.readAsDataURL(this.files[0]);
+    });
+
     /* ----- Inventory ----- */
 
     /* ----- EXTRA FUNCTIONS ----- */

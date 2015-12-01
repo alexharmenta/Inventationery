@@ -3,8 +3,9 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:22:12
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-26 20:16:40
+# @Last Modified time: 2015-11-30 21:47:20
 # views.py
+from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
 from django.forms import inlineformset_factory
 from django.http import HttpResponseRedirect
@@ -94,8 +95,12 @@ def createVendorView(request):
                     party.delete()
                     vendor.delete()
 
+                messages.success(request, "Proveedor creado correctamente")
                 redirect_url = "/vendor/update/" + str(vendor.AccountNum)
                 return HttpResponseRedirect(redirect_url)
+        else:
+            messages.error(
+                request, "Ocurrió un error al crear la orden de compra")
 
     else:
         # formulario inicial
@@ -168,6 +173,12 @@ def updateVendorView(request, AccountNum):
                 LogisticsPostalAddressModel.objects.exclude(
                     pk__in=list(PA_list)).delete()
 
+            messages.success(
+                request, "Proveedor actualizado correctamente")
+        else:
+            messages.error(
+                request, "Ocurrió un error al actualizar el proveedor")
+
     else:
         # formulario inicial
         vendor_form = VendorForm(instance=Vendor)
@@ -193,3 +204,16 @@ class DeleteVendorView(DeleteView):
     template_name = 'Vendor/DeleteVendor.html'
     success_url = '/vendor'
     success_message = 'Proveedor eliminado correctamente'
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Calls the delete() method on the fetched object and then
+        redirects to the success URL.
+        """
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.delete()
+        messages.success(self.request,
+                         "Proveedor eliminado correctamente",
+                         extra_tags='msg')
+        return HttpResponseRedirect(success_url)

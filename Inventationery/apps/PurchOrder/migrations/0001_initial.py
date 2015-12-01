@@ -8,8 +8,8 @@ import Inventationery.apps.PurchOrder.models
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('Vendor', '0001_initial'),
         ('Inventory', '0001_initial'),
-        ('Vendor', '0002_auto_20151123_1424'),
     ]
 
     operations = [
@@ -19,16 +19,16 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('modified', models.DateTimeField(auto_now=True)),
-                ('ItemName', models.CharField(max_length=50)),
-                ('PurchQty', models.PositiveIntegerField()),
-                ('PurchUnit', models.CharField(max_length=10)),
-                ('PurchPrice', models.FloatField()),
+                ('ItemName', models.CharField(max_length=50, null=True, blank=True)),
+                ('PurchQty', models.PositiveIntegerField(null=True, blank=True)),
+                ('PurchUnit', models.CharField(max_length=10, null=True, blank=True)),
+                ('PurchPrice', models.DecimalField(null=True, max_digits=10, decimal_places=2, blank=True)),
                 ('LineDisc', models.DecimalField(null=True, max_digits=10, decimal_places=2, blank=True)),
                 ('LinePercent', models.DecimalField(null=True, max_digits=10, decimal_places=2, blank=True)),
-                ('LineAmount', models.DecimalField(max_digits=20, decimal_places=2)),
-                ('PurchLineStatus', models.CharField(default=b'BAC', max_length=100, choices=[(b'BAC', b'Back order'), (b'REC', b'Recibido'), (b'INV', b'Facturado'), (b'PAI', b'Pagado'), (b'CAN', b'Cancelado')])),
+                ('LineAmount', models.DecimalField(null=True, max_digits=20, decimal_places=2, blank=True)),
+                ('PurchLineStatus', models.CharField(default=b'BAC', max_length=100, null=True, blank=True, choices=[(b'BAC', b'Back order'), (b'REC', b'Recibido'), (b'INV', b'Facturado'), (b'PAI', b'Pagado'), (b'CAN', b'Cancelado')])),
                 ('LineNum', models.PositiveSmallIntegerField(null=True, blank=True)),
-                ('ItemId', models.ForeignKey(to='Inventory.InventModel')),
+                ('ItemId', models.ForeignKey(blank=True, to='Inventory.ItemModel', null=True)),
             ],
             options={
                 'abstract': False,
@@ -58,6 +58,7 @@ class Migration(migrations.Migration):
                 ('Total', models.DecimalField(null=True, max_digits=20, decimal_places=2, blank=True)),
                 ('Paid', models.DecimalField(null=True, max_digits=20, decimal_places=2, blank=True)),
                 ('Balance', models.DecimalField(null=True, max_digits=20, decimal_places=2, blank=True)),
+                ('Enabled', models.BooleanField(default=True)),
                 ('Vendor', models.ForeignKey(default=None, to='Vendor.VendorModel')),
             ],
             options={

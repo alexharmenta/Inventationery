@@ -1,10 +1,6 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
 
-{% block panel_title%}
-	<h2><strong>Nuevo proveedor</strong></h2>
-{% endblock %}
-
 {% block content %}
 	<form action="" method="POST" id="PurchOrderForm"> {% csrf_token %}
 		{% if purch_form.errors %}

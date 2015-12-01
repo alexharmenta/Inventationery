@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:12:26
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-18 21:15:27
+# @Last Modified time: 2015-11-30 21:01:43
 from django.conf.urls import url
 from .views import (CreateInventView, InventListView,
                     DeleteInventView, UpdateInventView)

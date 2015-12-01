@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-29 21:07:26
+# @Last Modified time: 2015-11-30 21:40:07
 # from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
@@ -16,7 +16,7 @@ from datetime import date
 from .models import PurchOrderModel, PurchLineModel
 from .forms import PurchOrderForm, PurchOrderLinesForm
 from Inventationery.apps.Vendor.models import VendorModel
-from Inventationery.apps.Inventory.models import InventModel
+from Inventationery.apps.Inventory.models import ItemModel
 # Create your views here.
 
 
@@ -76,7 +76,7 @@ def createPurchOrderView(request):
             elif action == 'get_purchline_data':
                 Item_pk = request.POST.get('Item_pk', '')
                 try:
-                    Invent = InventModel.objects.get(pk=Item_pk)
+                    Invent = ItemModel.objects.get(pk=Item_pk)
                     response_dict = {
                         'ItemName': Invent.ItemName,
                         'UnitId': Invent.UnitId,
@@ -103,8 +103,12 @@ def createPurchOrderView(request):
                     if itemid:
                         purchline_form.save()
 
+            messages.success(request, "Orden de compra creada correctamente")
             redirect_url = "/purch_orders/update/" + str(PurchOrder.PurchId)
             return HttpResponseRedirect(redirect_url)
+        else:
+            messages.error(
+                request, "Ocurrió un error al crear la orden de compra")
 
     else:
         purch_form = PurchOrderForm(initial={'Enabled': True})
@@ -162,7 +166,7 @@ def updatePurchOrderView(request, PurchId):
             elif action == 'get_purchline_data':
                 Item_pk = request.POST.get('Item_pk', '')
                 try:
-                    Invent = InventModel.objects.get(pk=Item_pk)
+                    Invent = ItemModel.objects.get(pk=Item_pk)
                     response_dict = {
                         'ItemName': Invent.ItemName,
                         'UnitId': Invent.UnitId,
@@ -221,3 +225,16 @@ class DeletePurchOrderView(DeleteView):
     template_name = 'PurchOrder/DeletePurchOrder.html'
     success_url = '/purch_orders'
     success_message = 'Orden de compra eliminada correctamente'
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Calls the delete() method on the fetched object and then
+        redirects to the success URL.
+        """
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.delete()
+        messages.success(self.request,
+                         "Orden de compra eliminada correctamente",
+                         extra_tags='msg')
+        return HttpResponseRedirect(success_url)
