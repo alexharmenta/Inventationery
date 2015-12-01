@@ -1,8 +1,8 @@
 /* 
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
-* @Last Modified by:   Alex
-* @Last Modified time: 2015-11-30 21:52:42
+* @Last Modified by:   harmenta
+* @Last Modified time: 2015-12-01 12:29:50
 */
 
 'use strict';
@@ -67,7 +67,9 @@ $( document ).ready(function() {
    	// Vendor table list initialize plugin
     $('#VendorsListTableId').DataTable(
       {
-      
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+        }
       }
     );
 
@@ -116,7 +118,9 @@ $( document ).ready(function() {
     // PurchOrder table list initialize plugin
     $('#PurchOrderListTableId').DataTable(
       {
-      
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+        }
       }
     );
     // Purchline formset
@@ -306,7 +310,7 @@ $( document ).ready(function() {
           if(!purch_enabled){
             $('#PurchOrderForm *').not('purch_disabled').prop('disabled',true);
             $('#cancel_order_btn').text('Reabrir pedido');
-            notie.alert(2, 'Pedido cerrado.', 1.5);
+            notie.alert(2, 'Pedido cancelado.', 1.5);
           } else {
             $('#PurchOrderForm *').not('purch_disabled').prop('disabled',false);
             $('#cancel_order_btn').text('Cancelar pedido');
@@ -330,7 +334,9 @@ $( document ).ready(function() {
     // Inventory table list initialize plugin
     $('#InventoryListTableId').DataTable(
       {
-      
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+        }
       }
     );
     // Upload image preview
