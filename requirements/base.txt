@@ -1,9 +1,19 @@
-Django==1.8.6
+# Bleeding edge Django
+django==1.8.6
+
+# Configuration
 django-environ==0.4.0
 django-secure==1.0.1
+
+#Tweaks
 django-widget-tweaks==1.4.1
-MySQL-python==1.2.5
+
+#DataBase
+#MySQL-python==1.2.5
+
+# Images
 Pillow==3.0.0
+
 six==1.10.0
 sqlparse==0.1.18
 wheel==0.24.0
