@@ -3,9 +3,10 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:10:36
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-30 19:39:17
+# @Last Modified time: 2015-12-06 14:15:30
 from django.contrib import admin
-from .models import ItemModel, InventoryModel
+from .models import ItemModel, InventoryModel, LocationModel
 # Register your models here.
 admin.site.register(ItemModel)
 admin.site.register(InventoryModel)
+admin.site.register(LocationModel)

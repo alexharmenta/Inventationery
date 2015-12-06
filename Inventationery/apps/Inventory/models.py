@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:10:36
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-30 20:02:02
+# @Last Modified time: 2015-12-06 17:19:25
 from django.db import models
 from Inventationery.apps.Vendor.models import VendorModel
 from Inventationery.core.models import TimeStampedModel
@@ -40,12 +40,20 @@ class ItemModel(TimeStampedModel):
         return "{0}".format(self.ItemId)
 
 
+class LocationModel(TimeStampedModel):
+    LocationName = models.CharField(max_length=50, default='Default')
+
+    def __unicode__(self):
+        return "{0}".format(self.LocationName)
+
+
 class InventoryModel(TimeStampedModel):
 
-    Item = models.OneToOneField(ItemModel,
-                                default=None,
-                                related_name='Item',
-                                null=True,
-                                blank=True)
-    Qty = models.IntegerField()
-    # Pendiente catálogo de ubicaciones - LocationModel
+    Item = models.ForeignKey(ItemModel,
+                             default=None,
+                             related_name='Item',
+                             null=True,
+                             blank=True)
+    Location = models.ForeignKey(
+        LocationModel, null=True, blank=True, related_name='Location')
+    Qty = models.IntegerField(default=0, null=True)

@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-30 21:40:07
+# @Last Modified time: 2015-12-06 13:39:36
 # from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
@@ -91,8 +91,8 @@ def createPurchOrderView(request):
             return JsonResponse(response_dict)
 
         if purch_form.is_valid():
-            PurchOrder = purch_form.save(commit=False)
-            PurchOrder.save()
+            PurchOrder = purch_form.save()
+            messages.success(request, "Orden de compra creada correctamente")
 
             purchline_formset = PurchLineFormset(
                 request.POST, instance=PurchOrder, prefix='plfs')
@@ -102,11 +102,15 @@ def createPurchOrderView(request):
                     itemid = purchline_form.cleaned_data.get('ItemId')
                     if itemid:
                         purchline_form.save()
+                else:
+                    messages.warning(
+                        request,
+                        'Revise la información de las lineas de la OC')
 
-            messages.success(request, "Orden de compra creada correctamente")
             redirect_url = "/purch_orders/update/" + str(PurchOrder.PurchId)
             return HttpResponseRedirect(redirect_url)
         else:
+            purchline_formset = PurchLineFormset(request.POST, prefix='plfs')
             messages.error(
                 request, "Ocurrió un error al crear la orden de compra")
 
@@ -194,6 +198,7 @@ def updatePurchOrderView(request, PurchId):
 
         if purch_form.is_valid():
             purch_form.save()
+            messages.success(request, "Orden de compra actualizada")
 
             for purchline_form in purchline_formset:
                 if purchline_form.is_valid():
@@ -201,10 +206,17 @@ def updatePurchOrderView(request, PurchId):
                     if itemid:
                         PL = purchline_form.save()
                         PL_list.append(PL.pk)
+                else:
+                    messages.warning(
+                        request,
+                        'Revise la información de las lineas de la OC')
+        else:
+            purchline_formset = PurchLineFormset(request.POST, prefix='plfs')
+            messages.error(
+                request, "Ocurrió un error al crear la orden de compra")
 
         if purchline_formset.is_valid():
             PurchLineModel.objects.exclude(pk__in=list(PL_list)).delete()
-        messages.success(request, "Orden de compra actualizada")
 
     else:
         purch_form = PurchOrderForm(instance=PurchOrder)
@@ -224,7 +236,7 @@ class DeletePurchOrderView(DeleteView):
     model = PurchOrderModel
     template_name = 'PurchOrder/DeletePurchOrder.html'
     success_url = '/purch_orders'
-    success_message = 'Orden de compra eliminada correctamente'
+    success_message = 'Se ha eliminado la orden de compra'
 
     def delete(self, request, *args, **kwargs):
         """
@@ -235,6 +247,6 @@ class DeletePurchOrderView(DeleteView):
         success_url = self.get_success_url()
         self.object.delete()
         messages.success(self.request,
-                         "Orden de compra eliminada correctamente",
+                         "Se ha eliminado la orden de compra",
                          extra_tags='msg')
         return HttpResponseRedirect(success_url)

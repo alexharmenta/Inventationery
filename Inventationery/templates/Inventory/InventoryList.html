@@ -37,10 +37,10 @@
 					            <td>{{ item.Price }}</td>
 					            <td>{{ item.VendorPrice }}</td>
 					            <td class="text-center">
-									<a class='btn btn-info btn-xs' href="{% url "inventory:update" pk=item.pk %}">
+									<a class='btn btn-info btn-xs' href="{% url "inventory:update" ItemId=item.ItemId %}">
 										<span class="lnr lnr-pencil"></span> Editar
 									</a> 
-									<a href="{% url "inventory:delete" pk=item.pk %}" class="btn btn-danger btn-xs">
+									<a href="{% url "inventory:delete" ItemId=item.ItemId %}" class="btn btn-danger btn-xs">
 										<span class="lnr lnr-cross"></span> Eliminar
 									</a>
 								</td>

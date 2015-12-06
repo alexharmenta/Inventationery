@@ -1,8 +1,8 @@
 /* 
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
-* @Last Modified by:   harmenta
-* @Last Modified time: 2015-12-01 12:29:50
+* @Last Modified by:   Alex
+* @Last Modified time: 2015-12-06 15:55:30
 */
 
 'use strict';
@@ -351,7 +351,15 @@ $( document ).ready(function() {
       // read the image file as a data URL.
       reader.readAsDataURL(this.files[0]);
     });
-
+    // Inventory formset
+    $('#InventoryForm tbody tr').formset({ // Initialize django-formset plugin
+        prefix: 'infs',
+        formCssClass: 'inventory-formset',
+        addText: ' + ',
+        deleteText: ' X ',
+        addCssClass: 'btn btn-success btn-xs',
+        deleteCssClass: 'btn btn-danger btn-xs',
+    });
     /* ----- Inventory ----- */
 
     /* ----- EXTRA FUNCTIONS ----- */

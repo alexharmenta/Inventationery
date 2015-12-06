@@ -2,19 +2,19 @@
 {% load widget_tweaks %}
 
 {% block content %}
-	<form action="" method="POST"> {% csrf_token %}
-		{% if form.errors %}
-		    {% for field in form %}
+	<form action="" method="POST" id="InventoryForm"> {% csrf_token %}
+		{% if item_form.errors %}
+		    {% for field in item_form %}
 		        {% for error in field.errors %}
 		        	<style>
 						#{{ field.id_for_label }} {
 							border: 1px solid #f64747;
-							border-radius: 3px;
+							border-radius: 2px;
 						}
-		        	</style>				            
+		        	</style>		            
 		        {% endfor %}
 		    {% endfor %}
-		    {% for error in form.non_field_errors %}
+		    {% for error in item_form.non_field_errors %}
 		        <div class="alert alert-error">
 		            <strong> {{ error|escape }}</strong>
 		        </div>
@@ -36,57 +36,102 @@
             	</div>
 	            <div class="x_content">
 	                <div class="col-md-6 col-sm-6 col-xs-12">
+	                	<h2>General</h2>
 	                	<div class="col-md-6 col-sm-6 col-xs-12">
 	                		<div class="form-group">
-								{{ form.ItemId.errors }}
-								<label for="{{ form.ItemId.id_for_label }}">Código de artículo</label>
-								{% render_field form.ItemId class+="form-control" %}
+								{{ item_form.ItemId.errors }}
+								<label for="{{ item_form.ItemId.id_for_label }}">Código de artículo</label>
+								{% render_field item_form.ItemId class+="form-control" %}
 							</div>
 							<div class="form-group">
-								{{ form.ItemName.errors }}
-								<label for="{{ form.ItemName.id_for_label }}">Nombre de artículo</label>
-								{% render_field form.ItemName class+="form-control" %}
+								{{ item_form.ItemName.errors }}
+								<label for="{{ item_form.ItemName.id_for_label }}">Nombre de artículo</label>
+								{% render_field item_form.ItemName class+="form-control" %}
 							</div>
 							<div class="form-group">
-								{{ form.Description.errors }}
-								<label for="{{ form.Description.id_for_label }}">Descripción</label>
-								{% render_field form.Description|attr:"rows:4" class+="form-control" %}
+								{{ item_form.Description.errors }}
+								<label for="{{ item_form.Description.id_for_label }}">Descripción</label>
+								{% render_field item_form.Description|attr:"rows:4" class+="form-control" %}
 							</div>
 	                	</div>
 	                	<div class="col-md-6 col-sm-6 col-xs-12">
 							<div class="form-group">
-								{{ form.UnitId.errors }}
-								<label for="{{ form.UnitId.id_for_label }}">Unidad</label>
-								{% render_field form.UnitId class+="form-control" %}
+								{{ item_form.UnitId.errors }}
+								<label for="{{ item_form.UnitId.id_for_label }}">Unidad</label>
+								{% render_field item_form.UnitId class+="form-control" %}
 							</div>
 							<div class="form-group">
-								{{ form.Price.errors }}
-								<label for="{{ form.Price.id_for_label }}">Precio de venta</label>
-								{% render_field form.Price class+="form-control" %}
+								{{ item_form.Price.errors }}
+								<label for="{{ item_form.Price.id_for_label }}">Precio de venta</label>
+								{% render_field item_form.Price class+="form-control" %}
 							</div>
 							<div class="form-group">
-								{{ form.PrimaryVendor.errors }}
-								<label for="{{ form.PrimaryVendor.id_for_label }}">Proveedor principal</label>
-								{% render_field form.PrimaryVendor class+="form-control" %}
+								{{ item_form.PrimaryVendor.errors }}
+								<label for="{{ item_form.PrimaryVendor.id_for_label }}">Proveedor principal</label>
+								{% render_field item_form.PrimaryVendor class+="form-control" %}
 							</div>
 							<div class="form-group">
-								{{ form.VendorPrice.errors }}
-								<label for="{{ form.VendorPrice.id_for_label }}">Precio de compra</label>
-								{% render_field form.VendorPrice class+="form-control" %}
+								{{ item_form.VendorPrice.errors }}
+								<label for="{{ item_form.VendorPrice.id_for_label }}">Precio de compra</label>
+								{% render_field item_form.VendorPrice class+="form-control" %}
 							</div>
-	                	</div>						
+	                	</div>
+
+	                	<h2>Inventario</h2>
+	                	<div style="width: 400px; height: 150px; overflow-y: scroll;" class="table-responsive">
+	                		<table border="0" cellpadding="0" cellspacing="0" class="table table-condensed table-hover table-striped">
+							    <thead>
+							        <tr>
+							            <th style="width: 200px;">Ubicación</th>
+							            <th>Cantidad</th>
+							            <th>Accion</th>
+							        </tr>
+							    </thead>
+							    <tbody class="inventory_formset">
+						            {% for invent_form in inventory_formset.forms %}
+						            	{% if invent_form.errors %}
+										    {% for field in invent_form %}
+										        {% for error in field.errors %}
+										        	<style>
+														#{{ field.id_for_label }} {
+															border: 1px solid #f64747;
+															border-radius: 2px;
+														}
+										        	</style>
+										        	{{ error }}				            
+										        {% endfor %}
+										    {% endfor %}
+										    {% for error in invent_form.non_field_errors %}
+										        <div class="alert alert-error">
+										            <strong> {{ error }}</strong>
+										        </div>
+										    {% endfor %}
+										    {{ invent_form.non_field_errors }}
+										{% endif %}
+							            <tr>
+											<td>{% render_field invent_form.Location class+="form-control" %}</td>
+											<td>{% render_field invent_form.Qty class+="form-control" %}</td>
+											<td></td>
+							            </tr>
+							            {% for hidden in invent_form.hidden_fields %}
+									        {{ hidden }}
+									    {% endfor %}
+						            {% endfor %}
+						            {{ inventory_formset.management_form }}
+							    </tbody>
+							</table>
+					    </div>						
 	                </div>
 	                <div class="col-md-6 col-sm-6 col-xs-12">
+	                	<h2>Imagen</h2>
 	                	<div class="form-group file_upload">
-							{{ form.ItemImage.errors }}
-							<label for="{{ form.ItemImage.id_for_label }}">Imagen de artículo</label>
-							{% render_field form.ItemImage class+="" %}
+							{{ item_form.ItemImage.errors }}
+							{% render_field item_form.ItemImage class+="" %}
 							<div class="img_container">
 								<img id="item_image"/>
 							</div>
 						</div>
 	                </div>
-					
 	            </div>
 	        </div>
 	    </div>

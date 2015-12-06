@@ -3,22 +3,24 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:12:08
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-30 19:39:46
+# @Last Modified time: 2015-12-01 21:04:52
 from django import forms
-from .models import ItemModel
+from .models import ItemModel, InventoryModel
 
 
 # Class: Form for ItemModel
 # ----------------------------------------------------------------------------
-class InventForm(forms.ModelForm):
+class ItemForm(forms.ModelForm):
 
     class Meta:
         model = ItemModel
-        fields = ('ItemId',
-                  'ItemName',
-                  'Description',
-                  'UnitId',
-                  'PrimaryVendor',
-                  'Price',
-                  'VendorPrice',
-                  'ItemImage',)
+        fields = '__all__'
+
+
+# Class: Form for ItemModel
+# ----------------------------------------------------------------------------
+class InventoryForm(forms.ModelForm):
+
+    class Meta:
+        model = InventoryModel
+        fields = '__all__'

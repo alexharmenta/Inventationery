@@ -312,7 +312,7 @@ dark, .dark {
 }
 body {
     color: #333;
-    background-color: #181818;
+    background-color: #0C1719;
     font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
     font-size: 13px;
     height: 100%;
@@ -429,7 +429,6 @@ table.no-margin .progress {
 .col-md-55, .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
     position: relative;
     min-height: 1px;
-    float: left;
     padding-right: 10px;
     padding-left: 10px;
 }
@@ -498,18 +497,18 @@ a:hover, a:focus {
     margin-top: 0
 }
 .nav.side-menu> li {
-    background-color: #101112;
+    background-color: #001217;
     cursor: pointer;
 }
 .nav.side-menu> li > a {
-    margin-bottom: 2px;
+    margin-bottom: 0px;
 }
 .nav.side-menu> li > a:hover {
     color: #F2F5F7 !important;
 }
 .nav.side-menu>li>a:hover, .nav>li>a:focus {
     text-decoration: none;
-    background-color: #3E3F48;
+    background-color: #0C1719;
 }
 .nav.child_menu li:hover {
     background-color: rgba(255, 255, 255, 0.06);
@@ -518,7 +517,7 @@ a:hover, a:focus {
     padding-left: 30px
 }
 .nav.side-menu>li>a, .nav.child_menu>li>a {
-    color: #fff !important;
+    color: #49656D;
     font-weight: 500;
 }
 .nav>li>a {
@@ -529,13 +528,11 @@ li.current-page {
     background: rgba(255, 255, 255, 0.05);
 }
 .nav.side-menu> li.active > a {
-    -webkit-box-shadow: rgba(0, 0, 0, 0.25) 0 1px 0, inset rgba(255, 255, 255, 0.16) 0 1px 0;
-    -moz-box-shadow: rgba(0, 0, 0, 0.25) 0 1px 0, inset rgba(255, 255, 255, 0.16) 0 1px 0;
-    box-shadow: rgba(0, 0, 0, 0.25) 0 1px 0, inset rgba(255, 255, 255, 0.16) 0 1px 0;
-    border-left: 2px solid #009DCD;
+    border-left: 2px solid #02baf2;
+    color: #fff;
 }
 li.current-page a {
-    color: #a88cd5 !important
+    color: #fff !important
 }
 .navbar-brand, .navbar-nav>li>a {
     font-weight: 500;
@@ -1037,8 +1034,37 @@ table.countries_list td {
 }
 .dataTables_paginate a {
     padding: 6px 9px !important;
-    background: #ddd !important;
-    border-color: #ddd !important;
+    background: #fff !important;
+    color: #02baf2 !important;
+    border-color: #f3f1f1 !important;
+}
+.dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate {
+    color: #364347;
+    font-size: 14px;
+}
+.dataTables_length > label > select {
+    height: 30px;
+    border-radius: 2px;
+    min-width: 50px;
+    text-align: center;
+    border-color: #f3f1f1 !important;
+}
+.dataTables_length > label > select > option {
+    text-align: center;
+}
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid #d6e1e5;
+    color: #364347;
+    font-size: 13px;
+    line-height: 1.467;
+    padding: 0px 12px;
+    height: 30px;
+    /* -webkit-appearance: none; */
+    border-radius: 2px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    -webkit-transition: border .25s linear, color .25s linear, background-color .25s linear;
+    transition: border .25s linear, color .25s linear, background-color .25s linear;
 }
 .paging_full_numbers a.paginate_active {
     background-color: rgba(38, 185, 154, 0.59) !important;
@@ -1641,15 +1667,8 @@ h4.graph_title {
     margin-right: 10px;
 }
 #sidebar-menu .fa {
-    width: 26px;
-    opacity: .99;
-    display: inline-block;
-    font-family: FontAwesome;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 18px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    width: 20px;
+    /*color: #FAFAFA;*/
 }
 
 /* *********  /iconts-display  **************************** */
@@ -5476,4 +5495,7 @@ ul.purch_options li {
     width: auto;
     height: auto;
     margin: auto;
+}
+.inventory-formset-add {
+    display: block !important;
 }

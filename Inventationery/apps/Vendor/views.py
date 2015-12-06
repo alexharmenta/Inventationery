@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:22:12
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-30 21:47:20
+# @Last Modified time: 2015-12-06 13:41:22
 # views.py
 from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
@@ -64,11 +64,11 @@ def createVendorView(request):
             postal_formset = PostalFormSet(
                 request.POST, instance=party, prefix='pfs')
 
-            party = party_form.save(commit=False)
+            party = party_form.save()
             vendor = vendor_form.save(commit=False)
-            party.save()
             vendor.Party = party
             vendor.save()
+            messages.success(request, "Proveedor creado correctamente")
 
             for electronic_form in electronic_formset:
                 if electronic_form.is_valid():
@@ -80,8 +80,8 @@ def createVendorView(request):
                         Electronic.Party = party
                         Electronic.save()
                 else:
-                    party.delete()
-                    vendor.delete()
+                    messages.warning(
+                        request, 'Revise la información de contacto')
 
             for postal_form in postal_formset:
                 if postal_form.is_valid():
@@ -92,15 +92,14 @@ def createVendorView(request):
                         Postal.Party = party
                         Postal.save()
                 else:
-                    party.delete()
-                    vendor.delete()
+                    messages.warning(
+                        request, 'Revise la información de la dirección')
 
-                messages.success(request, "Proveedor creado correctamente")
-                redirect_url = "/vendor/update/" + str(vendor.AccountNum)
-                return HttpResponseRedirect(redirect_url)
+            redirect_url = "/vendor/update/" + str(vendor.AccountNum)
+            return HttpResponseRedirect(redirect_url)
         else:
             messages.error(
-                request, "Ocurrió un error al crear la orden de compra")
+                request, "Ocurrió un error al crear el proveedor")
 
     else:
         # formulario inicial
@@ -142,6 +141,7 @@ def updateVendorView(request, AccountNum):
             vendor = vendor_form.save(commit=False)
             vendor.Party = party
             vendor.save()
+            messages.success(request, "Proveedor actualizado correctamente")
 
             electronic_formset = ElectronicFormSet(
                 request.POST, prefix='efs', instance=Party)
@@ -156,6 +156,9 @@ def updateVendorView(request, AccountNum):
                     if description and contact:
                         EA = electronic_form.save()
                         EA_list.append(EA.pk)
+                else:
+                    messages.warning(
+                        request, 'Revise la información de contacto')
 
             if electronic_formset.is_valid():
                 LogisticsElectronicAddressModel.objects.exclude(
@@ -168,14 +171,19 @@ def updateVendorView(request, AccountNum):
                     if description:
                         PA = postal_form.save()
                         PA_list.append(PA.pk)
+                else:
+                    messages.warning(
+                        request, 'Revise la información de dirección')
 
             if postal_formset.is_valid():
                 LogisticsPostalAddressModel.objects.exclude(
                     pk__in=list(PA_list)).delete()
 
-            messages.success(
-                request, "Proveedor actualizado correctamente")
         else:
+            electronic_formset = ElectronicFormSet(
+                request.POST, prefix='efs')
+            postal_formset = PostalFormSet(
+                request.POST, prefix='pfs')
             messages.error(
                 request, "Ocurrió un error al actualizar el proveedor")
 
@@ -203,7 +211,7 @@ class DeleteVendorView(DeleteView):
     model = DirPartyModel
     template_name = 'Vendor/DeleteVendor.html'
     success_url = '/vendor'
-    success_message = 'Proveedor eliminado correctamente'
+    success_message = 'Se ha eliminado el proveedor'
 
     def delete(self, request, *args, **kwargs):
         """
@@ -214,6 +222,6 @@ class DeleteVendorView(DeleteView):
         success_url = self.get_success_url()
         self.object.delete()
         messages.success(self.request,
-                         "Proveedor eliminado correctamente",
+                         'Se ha eliminado el proveedor',
                          extra_tags='msg')
         return HttpResponseRedirect(success_url)
