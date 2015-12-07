@@ -1361,7 +1361,7 @@ ul.msg_list li a .message {
     z-index: 1000;
     border-top: 1px solid #fff;
 }
-.dropdown-menu:after {
+/*.dropdown-menu:after {
     border-bottom: 6px solid #999999;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
@@ -1370,7 +1370,7 @@ ul.msg_list li a .message {
     right: 6%;
     position: absolute;
     top: -6px;
-}
+}*/
 .dropdown-menu>li>a {
     color: #101112;
 }
@@ -1836,12 +1836,8 @@ a.star {
     width: 100%;
 }
 .buttons, button, .btn {
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     margin-right: 0px;
-}
-.btn-group-vertical .btn, .btn-group .btn {
-    margin-bottom: 0;
-    margin-right: 0;
 }
 .mail_list_column {
     border-left: 1px solid #DBDBDB;

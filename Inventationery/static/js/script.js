@@ -2,7 +2,7 @@
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
 * @Last Modified by:   Alex
-* @Last Modified time: 2015-12-06 15:55:30
+* @Last Modified time: 2015-12-06 22:00:56
 */
 
 'use strict';
@@ -257,17 +257,19 @@ $( document ).ready(function() {
           total = qty * price;
         }
       }
-      total = Math.round(parseFloat(total) * 100) / 100
+      total = Math.round(parseFloat(total) * 100) / 100;
       $(Total_id).val(total);
 
       if(total){
         total = 0;
         $('.total_amount').each(function(index){
-          total += parseFloat($(this).val());
-          total = Math.round(total * 100) / 100;
-          $('#id_SubTotal').val(total);
-          $('#id_Total').val(total);
-          $('#id_Balance').val($('#id_Total').val() - $('#id_Paid').val());
+          if($(this).val()) {
+            total += parseFloat($(this).val());
+            total = Math.round(total * 100) / 100;
+            $('#id_SubTotal').val(total);
+            $('#id_Total').val(total);
+            $('#id_Balance').val($('#id_Total').val() - $('#id_Paid').val());
+          }
         });
       }
     });
@@ -284,9 +286,8 @@ $( document ).ready(function() {
     } else {
       purch_enabled = false;
     }
-    if(!purch_enabled){
-      $('#PurchOrderForm *').not('purch_disabled').prop('disabled',true);
-    }
+    disableForm('PurchOrderForm', purch_enabled);
+    $('#cancel_order_btn').prop('disabled', false);
     // Enable/Disable purch order on click
     $('#cancel_order_btn').on('click', function(){
       var csrftoken = getCookie('csrftoken');
@@ -308,14 +309,14 @@ $( document ).ready(function() {
           purch_enabled = !purch_enabled;
           $('#id_Enabled').prop('checked', purch_enabled);
           if(!purch_enabled){
-            $('#PurchOrderForm *').not('purch_disabled').prop('disabled',true);
             $('#cancel_order_btn').text('Reabrir pedido');
             notie.alert(2, 'Pedido cancelado.', 1.5);
           } else {
-            $('#PurchOrderForm *').not('purch_disabled').prop('disabled',false);
             $('#cancel_order_btn').text('Cancelar pedido');
             notie.alert(4, 'Pedido abierto.', 1.5);
           }
+          disableForm('PurchOrderForm', purch_enabled);
+          $('#cancel_order_btn').prop('disabled', false);
         },
 
         // handle a non-successful response
@@ -327,7 +328,68 @@ $( document ).ready(function() {
       });
 
     });
+    
+    //Receive and pay
+    $('#receive_pay').on('click', function(event){
+      event.preventDefault();
 
+      swal({   
+        title: 'Se pagará completamente la orden de compra',   
+        text: 'Recibirá un total de ' + getTotalItems().toString() + ' artículos',   
+        type: 'warning',   
+        showCancelButton: true,   
+        confirmButtonColor: '#3085d6',   
+        cancelButtonColor: '#d33',   
+        confirmButtonText: 'Si, pagar!',   
+        closeOnConfirm: false 
+      }, 
+      function() {
+        var csrftoken = getCookie('csrftoken');
+        $.ajax({
+          url : window.location.href, // the endpoint,commonly same url
+          type: "POST",
+
+          data: { 
+            action: 'receive_pay',
+            csrfmiddlewaretoken : csrftoken,
+          },// data sent with the post request
+
+          // handle a successful response
+          success : function(json) {
+            //console.log(json); // another sanity check
+            //On success show the data posted to server as a message
+            swal(     
+            'Orden de compra pagada',     
+            'Se recibieron un total de ' + getTotalItems().toString() + ' artículos',     
+            'success'   
+            );
+            $('#id_Paid').val($('#id_Total').val()); // Pagar todo el monto     
+            $('#id_Balance').val($('#id_Total').val() - $('#id_Paid').val()); // Calcular balance
+            disableForm('PurchOrderForm', false); // Bloquear pedido
+            $('#cancel_order_btn').prop('disabled', true);
+          },
+
+          // handle a non-successful response
+          error : function(xhr,errmsg,err) {
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
+          }
+
+        });
+        
+      });
+    });
+
+    // Get current items
+    function getTotalItems(){
+      var total=0;
+      $('.pl_qty').each(function(index, el) {
+        if($(this).val() != ''){
+          total += parseFloat($(this).val());
+        }
+      });
+      return total;
+    }
     /* ----- Purchase Order ----- */
 
     /* ----- Inventory ----- */
@@ -386,6 +448,16 @@ $( document ).ready(function() {
             return(str.substring(0, index));
         }
         return("");
+    }
+
+    // Enable/Disable forms
+    function disableForm(form, enabled){
+      var formId = '#' + form + ' ' + '*';
+      if(!enabled){
+        $(formId).not('form_disabled').prop('disabled',true);
+      } else {
+        $(formId).not('form_disabled').prop('disabled',false);
+      }
     }
     /* ----- EXTRA FUNCTIONS ----- */
 

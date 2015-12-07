@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-30 19:38:21
+# @Last Modified time: 2015-12-06 21:58:18
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 from Inventationery.apps.Vendor.models import VendorModel
@@ -55,6 +55,7 @@ class PurchOrderModel(TimeStampedModel):
     INVOICED = 'INV'
     PAID = 'PAI'
     CANCELED = 'CAN'
+    RECEIVED_PAID = 'RPA'
 
     PURCH_STATUS = (
         (OPEN, 'Abierta'),
@@ -63,6 +64,7 @@ class PurchOrderModel(TimeStampedModel):
         (INVOICED, 'Facturado'),
         (PAID, 'Pagado'),
         (CANCELED, 'Cancelado'),
+        (RECEIVED_PAID, 'Recibido/Pagado'),
     )
     # DELIVERY MODE
     HOME = 'HOM'

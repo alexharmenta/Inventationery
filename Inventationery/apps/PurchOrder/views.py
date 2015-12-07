@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-06 13:39:36
+# @Last Modified time: 2015-12-06 21:59:20
 # from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
@@ -193,6 +193,30 @@ def updatePurchOrderView(request, PurchId):
                     Enabled=enable)
                 response_dict = {'PurchOrder': PurchOrder.PurchId, }
                 return JsonResponse(response_dict)
+
+            elif action == 'receive_pay':
+                if purch_form.is_valid():
+                    purch = purch_form.save(commit=False)
+                    purch.PurchStatus = 'RPA'
+                    purch.save()
+                    messages.success(request,
+                                     "Orden de compra recibida y pagada")
+
+                    for purchline_form in purchline_formset:
+                        if purchline_form.is_valid():
+                            itemid = purchline_form.cleaned_data.get('ItemId')
+                            if itemid:
+                                PL = purchline_form.save()
+                                PL_list.append(PL.pk)
+                        else:
+                            messages.warning(
+                                request,
+                                'Revise la información de las lineas de la OC')
+                else:
+                    purchline_formset = PurchLineFormset(
+                        request.POST, prefix='plfs')
+                    messages.error(
+                        request, "Ocurrió un error al registrar la recepción")
 
             return JsonResponse(response_dict)
 
