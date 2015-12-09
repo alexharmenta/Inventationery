@@ -2,7 +2,7 @@
 * @Author: Alex
 * @Date:   2015-11-16 18:59:28
 * @Last Modified by:   Alex
-* @Last Modified time: 2015-12-06 22:00:56
+* @Last Modified time: 2015-12-08 21:49:55
 */
 
 'use strict';
@@ -15,6 +15,10 @@ $( document ).ready(function() {
     });
     $('.error').each(function(index) {
       notie.alert(3, $(this).text(), 1.5);
+      $(this).fadeOut('fast');
+    });
+    $('.warning').each(function(index) {
+      notie.alert(2, $(this).text(), 1.5);
       $(this).fadeOut('fast');
     });
 
@@ -181,7 +185,7 @@ $( document ).ready(function() {
         total = Math.round(total * 100) / 100;
         $('#id_SubTotal').val(total);
         $('#id_Total').val(total);
-        $('#id_Paid').val(0);
+        //$('#id_Paid').val();
       }
     });
     // Get purchase line info with AJAX
@@ -310,9 +314,11 @@ $( document ).ready(function() {
           $('#id_Enabled').prop('checked', purch_enabled);
           if(!purch_enabled){
             $('#cancel_order_btn').text('Reabrir pedido');
+            $('#id_PurchStatus').val('CAN').change();
             notie.alert(2, 'Pedido cancelado.', 1.5);
           } else {
             $('#cancel_order_btn').text('Cancelar pedido');
+            $('#id_PurchStatus').val('OPE').change();
             notie.alert(4, 'Pedido abierto.', 1.5);
           }
           disableForm('PurchOrderForm', purch_enabled);
@@ -332,7 +338,7 @@ $( document ).ready(function() {
     //Receive and pay
     $('#receive_pay').on('click', function(event){
       event.preventDefault();
-
+      
       swal({   
         title: 'Se pagará completamente la orden de compra',   
         text: 'Recibirá un total de ' + getTotalItems().toString() + ' artículos',   
@@ -344,16 +350,18 @@ $( document ).ready(function() {
         closeOnConfirm: false 
       }, 
       function() {
-        var csrftoken = getCookie('csrftoken');
+        // var csrftoken = getCookie('csrftoken'); Not necesary through serialization
+        // Change values to send form
+        $('#id_Paid').val($('#id_Total').val()); // Pay total amount    
+        $('#id_Balance').val($('#id_Total').val() - $('#id_Paid').val()); // Calc balance
+        $('#id_PurchStatus').val('RPA').change();
+
+        var formData = $('#PurchOrderForm').serialize();
+        var action = '&action=receive_pay';
         $.ajax({
           url : window.location.href, // the endpoint,commonly same url
           type: "POST",
-
-          data: { 
-            action: 'receive_pay',
-            csrfmiddlewaretoken : csrftoken,
-          },// data sent with the post request
-
+          data: formData + action,          
           // handle a successful response
           success : function(json) {
             //console.log(json); // another sanity check
@@ -363,10 +371,9 @@ $( document ).ready(function() {
             'Se recibieron un total de ' + getTotalItems().toString() + ' artículos',     
             'success'   
             );
-            $('#id_Paid').val($('#id_Total').val()); // Pagar todo el monto     
-            $('#id_Balance').val($('#id_Total').val() - $('#id_Paid').val()); // Calcular balance
+            
             disableForm('PurchOrderForm', false); // Bloquear pedido
-            $('#cancel_order_btn').prop('disabled', true);
+            $('#cancel_order_btn').prop('disabled', true); // Bloquear boton de
           },
 
           // handle a non-successful response
@@ -376,7 +383,53 @@ $( document ).ready(function() {
           }
 
         });
-        
+      });
+    });
+    
+    //Pay
+    $('#pay_order').on('click', function(event){
+      event.preventDefault();
+      
+      swal({   
+        title: 'Se pagará completamente la orden de compra',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, pagar!',
+        closeOnConfirm: false,
+      }, 
+      function() {
+        // var csrftoken = getCookie('csrftoken'); Not necesary through serialization
+        // Change values to send form
+        $('#id_Paid').val($('#id_Total').val()); // Pay total amount    
+        $('#id_Balance').val($('#id_Total').val() - $('#id_Paid').val()); // Calc balance
+        $('#id_PurchStatus').val('PAI').change();
+
+        var formData = $('#PurchOrderForm').serialize();
+        var action = '&action=pay_order';
+        $.ajax({
+          url : window.location.href, // the endpoint,commonly same url
+          type: "POST",
+          data: formData + action,
+          // handle a successful response
+          success : function(json) {
+            swal(     
+            'Orden de compra pagada',
+            'Correcto',
+            'success'
+            );
+            
+            disableForm('PurchOrderForm', false); // Bloquear pedido            
+          },
+
+          // handle a non-successful response
+          error : function(xhr,errmsg,err) {
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
+          }
+
+        });
       });
     });
 

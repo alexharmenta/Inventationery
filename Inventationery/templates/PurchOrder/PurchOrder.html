@@ -286,15 +286,15 @@
 						    		{% endif %}
 						    		<li>
 						    			<!-- Split button -->
-										<div class="btn-group">
-										  <button type="button" class="btn btn-info" id="receive_pay">Recibir y pagar</button>
-										  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<div class="btn-group" id="ReceiveSplit">
+										  <button type="button" class="btn btn-info form_disabled" id="receive_pay">Recibir y pagar</button>
+										  <button type="button" class="btn btn-info form_disabled dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 										    <span class="caret"></span>
 										    <span class="sr-only">Toggle Dropdown</span>
 										  </button>
 										  <ul class="dropdown-menu">
-										    <li><a href="#">Recibir inventario</a></li>
-										    <li><a href="#">Pagar al proveedor</a></li>
+										    <li><a href="#" id="receive_invent">Recibir inventario</a></li>
+										    <li><a href="#" id="pay_order">Pagar al proveedor</a></li>
 										  </ul>
 										</div>
 						    		</li>

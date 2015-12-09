@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-06 21:59:20
+# @Last Modified time: 2015-12-08 21:52:01
 # from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
@@ -138,10 +138,8 @@ def updatePurchOrderView(request, PurchId):
 
     if request.method == 'POST':
         purch_form = PurchOrderForm(request.POST, instance=PurchOrder)
-
         purchline_formset = PurchLineFormset(
             request.POST, instance=PurchOrder, prefix='plfs')
-
         # Get info to retrieve to template with Ajax
         if request.is_ajax():
             action = request.POST.get('action', '')
@@ -182,22 +180,24 @@ def updatePurchOrderView(request, PurchId):
                         'UnitId': '',
                         'VendorPrice': '',
                     }
-
             elif action == 'update_enabled':
                 enable = request.POST.get('purch_enabled', '')
                 if enable == 'true':
                     enable = True
+                    PurchOrderModel.objects.filter(pk=PurchOrder.pk).update(
+                        Enabled=enable, PurchStatus='OPE')
                 else:
                     enable = False
-                PurchOrderModel.objects.filter(pk=PurchOrder.pk).update(
-                    Enabled=enable)
+                    PurchOrderModel.objects.filter(pk=PurchOrder.pk).update(
+                        Enabled=enable, PurchStatus='CAN')
+
                 response_dict = {'PurchOrder': PurchOrder.PurchId, }
                 return JsonResponse(response_dict)
-
             elif action == 'receive_pay':
                 if purch_form.is_valid():
                     purch = purch_form.save(commit=False)
                     purch.PurchStatus = 'RPA'
+                    purch.Enabled = False
                     purch.save()
                     messages.success(request,
                                      "Orden de compra recibida y pagada")
@@ -217,6 +217,50 @@ def updatePurchOrderView(request, PurchId):
                         request.POST, prefix='plfs')
                     messages.error(
                         request, "Ocurrió un error al registrar la recepción")
+
+                return render_to_response(
+                    'PurchOrder/UpdatePurchOrder.html',
+                    {
+                        'purch_form': purch_form,
+                        'purchline_formset': purchline_formset,
+                        'PurchOrder': PurchOrder
+                    },
+                    context_instance=RequestContext(request)
+                )
+            elif action == 'pay_order':
+                if purch_form.is_valid():
+                    purch = purch_form.save(commit=False)
+                    purch.PurchStatus = 'PAI'
+                    purch.Enabled = False
+                    purch.save()
+                    messages.success(request,
+                                     "Orden de compra pagada")
+
+                    for purchline_form in purchline_formset:
+                        if purchline_form.is_valid():
+                            itemid = purchline_form.cleaned_data.get('ItemId')
+                            if itemid:
+                                PL = purchline_form.save()
+                                PL_list.append(PL.pk)
+                        else:
+                            messages.warning(
+                                request,
+                                'Revise la información de las lineas de la OC')
+                else:
+                    purchline_formset = PurchLineFormset(
+                        request.POST, prefix='plfs')
+                    messages.error(
+                        request, "Ocurrió un error al registrar el pago")
+
+                return render_to_response(
+                    'PurchOrder/UpdatePurchOrder.html',
+                    {
+                        'purch_form': purch_form,
+                        'purchline_formset': purchline_formset,
+                        'PurchOrder': PurchOrder
+                    },
+                    context_instance=RequestContext(request)
+                )
 
             return JsonResponse(response_dict)
 
