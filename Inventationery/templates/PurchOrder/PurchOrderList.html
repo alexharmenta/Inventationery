@@ -35,8 +35,27 @@
 					            <td><a href="{% url "purch:update" PurchId=order.PurchId %}">{{ order.PurchId }}</a></td>
 					            <td><a href="{% url "vendor:update" AccountNum=order.Vendor %}">{{ order.Vendor }}</a></td>
 					            <td>{{ order.PurchName }}</td>
-					            <td>{{ order.PurchaseType }}</td>
-					            <td>{{ order.PurchStatus }}</td>
+					            {% if order.PurchaseType == 'PO' %}
+					            	<td>Orden de compra</td>
+				            	{% elif order.PurchaseType == 'RO' %}
+				            		<td>Devolución</td>
+					            {% endif %}
+					            
+					            {% if order.PurchStatus == 'OPE' %}
+					            	<td>Abierto</td>
+			            		{% elif order.PurchStatus == 'BAC'%}
+									<td>Back Order</td>
+								{% elif order.PurchStatus == 'REC'%}
+									<td>Recibido</td>
+								{% elif order.PurchStatus == 'INV'%}
+									<td>Facturado</td>
+								{% elif order.PurchStatus == 'PAI'%}
+									<td>Pagado</td>
+								{% elif order.PurchStatus == 'CAN'%}
+									<td>Cancelado</td>
+								{% elif order.PurchStatus == 'RPA'%}
+									<td>Recibido/Pagado</td>
+					            {% endif %}
 					            {% if order.Enabled %}
 					            	<td>Abierto</td>
 				            	{% else %}

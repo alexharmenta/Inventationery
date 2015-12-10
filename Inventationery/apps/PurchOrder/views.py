@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-08 21:52:01
+# @Last Modified time: 2015-12-09 22:08:07
 # from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
@@ -16,7 +16,7 @@ from datetime import date
 from .models import PurchOrderModel, PurchLineModel
 from .forms import PurchOrderForm, PurchOrderLinesForm
 from Inventationery.apps.Vendor.models import VendorModel
-from Inventationery.apps.Inventory.models import ItemModel
+from Inventationery.apps.Inventory.models import ItemModel, InventoryModel
 # Create your views here.
 
 
@@ -205,9 +205,68 @@ def updatePurchOrderView(request, PurchId):
                     for purchline_form in purchline_formset:
                         if purchline_form.is_valid():
                             itemid = purchline_form.cleaned_data.get('ItemId')
+                            qty = purchline_form.cleaned_data.get('PurchQty')
                             if itemid:
+                                item = ItemModel.objects.get(ItemId=itemid)
                                 PL = purchline_form.save()
                                 PL_list.append(PL.pk)
+
+                            if qty:
+                                try:
+                                    inventory = InventoryModel.objects.get(
+                                        Item=item)
+                                    inventory.Qty += qty
+                                    inventory.save()
+                                except:
+                                    messages.warning(
+                                        request,
+                                        'No se encontró el artículo')
+
+                        else:
+                            messages.warning(
+                                request,
+                                'Revise la información de las lineas de la OC')
+                else:
+                    purchline_formset = PurchLineFormset(
+                        request.POST, prefix='plfs')
+                    messages.error(
+                        request, "Ocurrió un error al registrar la recepción")
+
+                return render_to_response(
+                    'PurchOrder/UpdatePurchOrder.html',
+                    {
+                        'purch_form': purch_form,
+                        'purchline_formset': purchline_formset,
+                        'PurchOrder': PurchOrder
+                    },
+                    context_instance=RequestContext(request)
+                )
+            elif action == 'receive':
+                if purch_form.is_valid():
+                    purch = purch_form.save(commit=False)
+                    purch.PurchStatus = 'REC'
+                    # purch.Enabled = False
+                    purch.save()
+                    messages.success(request, "Orden de compra recibida")
+
+                    for purchline_form in purchline_formset:
+                        if purchline_form.is_valid():
+                            itemid = purchline_form.cleaned_data.get('ItemId')
+                            qty = purchline_form.cleaned_data.get('PurchQty')
+                            if itemid:
+                                item = ItemModel.objects.get(ItemId=itemid)
+                                PL = purchline_form.save()
+                                PL_list.append(PL.pk)
+
+                            if qty:
+                                try:
+                                    inventory = InventoryModel.objects.get(
+                                        Item=item)
+                                    inventory.Qty += qty
+                                    inventory.save()
+                                except:
+                                    inventory = InventoryModel.objects.get()
+
                         else:
                             messages.warning(
                                 request,
