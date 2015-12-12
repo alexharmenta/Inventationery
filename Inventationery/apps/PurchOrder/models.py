@@ -3,11 +3,11 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-06 21:58:18
+# @Last Modified time: 2015-12-12 11:53:07
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 from Inventationery.apps.Vendor.models import VendorModel
-from Inventationery.apps.Inventory.models import ItemModel
+from Inventationery.apps.Inventory.models import ItemModel, LocationModel
 from Inventationery.core.models import Countries
 
 
@@ -113,6 +113,8 @@ class PurchOrderModel(TimeStampedModel):
     Enabled = models.BooleanField(default=True)
 
     Vendor = models.ForeignKey(VendorModel, default=None)
+
+    Location = models.ForeignKey(LocationModel, blank=True, null=True)
 
     def __unicode__(self):
         return "{0}".format(self.PurchId)
