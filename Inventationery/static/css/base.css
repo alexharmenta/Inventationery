@@ -1060,7 +1060,7 @@ table.countries_list td {
     color: #364347;
     font-size: 13px;
     line-height: 1.467;
-    padding: 0px 50px;
+    width: 200px !important;
     height: 30px;
     /* -webkit-appearance: none; */
     border-radius: 2px;
@@ -3299,7 +3299,16 @@ html > body > .ui-pnotify {
 /* /theming */
 
 /* /Pnotify by Hunter Perrin :: 2.0.1 */
-
+.btn-purple {
+    color: #fff;
+    background-color: #a88cd5;
+    border-color: #a88cd5;
+}
+.btn-purple:hover {
+    color: #fff;
+    background-color: #9175bd;
+    border-color: #9175bd;
+}
 .btn.btn-outline {
     background: transparent;
 }
@@ -5501,4 +5510,14 @@ ul.purch_options li {
 }
 .inventory-formset-add {
     display: block !important;
+}
+
+#id_PurchStatus option {
+    display: none;
+}
+#id_PurchStatus {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 1px;
+    text-overflow: '';
 }

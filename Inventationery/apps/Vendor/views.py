@@ -3,14 +3,23 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:22:12
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-06 13:41:22
+# @Last Modified time: 2015-12-21 23:08:04
 # views.py
 from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
 from django.forms import inlineformset_factory
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.views.generic import ListView, DeleteView
+import csv
+import time
+from io import BytesIO
+from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import Table
+from reportlab.lib.pagesizes import landscape
 from .models import VendorModel
 from Inventationery.apps.DirParty.models import DirPartyModel
 from Inventationery.apps.LogisticsPostalAddress.models import (
@@ -25,7 +34,7 @@ from .forms import (VendorForm,
 # ----------------------------------------------------------------------------
 class VendorListView(ListView):
     model = VendorModel
-    template_name = 'Vendor/VendorList.html'
+    template_name = 'vendor/VendorList.html'
     context_object_name = 'vendors'
 
     def get_queryset(self):
@@ -109,7 +118,7 @@ def createVendorView(request):
             prefix='efs', instance=party)
         postal_formset = PostalFormSet(prefix='pfs', instance=party)
 
-    return render_to_response('Vendor/CreateVendor.html',
+    return render_to_response('vendor/CreateVendor.html',
                               {'vendor_form': vendor_form,
                                'party_form': party_form,
                                'electronic_formset': electronic_formset,
@@ -161,8 +170,9 @@ def updateVendorView(request, AccountNum):
                         request, 'Revise la información de contacto')
 
             if electronic_formset.is_valid():
-                LogisticsElectronicAddressModel.objects.exclude(
-                    pk__in=list(EA_list)).delete()
+                lea = LogisticsElectronicAddressModel.objects.filter(
+                    Party=party)
+                lea.exclude(pk__in=list(EA_list)).delete()
 
             for postal_form in postal_formset:
                 if postal_form.is_valid():
@@ -176,8 +186,8 @@ def updateVendorView(request, AccountNum):
                         request, 'Revise la información de dirección')
 
             if postal_formset.is_valid():
-                LogisticsPostalAddressModel.objects.exclude(
-                    pk__in=list(PA_list)).delete()
+                lpa = LogisticsPostalAddressModel.objects.filter(Party=Party)
+                lpa.exclude(pk__in=list(PA_list)).delete()
 
         else:
             electronic_formset = ElectronicFormSet(
@@ -196,7 +206,7 @@ def updateVendorView(request, AccountNum):
         postal_formset = PostalFormSet(
             prefix='pfs', instance=Vendor.Party)
 
-    return render_to_response('Vendor/UpdateVendor.html',
+    return render_to_response('vendor/UpdateVendor.html',
                               {'vendor_form': vendor_form,
                                'party_form': party_form,
                                'electronic_formset': electronic_formset,
@@ -209,7 +219,7 @@ def updateVendorView(request, AccountNum):
 # ----------------------------------------------------------------------------
 class DeleteVendorView(DeleteView):
     model = DirPartyModel
-    template_name = 'Vendor/DeleteVendor.html'
+    template_name = 'vendor/DeleteVendor.html'
     success_url = '/vendor'
     success_message = 'Se ha eliminado el proveedor'
 
@@ -225,3 +235,82 @@ class DeleteVendorView(DeleteView):
                          'Se ha eliminado el proveedor',
                          extra_tags='msg')
         return HttpResponseRedirect(success_url)
+
+
+# FBV: Export to csv
+# ----------------------------------------------------------------------------
+def export_csv(request):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="proveedores.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Número de cuenta',
+                     'Nombre',
+                     'Tipo de proveedor',
+                     'RFC',
+                     'Moneda',
+                     'Direccion principal',
+                     'Contacto principal'])
+    vendor_list = VendorModel.objects.all()
+    for vendor in vendor_list:
+        writer.writerow([vendor.AccountNum,
+                         vendor.Party.NameAlias,
+                         vendor.AccountType,
+                         vendor.VATNum,
+                         vendor.CurrencyCode,
+                         vendor.get_PrimaryAddress(),
+                         vendor.get_PrimaryElectronic()])
+
+    return response
+
+
+# FBV: Export to pdf
+# ----------------------------------------------------------------------------
+def export_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    # pdf_name = "proveedores.pdf"  # llamado proveedores
+    # response['Content-Disposition'] = 'attachment; filename=%s' % pdf_name
+    buff = BytesIO()
+    doc = SimpleDocTemplate(buff,
+                            pagesize=landscape(letter),
+                            rightMargin=20,
+                            leftMargin=20,
+                            topMargin=30,
+                            bottomMargin=20,
+                            )
+    proveedores = []
+    styles = getSampleStyleSheet()
+
+    title = Paragraph("Listado de proveedores", styles['Heading2'])
+    date = Paragraph(time.strftime("%d/%m/%Y"), styles['Heading2'])
+    header = (title, date)
+    t = Table([''] + [header] + [''])
+    t.setStyle(TableStyle(
+        [
+            ('ALIGN', (1, 1), (1, 1), 'RIGHT'),
+            ('TEXTCOLOR', (0, 1), (0, 0), colors.green),
+        ]
+    ))
+    proveedores.append(t)
+
+    headings = ('Número de cuenta', 'Nombre', 'Tipo de proveedor',
+                'RFC', 'Moneda', 'Direccion principal', 'Contacto principal')
+    vendors = [(v.AccountNum, v.Party.NameAlias, v.AccountType,
+                v.VATNum, v.CurrencyCode, v.get_PrimaryAddress(),
+                v.get_PrimaryElectronic())
+               for v in VendorModel.objects.all()]
+
+    t = Table([headings] + vendors)
+    t.setStyle(TableStyle(
+        [
+            ('GRID', (0, 0), (6, -1), 0.5, colors.dodgerblue),
+            ('LINEBELOW', (0, 0), (-1, 0), 0.5, colors.darkblue),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
+        ]
+    ))
+    proveedores.append(t)
+    doc.build(proveedores)
+    response.write(buff.getvalue())
+    buff.close()
+    return response

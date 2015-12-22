@@ -61,10 +61,10 @@
                                     <ul class="nav child_menu" style="display: none">
                                         <li><a href="{% url "vendor:list" %}"><i class="fa fa-users"></i>Proveedores</a></li>
                                         <li><a href="{% url "purch:list" %}"><i class="fa fa-list-alt"></i>Ordenes de compra (OC)</a></li>
-                                        <li><a href="#"><i class="fa fa-calendar"></i>(OC) recientes</a></li>
-                                        <li><a href="#"><i class="fa fa-circle-o-notch"></i>(OC) abiertas</a></li>
-                                        <li><a href="#"><i class="fa fa-check"></i>(OC) recibidas</a></li>
-                                        <li><a href="#"><i class="fa fa-money"></i>(OC) pagadas</a></li>
+                                        <li><a href="{% url "purch:recent" %}"><i class="fa fa-calendar"></i>(OC) recientes</a></li>
+                                        <li><a href="{% url "purch:open" %}"><i class="fa fa-circle-o-notch"></i>(OC) abiertas</a></li>
+                                        <li><a href="{% url "purch:received" %}"><i class="fa fa-check"></i>(OC) recibidas</a></li>
+                                        <li><a href="{% url "purch:paid" %}"><i class="fa fa-money"></i>(OC) pagadas</a></li>
                                     </ul>
                                 </li>
                             </ul>

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+	<form action="" method="POST" id="PaymentForm"> {% csrf_token %}
+		{% if form.errors %}
+		    {% for field in form %}
+		        {% for error in field.errors %}
+		        	<style>
+						#{{ field.id_for_label }} {
+							border: 1px solid #f64747;
+							border-radius: 2px;
+						}
+		        	</style>				            
+		        {% endfor %}
+		    {% endfor %}
+		    {% for error in form.non_field_errors %}
+		        <div class="alert alert-error">
+		            <strong> {{ error }}</strong>
+		        </div>
+		    {% endfor %}
+		{% endif %}
+
+		{% block page_title %}
+		{% endblock %}
+
+		<div>
+			{{ form.as_p }}
+		</div>
+
+	</form>
+</div>
+{% endblock %}

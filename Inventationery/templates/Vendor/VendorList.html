@@ -14,12 +14,14 @@
                 <div class="clearfix"></div>
         	</div>
             <div class="x_content table-responsive">
-                <a class='btn btn-primary pull-right' href="{% url "vendor:new" %}" id="NewVendorBtn">
-					<span class="lnr lnr-pencil"></span> Nuevo proveedor
+                <a class='btn btn-purple pull-right' href="{% url "vendor:new" %}" title="Agregar nuevo proveedor" id="NewVendorBtn">
+					<i class="fa fa-plus"></i> Nuevo proveedor
 				</a>
 				<script>
 					var NewVendorURL = '{% url "vendor:new" %}';
 				</script>
+				<div><a href="{% url "vendor:csv" %}" class="btn btn-warning" title="Exportar a CSV (Archivo separado por comas)">CSV <i class="fa fa-file-text-o"></i></a>
+				<a href="{% url "vendor:pdf" %}" target="_blank" class="btn btn-danger" title="Exportar a PDF">PDF <i class="fa fa-file-pdf-o"></i></a></div>
 				<table id="VendorsListTableId" class="display table table-hover">
 				    <thead>
 				        <tr>
@@ -35,7 +37,7 @@
 				    <tbody>
 				    	{% for vendor in vendors %}
 				    		<tr>
-					            <td><a href="{% url "vendor:update" AccountNum=vendor.AccountNum %}">{{ vendor.AccountNum }}</a></td>
+					            <td><a href="{% url "vendor:update" AccountNum=vendor.AccountNum %}" class="btn btn-link">{{ vendor.AccountNum }}</a></td>
 					            <td>{{ vendor.Party.NameAlias }}</td>
 					            <td>{{ vendor.CurrencyCode }}</td>
 					            <td>{{ vendor.VATNum }}</td>

@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:23:26
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-19 17:25:11
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-12-21 20:52:01
 from django.conf.urls import url
 from .views import createVendorView
-from .views import VendorListView, DeleteVendorView, updateVendorView
+from .views import (VendorListView, DeleteVendorView,
+                    updateVendorView, export_csv, export_pdf)
 
 urlpatterns = [
     url(r'^vendor/new/$', createVendorView, name='new'),
@@ -15,4 +16,6 @@ urlpatterns = [
         DeleteVendorView.as_view(), name='delete'),
     url(r'^vendor/update/(?P<AccountNum>[-\w]+)/$',
         updateVendorView, name='update'),
+    url(r'^vendor/export/cvs/$', export_csv, name='csv'),
+    url(r'^vendor/export/pdf/$', export_pdf, name='pdf'),
 ]

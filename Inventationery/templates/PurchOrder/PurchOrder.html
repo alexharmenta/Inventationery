@@ -198,12 +198,22 @@
 							<div class="form-group">
 								{{ purch_form.Payment.errors }}
 								<label for="{{ purch_form.Payment.id_for_label }}">Condición de pago</label>
-								{% render_field purch_form.Payment class+="form-control" %}
+								<div class="col-md-11 col-sm-11">
+									{% render_field purch_form.Payment class+="form-control" %}
+								</div>
+								<div class="col-md-1 col-sm-1">
+									<a href="{% url "payment:new-payment" %}" target="_blank" class="btn btn-xs btn-success pull-right"><i class="fa fa-plus"></i></a>
+								</div>
 							</div>
 							<div class="form-group">
 								{{ purch_form.PaymMode.errors }}
 								<label for="{{ purch_form.PaymMode.id_for_label }}">Método de pago</label>
-								{% render_field purch_form.PaymMode class+="form-control" %}
+								<div class="col-md-11 col-sm-11">
+									{% render_field purch_form.PaymMode class+="form-control" %}
+								</div>
+								<div class="col-md-1 col-sm-1">
+									<a href="{% url "payment:new-paym" %}" target="_blank" class="btn btn-xs btn-success pull-right"><i class="fa fa-plus"></i></a>
+								</div>
 							</div>
 							<div class="form-group">
 								{{ purch_form.Location.errors }}

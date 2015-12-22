@@ -6,7 +6,9 @@
 	<div class="col-md-12 col-sm-12 col-xs-12"> <!-- Purch order list -->
         <div class="x_panel tile">
             <div class="x_title">
-                <h2>Ordenes de compra</h2>
+            	{% block content_title %}
+            		<h2>Todas las órdenes de compra</h2>	
+            	{% endblock content_title %}
                 <ul class="nav navbar-right panel_toolbox">
                     <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
                     </li>
@@ -14,9 +16,11 @@
                 <div class="clearfix"></div>
         	</div>
             <div class="x_content table-responsive">
-                <a class='btn btn-primary btn-lg btn-xs pull-right' href="{% url "purch:new" %}">
-				<span class="lnr lnr-pencil"></span> Nueva orden de compra
+            	<a class='btn btn-purple pull-right' href="{% url "purch:new" %}" title="Crear nueva orden de compra" id="NewVendorBtn">
+					<i class="fa fa-plus"></i> Nueva orden de compra
 				</a>
+				<div><a href="{% url "purch:csv" %}" class="btn btn-warning" title="Exportar a CSV (Archivo separado por comas)">CSV <i class="fa fa-file-text-o"></i></a>
+				<a href="{% url "purch:pdf" %}" target="_blank" class="btn btn-danger" title="Exportar a PDF">PDF <i class="fa fa-file-pdf-o"></i></a></div>
 				<table id="PurchOrderListTableId" class="display table table-hover">
 				    <thead>
 				        <tr>
@@ -64,10 +68,12 @@
 					            <td class="text-center">
 									<a class='btn btn-info btn-xs' href="{% url "purch:update" PurchId=order.PurchId %}">
 										<span class="lnr lnr-pencil"></span> Editar
-									</a> 
-									<a href="{% url "purch:delete" pk=order.pk %}" class="btn btn-danger btn-xs">
-										<span class="lnr lnr-cross"></span> Eliminar
 									</a>
+									{% if order.PurchStatus == 'OPE' or order.PurchStatus == 'CAN' %}
+										<a href="{% url "purch:delete" pk=order.pk %}" class="btn btn-danger btn-xs">
+											<span class="lnr lnr-cross"></span> Eliminar
+										</a>
+								 	{% endif %}
 								</td>
 					        </tr>
 				    	{% endfor %}

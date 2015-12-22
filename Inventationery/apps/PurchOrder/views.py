@@ -3,15 +3,24 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-12 15:21:09
+# @Last Modified time: 2015-12-21 22:17:43
 # from django.shortcuts import render
+from django.db.models import Q
 from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.views.generic import ListView, DeleteView
 from django.forms import inlineformset_factory
 from django.http import JsonResponse
+import csv
+import time
+from io import BytesIO
+from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import Table
 from datetime import date
 from .models import PurchOrderModel, PurchLineModel
 from .forms import PurchOrderForm, PurchOrderLinesForm
@@ -30,6 +39,65 @@ class PurchOrderListView(ListView):
     def get_queryset(self):
         queryset = super(PurchOrderListView, self).get_queryset()
         queryset = PurchOrderModel.objects.all().order_by('created')
+        return queryset
+
+
+# CBV: View to list recent 10 PurchOrders ordered by created
+# ----------------------------------------------------------------------------
+class PurchOrderRecentListView(ListView):
+    model = PurchOrderModel
+    template_name = 'PurchOrder/PurchOrderRecentList.html'
+    context_object_name = 'orders'
+
+    def get_queryset(self):
+        queryset = super(PurchOrderRecentListView, self).get_queryset()
+        queryset = PurchOrderModel.objects.all().order_by('created')[:10]
+        return queryset
+
+
+# CBV: View to list open PurchOrders ordered by created
+# ----------------------------------------------------------------------------
+class PurchOrderOpenListView(ListView):
+    model = PurchOrderModel
+    template_name = 'PurchOrder/PurchOrderOpenList.html'
+    context_object_name = 'orders'
+
+    def get_queryset(self):
+        queryset = super(PurchOrderOpenListView, self).get_queryset()
+        queryset = PurchOrderModel.objects.filter(
+            Q(PurchStatus='OPE') |
+            Q(PurchStatus='REC') |
+            Q(PurchStatus='PAI')).order_by('created')
+        return queryset
+
+
+# CBV: View to list received PurchOrders ordered by created
+# ----------------------------------------------------------------------------
+class PurchOrderReceivedListView(ListView):
+    model = PurchOrderModel
+    template_name = 'PurchOrder/PurchOrderReceivedList.html'
+    context_object_name = 'orders'
+
+    def get_queryset(self):
+        queryset = super(PurchOrderReceivedListView, self).get_queryset()
+        queryset = PurchOrderModel.objects.filter(
+            Q(PurchStatus='REC') |
+            Q(PurchStatus='RPA')).order_by('created')
+        return queryset
+
+
+# CBV: View to list paid PurchOrders ordered by created
+# ----------------------------------------------------------------------------
+class PurchOrderPaidListView(ListView):
+    model = PurchOrderModel
+    template_name = 'PurchOrder/PurchOrderPaidList.html'
+    context_object_name = 'orders'
+
+    def get_queryset(self):
+        queryset = super(PurchOrderPaidListView, self).get_queryset()
+        queryset = PurchOrderModel.objects.filter(
+            Q(PurchStatus='PAI') |
+            Q(PurchStatus='RPA')).order_by('created')
         return queryset
 
 
@@ -343,19 +411,21 @@ def updatePurchOrderView(request, PurchId):
             return JsonResponse(response_dict)
 
         if purch_form.is_valid():
-            purch_form.save()
-            messages.success(request, "Orden de compra actualizada")
+            PO = purch_form.save(commit=False)
+            if PO.PurchStatus is not 'RPA' or PO.PurchStatus is not 'INV':
+                PO.save()
+                messages.success(request, "Orden de compra actualizada")
 
-            for purchline_form in purchline_formset:
-                if purchline_form.is_valid():
-                    itemid = purchline_form.cleaned_data.get('ItemId')
-                    if itemid:
-                        PL = purchline_form.save()
-                        PL_list.append(PL.pk)
-                else:
-                    messages.warning(
-                        request,
-                        'Revise la información de las lineas de la OC')
+                for purchline_form in purchline_formset:
+                    if purchline_form.is_valid():
+                        itemid = purchline_form.cleaned_data.get('ItemId')
+                        if itemid:
+                            PL = purchline_form.save()
+                            PL_list.append(PL.pk)
+                    else:
+                        messages.warning(
+                            request,
+                            'Revise la información de las lineas de la OC')
         else:
             purchline_formset = PurchLineFormset(request.POST, prefix='plfs')
             messages.error(
@@ -396,3 +466,83 @@ class DeletePurchOrderView(DeleteView):
                          "Se ha eliminado la orden de compra",
                          extra_tags='msg')
         return HttpResponseRedirect(success_url)
+
+
+# FBV: Export to csv
+# ----------------------------------------------------------------------------
+def export_csv(request):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response[
+        'Content-Disposition'] = 'attachment; filename="ordenes de venta.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Órden de compra',
+                     'Estado',
+                     'Proveedor',
+                     'Total',
+                     'Pagado',
+                     'Balance', ])
+    try:
+        orders = PurchOrderModel.objects.all().order_by('created')
+        for order in orders:
+            writer.writerow([order.PurchId,
+                             order.PurchStatus,
+                             order.Vendor,
+                             order.Total,
+                             order.Paid,
+                             order.Balance, ])
+    except:
+        return HttpResponseRedirect('/purch_orders/')
+
+    return response
+
+
+# FBV: Export to pdf
+# ----------------------------------------------------------------------------
+def export_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    # pdf_name = "proveedores.pdf"  # llamado proveedores
+    # response['Content-Disposition'] = 'attachment; filename=%s' % pdf_name
+    buff = BytesIO()
+    doc = SimpleDocTemplate(buff,
+                            pagesize=letter,
+                            rightMargin=20,
+                            leftMargin=20,
+                            topMargin=30,
+                            bottomMargin=20,
+                            )
+    ordenes = []
+    styles = getSampleStyleSheet()
+
+    title = Paragraph("Listado de órdenes de compra", styles['Heading2'])
+    date = Paragraph(time.strftime("%d/%m/%Y"), styles['Heading2'])
+    header = (title, date)
+    t = Table([''] + [header] + [''])
+    t.setStyle(TableStyle(
+        [
+            ('ALIGN', (1, 1), (1, 1), 'RIGHT'),
+            ('TEXTCOLOR', (0, 1), (0, 0), colors.green),
+        ]
+    ))
+    ordenes.append(t)
+
+    headings = ('Órden de compra', 'Estado', 'Proveedor',
+                'Total', 'Pagado', 'Balance',)
+    orders = [(o.PurchId, o.PurchStatus, o.Vendor,
+               o.Total, o.Paid, o.Balance,)
+              for o in PurchOrderModel.objects.all().order_by('created')]
+
+    t = Table([headings] + orders)
+    t.setStyle(TableStyle(
+        [
+            ('GRID', (0, 0), (6, -1), 0.5, colors.dodgerblue),
+            ('LINEBELOW', (0, 0), (-1, 0), 0.5, colors.darkblue),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
+        ]
+    ))
+    ordenes.append(t)
+    doc.build(ordenes)
+    response.write(buff.getvalue())
+    buff.close()
+    return response

@@ -3,13 +3,21 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:10:36
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-06 17:28:57
-from django.http import HttpResponseRedirect
+# @Last Modified time: 2015-12-21 22:01:25
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.forms import inlineformset_factory
 from django.views.generic import (ListView, DeleteView)
+import csv
+import time
+from io import BytesIO
+from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import Table
 from .models import ItemModel, InventoryModel
 from .forms import InventoryForm, ItemForm
 
@@ -150,3 +158,86 @@ class DeleteInventView(DeleteView):
                          "Artículo eliminado correctamente",
                          extra_tags='msg')
         return HttpResponseRedirect(success_url)
+
+
+# FBV: Export to csv
+# ----------------------------------------------------------------------------
+def export_csv(request):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="artículos.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Código',
+                     'Nombre',
+                     'Descripción',
+                     'Unidad',
+                     'Precio venta',
+                     'Proveedor principal',
+                     'Precio compra'])
+    try:
+        item_list = ItemModel.objects.all().order_by('ItemId')
+        for item in item_list:
+            writer.writerow([item.ItemId,
+                             item.ItemName,
+                             item.Description,
+                             item.UnitId,
+                             item.Price,
+                             item.PrimaryVendor,
+                             item.VendorPrice])
+    except:
+        return HttpResponseRedirect('/Item/')
+
+    return response
+
+
+# FBV: Export to pdf
+# ----------------------------------------------------------------------------
+def export_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    # pdf_name = "proveedores.pdf"  # llamado proveedores
+    # response['Content-Disposition'] = 'attachment; filename=%s' % pdf_name
+    buff = BytesIO()
+    doc = SimpleDocTemplate(buff,
+                            pagesize=letter,
+                            rightMargin=20,
+                            leftMargin=20,
+                            topMargin=30,
+                            bottomMargin=20,
+                            )
+    articulos = []
+    styles = getSampleStyleSheet()
+
+    title = Paragraph("Listado de artículos", styles['Heading2'])
+    date = Paragraph(time.strftime("%d/%m/%Y"), styles['Heading2'])
+    header = (title, date)
+    t = Table([''] + [header] + [''])
+    t.setStyle(TableStyle(
+        [
+            ('ALIGN', (1, 1), (1, 1), 'RIGHT'),
+            ('TEXTCOLOR', (0, 1), (0, 0), colors.green),
+        ]
+    ))
+    articulos.append(t)
+
+    headings = ('Código', 'Nombre', 'Descripción',
+                'Unidad', 'Precio venta', 'Proveedor principal',
+                'Precio compra')
+    items = [(i.ItemId, i.ItemName, i.Description,
+              i.UnitId, i.Price, i.PrimaryVendor,
+              i.VendorPrice)
+             for i in ItemModel.objects.all().order_by('ItemId')]
+
+    t = Table([headings] + items)
+    t.setStyle(TableStyle(
+        [
+            ('GRID', (0, 0), (6, -1), 0.5, colors.dodgerblue),
+            ('LINEBELOW', (0, 0), (-1, 0), 0.5, colors.darkblue),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.dodgerblue)
+        ]
+    ))
+    articulos.append(t)
+    doc.build(articulos)
+    response.write(buff.getvalue())
+    buff.close()
+    return response

@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-11-28 15:04:58
+# @Last Modified time: 2015-12-20 22:13:49
 """
 Django settings for Inventationery project.
 
@@ -41,6 +41,7 @@ DJANGO_APPS = (
 )
 THIRD_PARTY_APPS = (
     'widget_tweaks',
+    'django_extensions',
 )
 
 # Apps specific for this project go here.
@@ -54,6 +55,7 @@ LOCAL_APPS = (
     'Inventationery.apps.PurchOrder',
     'Inventationery.apps.Vendor',
     'Inventationery.core',
+    'Inventationery.apps.Payments',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

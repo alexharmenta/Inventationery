@@ -14,9 +14,11 @@
                 <div class="clearfix"></div>
         	</div>
             <div class="x_content table-responsive">
-                <a class='btn btn-primary btn-lg btn-xs pull-right' href="{% url "inventory:new" %}">
-				<span class="lnr lnr-pencil"></span> Nuevo artículo
+            	<a class='btn btn-purple pull-right' href="{% url "inventory:new" %}" title="Agregar nuevo proveedor" id="NewVendorBtn">
+					<i class="fa fa-plus"></i> Nuevo artículo
 				</a>
+				<div><a href="{% url "inventory:csv" %}" class="btn btn-warning" title="Exportar a CSV (Archivo separado por comas)">CSV <i class="fa fa-file-text-o"></i></a>
+				<a href="{% url "inventory:pdf" %}" target="_blank" class="btn btn-danger" title="Exportar a PDF">PDF <i class="fa fa-file-pdf-o"></i></a></div>
 				<table id="InventoryListTableId" class="display table table-hover">
 				    <thead>
 				        <tr>
@@ -25,17 +27,30 @@
 				            <th>Unidad</th>
 				            <th>Precio de venta</th>
 				            <th>Precio de compra</th>
+				            <th>Proveedor principal</th>
 				            <th>Acciones</th>
 				        </tr>
 				    </thead>
 				    <tbody>
 				    	{% for item in items %}
 				    		<tr>
-					            <td>{{ item.ItemId }}</td>
+					            <td>
+					            	<a class='btn btn-link btn-xs' href="{% url "inventory:update" ItemId=item.ItemId %}">
+										{{ item.ItemId }}
+									</a>
+								</td>
 					            <td>{{ item.ItemName }}</td>
 					            <td>{{ item.UnitId }}</td>
 					            <td>{{ item.Price }}</td>
 					            <td>{{ item.VendorPrice }}</td>
+					            <td>
+					            {% if item.PrimaryVendor %}
+					            	<a class='btn btn-link btn-xs' href="{% url "vendor:update" AccountNum=item.PrimaryVendor %}">
+										{{ item.PrimaryVendor }}
+									</a>
+					            {% endif %}
+					            	
+								</td>
 					            <td class="text-center">
 									<a class='btn btn-info btn-xs' href="{% url "inventory:update" ItemId=item.ItemId %}">
 										<span class="lnr lnr-pencil"></span> Editar

@@ -3,11 +3,12 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-12 11:53:07
+# @Last Modified time: 2015-12-21 22:26:28
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 from Inventationery.apps.Vendor.models import VendorModel
 from Inventationery.apps.Inventory.models import ItemModel, LocationModel
+from Inventationery.apps.Payments.models import PaymentModel, PaymModeModel
 from Inventationery.core.models import Countries
 
 
@@ -50,7 +51,7 @@ class PurchOrderModel(TimeStampedModel):
     )
     # PURCHASE STATUS OPTIONS
     OPEN = 'OPE'
-    BACKORDER = 'BAC'
+    # BACKORDER = 'BAC'
     RECEIVED = 'REC'
     INVOICED = 'INV'
     PAID = 'PAI'
@@ -59,7 +60,7 @@ class PurchOrderModel(TimeStampedModel):
 
     PURCH_STATUS = (
         (OPEN, 'Abierta'),
-        (BACKORDER, 'Back order'),
+        # (BACKORDER, 'Back order'),
         (RECEIVED, 'Recibido'),
         (INVOICED, 'Facturado'),
         (PAID, 'Pagado'),
@@ -96,9 +97,9 @@ class PurchOrderModel(TimeStampedModel):
         default='MXN',
         max_length=3)  # VendModel-CurrencyCode
     # Catalogo de pagos a 30 dias
-    Payment = models.CharField(max_length=30, blank=True, null=True)
+    Payment = models.ForeignKey(PaymentModel, blank=True, null=True)
     # Catalogo de tipo de pagos
-    PaymMode = models.CharField(max_length=30, blank=True, null=True)
+    PaymMode = models.ForeignKey(PaymModeModel, null=True, blank=True)
     Remarks = models.TextField(
         default=None, blank=True, null=True)
     SubTotal = models.DecimalField(

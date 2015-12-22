@@ -2,7 +2,7 @@
  * @Author: Alex
  * @Date:   2015-11-16 18:59:28
  * @Last Modified by:   Alex
- * @Last Modified time: 2015-12-12 15:20:07
+ * @Last Modified time: 2015-12-21 23:53:25
  */
 
 'use strict';
@@ -288,7 +288,10 @@ $(document).ready(function() {
         purch_enabled = false;
     }
     disableForm('PurchOrderForm', purch_enabled);
-    $('#cancel_order_btn').prop('disabled', false);
+    if ($('#id_PurchStatus').val() != 'OPE' || $('#id_PurchStatus').val() == 'CAN') {
+        $('#cancel_order_btn').prop('disabled', true);
+    }
+    
     // Enable/Disable purch order on click
     $('#cancel_order_btn').on('click', function() {
         var csrftoken = getCookie('csrftoken');
@@ -423,6 +426,7 @@ $(document).ready(function() {
                         );
                         if (json.Enabled == false){
                           disableForm('PurchOrderForm', false);
+                          $('#cancel_order_btn').prop('disabled', true); //Bloquear cancelación
                         }
                         $('#id_PurchStatus').val(json.PurchStatus.toString()).change();
                     },
@@ -470,6 +474,7 @@ $(document).ready(function() {
                         );
                         if (json.Enabled == false){
                           disableForm('PurchOrderForm', false);
+                          $('#cancel_order_btn').prop('disabled', true); //Bloquear cancelación
                         }
                         $('#id_PurchStatus').val(json.PurchStatus.toString()).change();
                     },
