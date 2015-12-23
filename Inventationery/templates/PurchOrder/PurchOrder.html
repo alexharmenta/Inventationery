@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load staticfiles i18n %}
 {% load widget_tweaks %}
 
 {% block content %}
@@ -272,13 +273,13 @@
 								    {{ purchline_form.non_field_errors }}
 								{% endif %}
 					            <tr>
-									<td>{% render_field purchline_form.ItemId class+="form-control" %}</td>
+									<td>{% render_field purchline_form.ItemId class+="form-control item-id" %}</td>
 									<td>{% render_field purchline_form.ItemName class+="form-control" %}</td>
 									<td>{% render_field purchline_form.PurchQty class+="pl_amount form-control pl_qty" %}</td>
 									<td>{% render_field purchline_form.PurchUnit class+="form-control" %}</td>
 									<td>{% render_field purchline_form.PurchPrice class+="pl_amount form-control amount" %}</td>
-									<td>{% render_field purchline_form.LineDisc class+="pl_amount form-control" %}</td>
-									<td>{% render_field purchline_form.LinePercent class+="pl_amount form-control" %}</td>
+									<td>{% render_field purchline_form.LineDisc class+="pl_amount form-control pl_disc" %}</td>
+									<td>{% render_field purchline_form.LinePercent class+="pl_amount form-control pl_percent" %}</td>
 									<td>{% render_field purchline_form.LineAmount|append_attr:'readonly' class+="form-control amount total_amount" %}</td>
 									<td></td>
 					            </tr>
@@ -367,3 +368,8 @@
 	</form>
 </div>
 {% endblock %}
+
+
+{% block ExtraJS %}
+<script type="text/javascript" charset="utf8" src="{% static "js/PurchOrder/PurchOrder.js" %}"></script>
+{% endblock ExtraJS %}

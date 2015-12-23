@@ -157,7 +157,6 @@
 
     </div>
     
-    {% block js %}
 	<script type="text/javascript" charset="utf8" src="{% static "third-party/jquery/jquery-2.1.4.min.js" %}"></script>
     <!-- Latest compiled and minified JavaScript -->
 	<script type="text/javascript" charset="utf8" src="{% static "third-party/bootstrap-3.3.5-dist/js/bootstrap.min.js" %}"></script>
@@ -172,10 +171,13 @@
     <script type="text/javascript" charset="utf8" src="{% static "third-party/sweet-alert/js/sweetalert.min.js" %}"></script>
     <!-- Notie JS -->
     <script type="text/javascript" charset="utf8" src="{% static "third-party/notie/js/notie.js" %}"></script>
-
+    
+    <!-- Project JS Files -->
     <script type="text/javascript" charset="utf8" src="{% static "js/script.js" %}"></script>
     <script type="text/javascript" charset="utf8" src="{% static "js/project.js" %}"></script>
     
-    {% endblock %}
+    {% block ExtraJS %}
+    
+    {% endblock ExtraJS %}
 </body>
 </html>

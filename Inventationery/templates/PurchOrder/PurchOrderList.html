@@ -36,8 +36,8 @@
 				    <tbody>
 				    	{% for order in orders %}
 				    		<tr>
-					            <td><a href="{% url "purch:update" PurchId=order.PurchId %}">{{ order.PurchId }}</a></td>
-					            <td><a href="{% url "vendor:update" AccountNum=order.Vendor %}">{{ order.Vendor }}</a></td>
+					            <td><a href="{% url "purch:update" PurchId=order.PurchId %}" class="btn btn-link btn-xs">{{ order.PurchId }}</a></td>
+					            <td><a href="{% url "vendor:update" AccountNum=order.Vendor %}" class="btn btn-link btn-xs">{{ order.Vendor }}</a></td>
 					            <td>{{ order.PurchName }}</td>
 					            {% if order.PurchaseType == 'PO' %}
 					            	<td>Orden de compra</td>

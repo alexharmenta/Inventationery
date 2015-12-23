@@ -9,7 +9,7 @@
 		</div>
 		<div class="col-md-2">
 			{% if PurchOrder.PurchStatus == 'OPE' or PurchOrder.PurchStatus == 'CAN' %}
-				<a href="{% url "purch:delete" pk=PurchOrder.pk %}" class="btn btn-danger btn-block">
+				<a href="{% url "purch:delete" pk=PurchOrder.pk %}" class="btn btn-danger btn-block" id="delPurchOrderBtn">
 					<i class="fa fa-times"></i> Eliminar
 				</a>
 		 	{% endif %}

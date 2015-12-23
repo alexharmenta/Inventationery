@@ -34,9 +34,9 @@ var notie = function(){
     var alert_color_text = '#FFF';
 
     // notie.confirm colors
-    var confirm_and_input_color_background = '#4D82D6';
-    var confirm_and_input_color_yes_background = '#57BF57';
-    var confirm_and_input_color_no_background = '#E1715B';
+    var confirm_and_input_color_background = '#009dcd';
+    var confirm_and_input_color_yes_background = '#3eb5ac';
+    var confirm_and_input_color_no_background = '#f84545';
     var confirm_and_input_color_text = '#FFF';
     var confirm_and_input_color_yes_text = '#FFF';
     var confirm_and_input_color_no_text = '#FFF';
