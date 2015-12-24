@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-21 22:17:43
+# @Last Modified time: 2015-12-23 23:47:27
 # from django.shortcuts import render
 from django.db.models import Q
 from django.contrib import messages
@@ -51,7 +51,7 @@ class PurchOrderRecentListView(ListView):
 
     def get_queryset(self):
         queryset = super(PurchOrderRecentListView, self).get_queryset()
-        queryset = PurchOrderModel.objects.all().order_by('created')[:10]
+        queryset = PurchOrderModel.objects.reverse().order_by('created')[:10]
         return queryset
 
 
@@ -249,17 +249,19 @@ def updatePurchOrderView(request, PurchId):
                         'VendorPrice': '',
                     }
             elif action == 'update_enabled':
-                enable = request.POST.get('purch_enabled', '')
-                if enable == 'true':
-                    enable = True
-                    PurchOrderModel.objects.filter(pk=PurchOrder.pk).update(
-                        Enabled=enable, PurchStatus='OPE')
+                enabled = request.POST.get('purch_enabled', '')
+                if enabled == 'true':
+                    PurchOrder.PurchStatus = 'CAN'
+                    PurchOrder.Enabled = False
                 else:
-                    enable = False
-                    PurchOrderModel.objects.filter(pk=PurchOrder.pk).update(
-                        Enabled=enable, PurchStatus='CAN')
+                    PurchOrder.PurchStatus = 'OPE'
+                    PurchOrder.Enabled = True
+                PurchOrder.save()
 
-                response_dict = {'PurchOrder': PurchOrder.PurchId, }
+                response_dict = {
+                    'Enabled': PurchOrder.Enabled,
+                    'PurchStatus': PurchOrder.PurchStatus,
+                }
                 return JsonResponse(response_dict)
             elif action == 'receive_pay':
                 if purch_form.is_valid():
@@ -295,6 +297,13 @@ def updatePurchOrderView(request, PurchId):
                             messages.warning(
                                 request,
                                 'Revise la información de las lineas de la OC')
+
+                    response_dict = {
+                        'Enabled': PurchOrder.Enabled,
+                        'PurchStatus': PurchOrder.PurchStatus,
+                    }
+
+                    return JsonResponse(response_dict)
                 else:
                     purchline_formset = PurchLineFormset(
                         request.POST, prefix='plfs')
@@ -338,7 +347,7 @@ def updatePurchOrderView(request, PurchId):
                     purchline_formset = PurchLineFormset(
                         request.POST, prefix='plfs')
                     messages.error(
-                        request, "Ocurrió un error al registrar la recepción")
+                        request, "Ocurrió un error al registrar el pago")
                     return render_to_response(
                         'PurchOrder/UpdatePurchOrder.html',
                         {'purch_form': purch_form,

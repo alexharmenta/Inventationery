@@ -2,7 +2,7 @@
 * @Author: Alex
 * @Date:   2015-12-22 19:23:28
 * @Last Modified by:   Alex
-* @Last Modified time: 2015-12-22 23:37:02
+* @Last Modified time: 2015-12-23 23:49:45
 */
 
 'use strict';
@@ -21,8 +21,6 @@ $(document).ready(function(){
 
 	/* ----- INIT VALUES ----- */
 
-	// PurchOrder table list initialize plugin
-
     // Purchline formset
     $('#PurchOrderForm tbody tr').formset({ // Initialize django-formset plugin
         prefix: 'plfs',
@@ -38,20 +36,14 @@ $(document).ready(function(){
 	// Enable/Disable discount fields
 	EnableDiscounts();
     // Enable/Disable purchase lines on load if status is REC
-    if($('#id_PurchStatus').val() == 'REC' || $('#id_PurchStatus').val() == 'RPA' ) {
-        DisablePurchLines();
-    }
+    ChangePurchaseStatus($('#id_PurchStatus').val());
 	// Enable/Disable purch order on load
     if ($('#id_Enabled').is(':checked')) {
         purch_enabled = true;
     } else {
         purch_enabled = false;
     }
-    disableForm('PurchOrderForm', purch_enabled);
-
-    if ($('#id_PurchStatus').val() != 'OPE' || $('#id_PurchStatus').val() == 'CAN') {
-        $('#cancel_order_btn').prop('disabled', true);
-    }
+    EnableForm('PurchOrderForm', purch_enabled);
 
 	/* -------------------- */
 
@@ -183,40 +175,48 @@ $(document).ready(function(){
 
 	// Set balance on Paid change
     $('#id_Paid').on('change', function() {
-        $('#id_Balance').val($('#id_Total').val() - $(this).val());
+        SetBalance();
+        if($('#id_Paid').val() == 0) {
+            EnablePurchLines(true);
+        }
+        ChangePurchaseStatus('OPE');
     });
 
     // Enable/Disable purch order on click
     $('#cancel_order_btn').on('click', function() {
         csrftoken = getCookie('csrftoken');
+        var formData = $('#PurchOrderForm').serialize(); // Serialized form data
+        var action = '&action=update_enabled'; //Action to execute on Django View
+        if ($('#id_Enabled').is(':checked')) {
+            purch_enabled = true;
+        } else {
+            purch_enabled = false;
+        }
 
         $.ajax({
             url: window.location.href, // the endpoint,commonly same url
             type: "POST",
-
             data: {
-                action: 'update_enabled',
-                purch_enabled: !purch_enabled,
-                csrfmiddlewaretoken: csrftoken,
-            }, // data sent with the post request
-
+                    action: 'update_enabled',
+                    purch_enabled: purch_enabled,
+                    csrfmiddlewaretoken: csrftoken,
+                }, // data sent with the post request
             // handle a successful response
             success: function(json) {
                 //console.log(json); // another sanity check
                 //On success show the data posted to server as a message
-                purch_enabled = !purch_enabled;
-                $('#id_Enabled').prop('checked', purch_enabled);
-                if (!purch_enabled) {
+                
+                $('#id_Enabled').prop('checked', json.Enabled);
+                if (!json.Enabled) {
                     $('#cancel_order_btn').text('Reabrir pedido');
-                    $('#id_PurchStatus').val('CAN').change();
+                    SetBalance();
                     notie.alert(2, 'Pedido cancelado.', 1.5);
                 } else {
                     $('#cancel_order_btn').text('Cancelar pedido');
-                    $('#id_PurchStatus').val('OPE').change();
                     notie.alert(4, 'Pedido abierto.', 1.5);
                 }
-                disableForm('PurchOrderForm', purch_enabled);
-                $('#cancel_order_btn').prop('disabled', false);
+                $('#id_Paid').val(0);
+                ChangePurchaseStatus(json.PurchStatus);
             },
 
             // handle a non-successful response
@@ -228,13 +228,63 @@ $(document).ready(function(){
         });
     });
 
+    //Pay
+    $('#pay_order').on('click', function(event) {
+        event.preventDefault();
+
+        swal({
+                title: 'Se pagará un total de: '+ getPurchTotal(),
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, pagar!',
+                closeOnConfirm: false,
+            },
+            function() {
+                // var csrftoken = getCookie('csrftoken'); Not necesary through serialization
+                // Current form values
+                var PaidAmount = parseFloat($('#id_Paid').val());
+                var BalanceAmount = parseFloat($('#id_Balance').val());
+                var TotalAmount = parseFloat($('#id_Total').val());
+                // Change values to send form
+                PayPurchOrder();
+                var formData = $('#PurchOrderForm').serialize(); // Serialized form data
+                var action = '&action=pay_order'; //Action to execute on Django View
+                $.ajax({
+                    url: window.location.href, // the endpoint,commonly same url
+                    type: "POST",
+                    data: formData + action,
+                    // handle a successful response
+                    success: function(json) {
+                        swal(
+                            'Orden de compra pagada',
+                            'Correcto',
+                            'success'
+                        );
+                        // Actions when order is Paid
+                        ChangePurchaseStatus(json.PurchStatus); // Change status function
+                    },
+                    // handle a non-successful response
+                    error: function(xhr, errmsg, err) {
+                        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                        swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error");
+                        $('#id_Paid').val(PaidAmount); // Restore Paid    
+                        $('#id_Balance').val(BalanceAmount); // Restore Balance
+                        $('#id_Total').val(TotalAmount); // Restore Total
+                    }
+
+                });
+            });
+    });
+
     //Receive and pay
     $('#receive_pay').on('click', function(event) {
         event.preventDefault();
 
         swal({
-                title: 'Se pagará completamente la orden de compra',
-                text: 'Recibirá un total de ' + getTotalItems().toString() + ' artículos',
+                title: 'Se pagará un total de: '+ getPurchTotal(),
+                text: 'Recibirá ' + getTotalItems().toString() + ' artículos',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -248,10 +298,8 @@ $(document).ready(function(){
                 var PaidAmount = parseFloat($('#id_Paid').val());
                 var BalanceAmount = parseFloat($('#id_Balance').val());
                 var TotalAmount = parseFloat($('#id_Total').val());
-                var PurchStatus = $('#id_PurchStatus').val();
-                $('#id_Paid').val(TotalAmount); // Pay total amount    
-                $('#id_Balance').val(0); // Calc balance
-                $('#id_PurchStatus').val('RPA').change();
+                
+                PayPurchOrder();
 
                 var formData = $('#PurchOrderForm').serialize(); // Serialized form data
                 var action = '&action=receive_pay'; //Action to execute on Django View
@@ -265,13 +313,12 @@ $(document).ready(function(){
                         //On success show the data posted to server as a message
                         swal(
                             'Orden de compra pagada',
-                            'Se recibieron un total de ' + getTotalItems().toString() + ' artículos',
+                            'Recibió ' + getTotalItems().toString() + ' artículos',
                             'success'
                         );
-                        disableForm('PurchOrderForm', false); // Bloquear pedido
-                        DisablePurchLines();
-                        $('#cancel_order_btn').prop('disabled', true); //Bloquear cancelación
-                        $('#delPurchOrderBtn').remove(); //Bloquear eliminación
+                        ChangePurchaseStatus(json.PurchStatus);
+                        //$('#cancel_order_btn').prop('disabled', true); //Bloquear cancelación
+                        //$('#delPurchOrderBtn').hide(); //Bloquear eliminación
                     },
                     // handle a non-successful response
                     error: function(xhr, errmsg, err) {
@@ -286,60 +333,7 @@ $(document).ready(function(){
                 });
             });
     });
-    //Pay
-    $('#pay_order').on('click', function(event) {
-        event.preventDefault();
-
-        swal({
-                title: 'Se pagará completamente la orden de compra',
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Si, pagar!',
-                closeOnConfirm: false,
-            },
-            function() {
-                // var csrftoken = getCookie('csrftoken'); Not necesary through serialization
-                // Change values to send form
-                var PaidAmount = parseFloat($('#id_Paid').val());
-                var BalanceAmount = parseFloat($('#id_Balance').val());
-                var TotalAmount = parseFloat($('#id_Total').val());
-                $('#id_Paid').val(TotalAmount); // Pay total amount    
-                $('#id_Balance').val(0); // Calc balance
-                var formData = $('#PurchOrderForm').serialize(); // Serialized form data
-                var action = '&action=pay_order'; //Action to execute on Django View
-                $.ajax({
-                    url: window.location.href, // the endpoint,commonly same url
-                    type: "POST",
-                    data: formData + action,
-                    // handle a successful response
-                    success: function(json) {
-                        swal(
-                            'Orden de compra pagada',
-                            'Correcto',
-                            'success'
-                        );
-                        if (json.Enabled == false){
-                          disableForm('PurchOrderForm', false);
-                        }
-                        $('#cancel_order_btn').prop('disabled', true); //Bloquear cancelación
-                        $('#delPurchOrderBtn').hide(); //Bloquear eliminación
-                        DisablePurchLines();
-                        $('#id_PurchStatus').val(json.PurchStatus.toString()).change();
-                    },
-                    // handle a non-successful response
-                    error: function(xhr, errmsg, err) {
-                        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                        swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error");
-                        $('#id_Paid').val(PaidAmount); // Restore Paid    
-                        $('#id_Balance').val(BalanceAmount); // Restore Balance
-                        $('#id_Total').val(TotalAmount); // Restore Total
-                    }
-
-                });
-            });
-    });
+    
     //Receive
     $('#receive_invent').on('click', function(event) {
         event.preventDefault();
@@ -372,11 +366,11 @@ $(document).ready(function(){
 	                            'success'
 	                        );
 	                        if (json.Enabled == false){
-	                          disableForm('PurchOrderForm', false);
+	                          
 	                        }
                             $('#cancel_order_btn').prop('disabled', true); //Bloquear cancelación
-                            $('#delPurchOrderBtn').remove(); //Bloquear eliminación
-                            DisablePurchLines();
+                            $('#delPurchOrderBtn').hide(); //Bloquear eliminación
+                            
 	                        $('#id_PurchStatus').val(json.PurchStatus.toString()).change();
 	                    },
 	                    // handle a non-successful response
@@ -389,14 +383,18 @@ $(document).ready(function(){
 	            });
 		}
     });
-
-    $('id_Balance').on('change', function(){
+    
+    if($('#id_Paid').val() != 0) {
+        $('#delPurchOrderBtn').hide(); //Bloquear eliminación
+    }
+    $('#id_Paid').on('change', function(){
         if(!$(this).val() || $(this).val() == 0) {
             $('#delPurchOrderBtn').show(); //Bloquear eliminación
         } else {
             $('#delPurchOrderBtn').hide(); //Bloquear eliminación
         }
     });
+
     /* ----- Purchase Order ----- */
 
 });
@@ -404,17 +402,11 @@ $(document).ready(function(){
 /* ----- LOCAL FUNCTIONS ----- */
 // Set totals in PO
 function SetTotals(setBalance){
-	var total = 0;
+	var total = getPurchTotal();
 
-	$('.total_amount').each(function(index) {
-        if ($(this).val()) {
-            total += parseFloat($(this).val());
-            total = (Math.round( total * 100 )/100 );
-            $('#id_SubTotal').val(total);
-            $('#id_Total').val(total);
-        	$('#id_Balance').val($('#id_Total').val() - $('#id_Paid').val());
-        }
-    });
+    $('#id_SubTotal').val(total);
+    $('#id_Total').val(total);
+	$('#id_Balance').val($('#id_Total').val() - $('#id_Paid').val());
 }
 // Block discount fields
 function EnableDiscounts(setBalance){
@@ -431,18 +423,31 @@ function EnableDiscounts(setBalance){
     });
 }
 // Disable Table items
-function DisablePurchLines(){
-	$("#purchline_table").find("input,button,textarea,select,a").attr("readonly", "readonly");
-	$('#purchline_table th:last').remove();
-	$('#purchline_table tr:last').remove();
-	$('#purchline_table tr').each(function(){
-		$(this).children('td:last').remove();
-		$(this).find('td:first select').css('-webkit-appearance', 'none');
-		$(this).find('td:first select').css('-moz-appearance', 'none');
-		$(this).find('td:first select').css('text-indent', '0px');
-		$(this).find('td:first select').css('text-overflow', '');
-		$(this).find('td:first select option').hide();
-	});
+function EnablePurchLines(enable){
+    if(enable) {
+        $('.del-row').show();
+        $('.add-row').show();
+        $("#purchline_table *").attr("readonly", false);
+        $('#purchline_table tr').each(function(){
+            $(this).find('td:first select').css('-webkit-appearance', '');
+            $(this).find('td:first select').css('-moz-appearance', '');
+            $(this).find('td:first select').css('text-indent', '');
+            $(this).find('td:first select').css('text-overflow', '');
+            $(this).find('td:first select option').show();
+        }); 
+    } else {
+        $('.del-row').hide();
+        $('.add-row').hide();
+        $("#purchline_table *").attr("readonly", true);
+        $('#purchline_table tr').each(function(){
+            $(this).find('td:first select').css('-webkit-appearance', 'none');
+            $(this).find('td:first select').css('-moz-appearance', 'none');
+            $(this).find('td:first select').css('text-indent', '0px');
+            $(this).find('td:first select').css('text-overflow', '');
+            $(this).find('td:first select option').hide();
+        });    
+    }
+	
 }
 // Get total items in PO items
 function getTotalItems() {
@@ -452,6 +457,64 @@ function getTotalItems() {
             total += parseFloat($(this).val());
         }
     });
+
+    return parseFloat(total).toFixed(2);
+}
+
+// Get Purch Total
+function getPurchTotal() {
+    var total = 0;
+    $('.total_amount').each(function(index) {
+        if ($(this).val()) {
+            total += parseFloat($(this).val());
+            total = (Math.round( total * 100 )/100 );
+        }
+    });
     return total;
 }
+
+// Pay Purchase Order Total
+function PayPurchOrder() {
+    $('#id_Paid').val(getPurchTotal());
+    SetBalance();
+}
+
+// Set balance
+function SetBalance() {
+    var Balance = parseFloat(getPurchTotal() - $('#id_Paid').val()).toFixed(2);
+    $('#id_Balance').val(Balance);
+}
+/* ----- Status control section ----- */
+
+function ChangePurchaseStatus(action) {
+    switch(action) {
+        case 'PAI':
+            $('#id_PurchStatus').val('PAI').change();
+            EnablePurchLines(false);
+            EnableForm('PurchOrderForm',true);
+            break;
+        case 'REC':
+            $('#id_PurchStatus').val('REC').change();
+            EnablePurchLines(false);
+            EnableForm('PurchOrderForm',true);
+            break;
+        case 'RPA':
+            $('#id_PurchStatus').val('RPA').change();
+            EnablePurchLines(false);
+            EnableForm('PurchOrderForm',false);
+            break;
+        case 'OPE':
+            $('#id_PurchStatus').val('OPE').change();
+            //EnablePurchLines(true);
+            EnableForm('PurchOrderForm',true);
+            break;
+        case 'CAN':
+            $('#id_PurchStatus').val('CAN').change();
+            //EnablePurchLines(false);
+            EnableForm('PurchOrderForm',false);
+            break;
+    }
+}
+
+/* .---- Status control section ----- */
 /* -------------------- */

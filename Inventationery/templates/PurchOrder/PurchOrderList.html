@@ -27,6 +27,7 @@
 				            <th>Orden de compra</th>
 				            <th>Cuenta de proveedor</th>
 				            <th>Nombre</th>
+				            <th>Fecha de la OV</th>
 				            <th>Tipo de compra</th>
 				            <th>Estado del pedido</th>
 				            <th>Pedido</th>
@@ -39,6 +40,7 @@
 					            <td><a href="{% url "purch:update" PurchId=order.PurchId %}" class="btn btn-link btn-xs">{{ order.PurchId }}</a></td>
 					            <td><a href="{% url "vendor:update" AccountNum=order.Vendor %}" class="btn btn-link btn-xs">{{ order.Vendor }}</a></td>
 					            <td>{{ order.PurchName }}</td>
+					            <td>{{ order.created|date:"d/m/y" }}</td>
 					            {% if order.PurchaseType == 'PO' %}
 					            	<td>Orden de compra</td>
 				            	{% elif order.PurchaseType == 'RO' %}

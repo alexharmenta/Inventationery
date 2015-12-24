@@ -280,7 +280,7 @@
 									<td>{% render_field purchline_form.PurchPrice class+="pl_amount form-control amount" %}</td>
 									<td>{% render_field purchline_form.LineDisc class+="pl_amount form-control pl_disc" %}</td>
 									<td>{% render_field purchline_form.LinePercent class+="pl_amount form-control pl_percent" %}</td>
-									<td>{% render_field purchline_form.LineAmount|append_attr:'readonly' class+="form-control amount total_amount" %}</td>
+									<td>{% render_field purchline_form.LineAmount|append_attr:'readonly' class+="form-control amount total_amount form_disabled" %}</td>
 									<td></td>
 					            </tr>
 					            {% for hidden in purchline_form.hidden_fields %}
@@ -296,9 +296,9 @@
 				    		<div class="form-group pull-left">
 						    	<ul class="purch_options">
 						    		{% if PurchOrder.Enabled %}
-						    			<li><button type="button" id="cancel_order_btn" class="btn btn-block btn-warning">Cancelar pedido</button></li>
+						    			<li><a id="cancel_order_btn" class="btn btn-block btn-warning" href="javascript:void(0)">Cancelar pedido</a></li>
 					    			{% else %}
-					    				<li><button type="button" id="cancel_order_btn" class="btn btn-block btn-warning">Reabrir pedido</button></li>
+					    				<li><a id="cancel_order_btn" class="btn btn-block btn-warning" href="javascript:void(0)">Reabrir pedido</a></li>
 						    		{% endif %}
 						    		<li>
 						    			<!-- Split button -->
@@ -317,7 +317,7 @@
 						    	</ul>				    			
 				    		</div>
 					    {% endif %}
-					    {% render_field purch_form.Enabled|append_attr:"style:visibility:hidden;"%}
+					    {% render_field purch_form.Enabled|append_attr:"style:visibility:hidden; class: form_disabled"%}
 				    	<div class="col-md-4 col-sm-4 col-xs-12 pull-right">
 				    		<div class="form-group">
 				    			<div class="col-md-4 col-sm-4 col-xs 12">

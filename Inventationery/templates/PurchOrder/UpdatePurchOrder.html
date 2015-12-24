@@ -8,11 +8,9 @@
 			<span> <h5> Última vez modificado: {{ PurchOrder.modified|date:"D d M Y" }} {{ PurchOrder.modified|time:"H:i" }}</h5> </span>
 		</div>
 		<div class="col-md-2">
-			{% if PurchOrder.PurchStatus == 'OPE' or PurchOrder.PurchStatus == 'CAN' %}
-				<a href="{% url "purch:delete" pk=PurchOrder.pk %}" class="btn btn-danger btn-block" id="delPurchOrderBtn">
-					<i class="fa fa-times"></i> Eliminar
-				</a>
-		 	{% endif %}
+			<a href="{% url "purch:delete" pk=PurchOrder.pk %}" class="btn btn-danger btn-block" id="delPurchOrderBtn">
+				<i class="fa fa-times"></i> Eliminar
+			</a>
 		</div>
 		<div class="col-md-2">
 			<a class='btn btn-purple pull-right btn-block' href="{% url "purch:new" %}" title="Crear nueva orden de compra" id="NewVendorBtn">

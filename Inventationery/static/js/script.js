@@ -2,7 +2,7 @@
  * @Author: Alex
  * @Date:   2015-11-16 18:59:28
  * @Last Modified by:   Alex
- * @Last Modified time: 2015-12-22 23:50:16
+ * @Last Modified time: 2015-12-23 23:36:06
  */
 
 'use strict';
@@ -18,6 +18,7 @@ $(document).ready(function() {
     });
     // Purch order table list initialize plugin
     $('#PurchOrderListTableId').DataTable({
+        "order": [[ 7, "desc" ]],
         "language": {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
         }
@@ -80,7 +81,7 @@ function getCharsBefore(str, chr) {
     return ("");
 }
 // Enable/Disable forms
-function disableForm(form, enabled) {
+function EnableForm(form, enabled) {
     var formId = '#' + form + ' ' + '*';
     if (enabled) {
         $(formId).not('form_disabled').prop('disabled', false);
