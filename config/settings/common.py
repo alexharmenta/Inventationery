@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-12-20 22:13:49
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-12-24 11:46:47
 """
 Django settings for Inventationery project.
 
@@ -56,6 +56,7 @@ LOCAL_APPS = (
     'Inventationery.apps.Vendor',
     'Inventationery.core',
     'Inventationery.apps.Payments',
+    'Inventationery.apps.Company',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

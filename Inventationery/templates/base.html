@@ -69,10 +69,18 @@
                                 </li>
                             </ul>
                             <ul class="nav side-menu">
-                                <li><a class="collapse-menu"> <i class="fa fa-database"></i> Inventario <span class="lnr lnr-chevron-down"></span></a>
+                                <li><a class="collapse-menu"> <i class="fa fa-cubes"></i> Inventario <span class="lnr lnr-chevron-down"></span></a>
                                     <ul class="nav child_menu" style="display: none">
-                                        <li><a href="{% url "inventory:list" %}"><i class="fa fa-barcode"></i>Artículos</a></li>
+                                        <li><a href="{% url "inventory:list" %}"><i class="fa fa-database"></i>Artículos</a></li>
                                         <li><a href="#"><i class="fa fa-archive"></i>Artículos en existencia</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <ul class="nav side-menu">
+                                <li><a class="collapse-menu"> <i class="fa fa-building-o"></i> Administración de la organización <span class="lnr lnr-chevron-down"></span></a>
+                                    <ul class="nav child_menu" style="display: none">
+                                        <li><a href="#"><i class="fa fa-building"></i>Empresa</a></li>
+                                        <li><a href="#"><i class="fa fa-users"></i>Usuarios</a></li>
                                     </ul>
                                 </li>
                             </ul>

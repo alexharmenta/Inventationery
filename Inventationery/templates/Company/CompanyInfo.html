@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% load widget_tweaks %}
+
+{% block content %}
+<form action="" method="POST" id="CompanyInfoForm">  {% csrf_token %}
+	{% if companyInfoForm.errors %}
+	    {% for field in companyInfoForm %}
+	        {% for error in field.errors %}
+	        	<style>
+					#{{ field.id_for_label }} {
+						border: 1px solid #f64747;
+						border-radius: 2px;
+					}
+	        	</style>				            
+	        {% endfor %}
+	    {% endfor %}
+	    {% for error in companyInfoForm.non_field_errors %}
+	        <div class="alert alert-error">
+	            <strong> {{ error }}</strong>
+	        </div>
+	    {% endfor %}
+	{% endif %}
+	{% if party_form.errors %}
+	    {% for field in party_form %}
+	        {% for error in field.errors %}
+	        	<style>
+					#{{ field.id_for_label }} {
+						border: 1px solid #f64747;
+						border-radius: 2px;
+					}
+	        	</style>				            
+	        {% endfor %}
+	    {% endfor %}
+	    {% for error in party_form.non_field_errors %}
+	        <div class="alert alert-error">
+	            <strong> {{ error }}</strong>
+	        </div>
+	    {% endfor %}
+	{% endif %}
+	{% if postal_form.errors %}
+	    {% for field in postal_form %}
+	        {% for error in field.errors %}
+	        	<style>
+					#{{ field.id_for_label }} {
+						border: 1px solid #f64747;
+						border-radius: 2px;
+					}
+	        	</style>				            
+	        {% endfor %}
+	    {% endfor %}
+	    {% for error in postal_form.non_field_errors %}
+	        <div class="alert alert-error">
+	            <strong> {{ error }}</strong>
+	        </div>
+	    {% endfor %}
+	{% endif %}
+	{% if electronic_form.errors %}
+	    {% for field in electronic_form %}
+	        {% for error in field.errors %}
+	        	<style>
+					#{{ field.id_for_label }} {
+						border: 1px solid #f64747;
+						border-radius: 2px;
+					}
+	        	</style>				            
+	        {% endfor %}
+	    {% endfor %}
+	    {% for error in electronic_form.non_field_errors %}
+	        <div class="alert alert-error">
+	            <strong> {{ error }}</strong>
+	        </div>
+	    {% endfor %}
+	{% endif %}
+
+	{% block page_title %}
+	{% endblock %}
+	<div class="col-md-12 col-sm-12 col-xs-12"> <!-- General info -->
+        <div class="x_panel tile">
+            <div class="x_title">
+                <h2>General</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+        	</div>
+            <div class="x_content">
+				<div class="row">
+					<div class="col-md-4 col-sm-4 col-xs-12">
+						<!-- DirParty -->
+						<h4><strong>Información general</strong></h4>
+						<div class="form-group">
+							{{ party_form.Name.errors }}
+							<label for="{{ party_form.Name.id_for_label }}">*Nombre de la empresa</label>
+							{% render_field party_form.Name|append_attr:"required" class+="form-control" %}
+						</div>
+						<div class="form-group">
+							{{ party_form.NameAlias.errors }}
+							<label for="{{ party_form.NameAlias.id_for_label }}">*Nombre de búsqueda</label>
+							{% render_field party_form.NameAlias|append_attr:"required" class+="form-control" %}
+						</div>
+						<div class="form-group">
+							{{ party_form.LanguageCode.errors }}
+							<label for="{{ party_form.LanguageCode.id_for_label }}">Lenguaje</label>
+							{% render_field party_form.LanguageCode class+="form-control" %}
+						</div>
+						<div class="form-group">
+							{{ party_form.FirstLastName.errors }}
+							<label for="{{ party_form.FirstLastName.id_for_label }}">Apellido</label>
+							{% render_field party_form.FirstLastName|append_attr:"value:xxxx hide" class+="form-control" %}
+						</div>
+					</div>
+					<div class="col-md-4 col-sm-4 col-xs-12">
+						<!-- Compañía -->
+						<h4><strong>Datos de la empresa</strong></h4>
+						<div class="form-group">
+							{{ companyInfoForm.CompanyType.errors }}
+							<label for="{{ companyInfoForm.CompanyType.id_for_label }}">*Tipo de empresa</label>
+							{% render_field companyInfoForm.CompanyType|append_attr:"required" class+="form-control" %}
+						</div>
+						<div class="form-group">
+							{{ companyInfoForm.CoRegNum.errors }}
+							<label for="{{ companyInfoForm.CoRegNum.id_for_label }}">Código de identificación fiscal (CIF)</label>
+							{% render_field companyInfoForm.CoRegNum class+="form-control" %}
+						</div>
+						<div class="form-group">
+							{{ companyInfoForm.VATNum.errors }}
+							<label for="{{ companyInfoForm.VATNum.id_for_label }}">CURP / RFC</label>
+							{% render_field companyInfoForm.VATNum class+="form-control" %}
+						</div>
+						<div class="form-group">
+							{{ companyInfoForm.DataArea.errors }}
+							<label for="{{ companyInfoForm.DataArea.id_for_label }}">Data area</label>
+							{% render_field companyInfoForm.DataArea class+="form-control" %}
+						</div>
+					</div>
+				</div>
+				<!-- Addresses -->
+				<div class="row">
+					<div class="col-md-4 col-sm-4 col-xs-12">
+						<!-- Compañía -->
+						<h4><strong>Dirección</strong></h4>
+						<div class="form-group postal-info">
+							<label{{ postal_form.Description.id_for_label }} for="">*Descripción
+							<span>&nbsp; {{ postal_form.Description.errors }}</span></label>
+							{% render_field postal_form.Description class+="form-control" %}
+						</div>
+						<div class="row">
+							<div class="col-md-9 col-sm-9 col-xs-6">
+								<div class="form-group postal-info">
+									<label{{ postal_form.Purpose.id_for_label }} for="">Propósito
+									<span>&nbsp; {{ postal_form.Purpose.errors }}</span></label>
+									{% render_field postal_form.Purpose class+="form-control" %}
+								</div>
+							</div>
+							<div class="col-md-3 col-sm-3 col-xs-6">
+								<div class="form-group postal-info">
+									<label{{ postal_form.IsPrimary.id_for_label }} for="">Principal
+									<span>&nbsp; {{ postal_form.IsPrimary.errors }}</span></label>
+									{% render_field postal_form.IsPrimary class+="form-control pull-right" %}
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="form-group postal-info">
+									<label{{ postal_form.CountryRegionId.id_for_label }} for="">*País
+									<span>&nbsp; {{ postal_form.CountryRegionId.errors }}</span></label>
+									{% render_field postal_form.CountryRegionId class+="form-control" %}
+								</div>
+							</div>
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="form-group postal-info">
+									<label{{ postal_form.ZipCode.id_for_label }} for="">Código postal
+									<span>&nbsp; {{ postal_form.ZipCode.errors }}</span></label>
+									{% render_field postal_form.ZipCode class+="form-control" %}
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-8 col-sm-8 col-xs-6">
+								<div class="form-group postal-info">
+									<label{{ postal_form.Street.id_for_label }} for="">Calle
+									<span>&nbsp; {{ postal_form.Street.errors }}</span></label>
+									{% render_field postal_form.Street class+="form-control" %}
+								</div>
+							</div>
+							<div class="col-md-4 col-sm-4 col-xs-6">
+								<div class="form-group postal-info">
+									<label{{ postal_form.StreetNumber.id_for_label }} for="">Número
+									<span>&nbsp; {{ postal_form.StreetNumber.errors }}</span></label>
+									{% render_field postal_form.StreetNumber class+="form-control" %}
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-3 col-sm-3 col-xs-6">
+								<div class="form-group postal-info">
+									<label{{ postal_form.BuildingCompliment.id_for_label }} for="">Interior
+									<span>&nbsp; {{ postal_form.BuildingCompliment.errors }}</span></label>
+									{% render_field postal_form.BuildingCompliment class+="form-control" %}
+								</div>
+							</div>
+							<div class="col-md-9 col-sm-9 col-xs-6">
+								<div class="form-group postal-info">
+									<label{{ postal_form.City.id_for_label }} for="">Ciudad
+									<span>&nbsp; {{ postal_form.City.errors }}</span></label>
+									{% render_field postal_form.City class+="form-control" %}
+								</div>
+							</div>
+						</div>
+						<div class="form-group postal-info">
+							<label{{ postal_form.State.id_for_label }} for="">Estado
+							<span>&nbsp; {{ postal_form.State.errors }}</span></label>
+							{% render_field postal_form.State class+="form-control" %}
+						</div>
+					</div>
+
+					<div class="col-md-4 col-sm-4 col-xs-12">
+						<!-- DirParty -->
+						<h4><strong>Contacto</strong></h4>
+						<div class="form-group">
+							{{ companyInfoForm.Phone.errors }}
+							<label for="{{ companyInfoForm.Phone.id_for_label }}">Teléfono</label>
+							{% render_field companyInfoForm.Phone class+="form-control" %}
+						</div>
+						<div class="form-group">
+							{{ companyInfoForm.Fax.errors }}
+							<label for="{{ companyInfoForm.Fax.id_for_label }}">Fax</label>
+							{% render_field companyInfoForm.Fax class+="form-control" %}
+						</div>
+						<div class="form-group">
+							{{ companyInfoForm.URL.errors }}
+							<label for="{{ companyInfoForm.URL.id_for_label }}">Sitio web</label>
+							{% render_field companyInfoForm.URL class+="form-control" %}
+						</div>
+						<div class="form-group">
+							{{ companyInfoForm.Email.errors }}
+							<label for="{{ companyInfoForm.Email.id_for_label }}">Email</label>
+							{% render_field companyInfoForm.Email class+="form-control" %}
+						</div>
+					</div>
+				</div>
+            </div>
+        </div>
+    </div>
+
+</form>
+{% endblock %}
+
+{% block ExtraJS %}
+{% comment %}
+<script type="text/javascript" charset="utf8" src="{% static "js/Inventory/Inventory.js" %}"></script>
+{% endcomment %}
+{% endblock ExtraJS %}

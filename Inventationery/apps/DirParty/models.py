@@ -3,7 +3,7 @@
 # @Author: Alex Armenta
 # @Date:   2015-11-16 19:08:22
 # @Last Modified by:   harmenta
-# @Last Modified time: 2015-11-23 10:54:02
+# @Last Modified time: 2015-12-24 13:44:09
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 
@@ -32,7 +32,9 @@ class DirPartyModel(TimeStampedModel):
     SecondLastName = models.CharField(max_length=30, blank=True, null=True)
     Gender = models.CharField(max_length=1,
                               choices=GENDER_CHOICES,
-                              default=NOT_DEFINED,)
+                              default=NOT_DEFINED,
+                              blank=True,
+                              null=True)
 
     def __unicode__(self):
         return self.NameAlias

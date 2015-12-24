@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-12-20 22:13:28
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-12-24 12:43:44
 """Inventationery URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -34,4 +34,5 @@ urlpatterns = [
     url(r'^', include('Inventationery.apps.PurchOrder.urls', namespace='purch')),
     url(r'^', include('Inventationery.apps.Inventory.urls', namespace='inventory')),
     url(r'^', include('Inventationery.apps.Payments.urls', namespace='payment')),
+    url(r'^', include('Inventationery.apps.Company.urls', namespace='company')),
 ]
