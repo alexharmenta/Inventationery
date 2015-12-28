@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
 # @Last Modified by:   harmenta
-# @Last Modified time: 2015-12-24 11:46:47
+# @Last Modified time: 2015-12-28 12:11:00
 """
 Django settings for Inventationery project.
 
@@ -229,5 +229,3 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Location of root django.contrib.admin URL, use {% url 'admin:index' %}
 ADMIN_URL = r'^admin/'
-
-# Your common stuff: Below this line define 3rd party library settings

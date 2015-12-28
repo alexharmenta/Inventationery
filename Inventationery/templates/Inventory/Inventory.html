@@ -3,7 +3,7 @@
 {% load widget_tweaks %}
 
 {% block content %}
-	<form action="" method="POST" id="InventoryForm"> {% csrf_token %}
+	<form action="" method="POST" id="InventoryForm" enctype="multipart/form-data"> {% csrf_token %}
 		{% if item_form.errors %}
 		    {% for field in item_form %}
 		        {% for error in field.errors %}
@@ -67,11 +67,6 @@
 					    	</a>
 				    	</li>
 					    <li role="presentation">
-					    	<a href="#Vendor" aria-controls="Vendor" role="tab" data-toggle="tab">
-					    		Proveedores de artículo
-					    	</a>
-				    	</li>
-					    <li role="presentation">
 					    	<a href="#MovementHistory" aria-controls="MovementHistory" role="tab" data-toggle="tab">
 					    		Historial de movimientos
 					    	</a>
@@ -90,12 +85,13 @@
 					    		<div class="col-md-6 col-sm-6 col-xs-12">
 									<h2>Imagen</h2>
 				                	<div class="form-group file_upload">
+				                		<div class="img_container">
+											<img {% if Item.ItemImage %}src="{{ Item.ItemImage.url }}"{% endif %} class="img-responsive" id="item_image"/>
+										</div>
+										<label class="btn btn-info" for="id_ItemImage">Seleccione una imagen</label>
+										<br>
 										{{ item_form.ItemImage.errors }}
 										{% render_field item_form.ItemImage class+="inputfile" %}
-										<label for="id_ItemImage" class="btn btn-success">Selecciona una imagen</label>
-										<div class="img_container">
-											<img class="img-responsive" id="item_image"/>
-										</div>
 									</div>
 			                	</div>
 			                	<div class="col-md-6 col-sm-6 col-xs-12">
@@ -138,7 +134,7 @@
 									            <th>Acción</th>
 									        </tr>
 									    </thead>
-									    <tbody class="inventory_formset">
+									    <tbody>
 								            {% for invent_form in inventory_formset.forms %}
 								            	{% if invent_form.errors %}
 												    {% for field in invent_form %}
@@ -172,6 +168,54 @@
 									    </tbody>
 									</table>
 							    </div>	
+			                </div>
+			                <div class="col-md-6 col-sm-6 col-cx-12">
+			                	<div class="table-responsive">
+			                		<h2>Proveedores de artículo</h2>
+			                		<table border="0" cellpadding="0" cellspacing="0" class="table table-condensed table-hover table-striped" id="ItemVendorFormset">
+									    <thead>
+									        <tr>
+									            <th>Proveedor</th>
+									            <th>Precio del proveedor</th>
+									            <th>Código de producto del proveedor</th>
+									            <th>Acción</th>
+									        </tr>
+									    </thead>
+									    <tbody>
+								            {% for itemVendorForm in itemVendor_formset.forms %}
+								            	{% if itemVendorForm.errors %}
+												    {% for field in itemVendorForm %}
+												        {% for error in field.errors %}
+												        	<style>
+																#{{ field.id_for_label }} {
+																	border: 1px solid #f64747;
+																	border-radius: 2px;
+																}
+												        	</style>
+												        	{{ error }}				            
+												        {% endfor %}
+												    {% endfor %}
+												    {% for error in itemVendorForm.non_field_errors %}
+												        <div class="alert alert-error">
+												            <strong> {{ error }}</strong>
+												        </div>
+												    {% endfor %}
+												    {{ itemVendorForm.non_field_errors }}
+												{% endif %}
+									            <tr>
+													<td>{% render_field itemVendorForm.Vendor class+="form-control" %}</td>
+													<td>{% render_field itemVendorForm.VendorPrice class+="form-control amount" %}</td>
+													<td>{% render_field itemVendorForm.VendorItemId class+="form-control" %}</td>
+													<td></td>
+									            </tr>
+									            {% for hidden in itemVendorForm.hidden_fields %}
+											        {{ hidden }}
+											    {% endfor %}
+								            {% endfor %}
+								            {{ itemVendor_formset.management_form }}
+									    </tbody>
+									</table>
+							    </div>
 			                </div>
 					    </div>
 					    <div role="tabpanel" class="tab-pane fade" id="Extra">
@@ -217,54 +261,6 @@
 										{% render_field ecoResProductForm.Notes|attr:"rows:4" class+="form-control" %}
 									</div>
 								</div>
-						    </div>
-					    </div>
-					    <div role="tabpanel" class="tab-pane fade" id="Vendor">
-					    	<div class="table-responsive">
-		                		<h2>Proveedores de artículo</h2>
-		                		<table border="0" cellpadding="0" cellspacing="0" class="table table-condensed table-hover table-striped" id="ItemVendorFormset">
-								    <thead>
-								        <tr>
-								            <th>Proveedor</th>
-								            <th>Precio del proveedor</th>
-								            <th>Código de producto del proveedor</th>
-								            <th>Acción</th>
-								        </tr>
-								    </thead>
-								    <tbody class="itemVendor_formset">
-							            {% for itemVendorForm in itemVendor_formset.forms %}
-							            	{% if itemVendorForm.errors %}
-											    {% for field in itemVendorForm %}
-											        {% for error in field.errors %}
-											        	<style>
-															#{{ field.id_for_label }} {
-																border: 1px solid #f64747;
-																border-radius: 2px;
-															}
-											        	</style>
-											        	{{ error }}				            
-											        {% endfor %}
-											    {% endfor %}
-											    {% for error in itemVendorForm.non_field_errors %}
-											        <div class="alert alert-error">
-											            <strong> {{ error }}</strong>
-											        </div>
-											    {% endfor %}
-											    {{ itemVendorForm.non_field_errors }}
-											{% endif %}
-								            <tr>
-												<td>{% render_field itemVendorForm.Vendor class+="form-control" %}</td>
-												<td>{% render_field itemVendorForm.VendorPrice class+="form-control amount" %}</td>
-												<td>{% render_field itemVendorForm.VendorItemId class+="form-control" %}</td>
-												<td></td>
-								            </tr>
-								            {% for hidden in itemVendorForm.hidden_fields %}
-										        {{ hidden }}
-										    {% endfor %}
-							            {% endfor %}
-							            {{ itemVendor_formset.management_form }}
-								    </tbody>
-								</table>
 						    </div>
 					    </div>
 					    <div role="tabpanel" class="tab-pane fade" id="MovementHistory">

@@ -1,8 +1,8 @@
 /* 
  * @Author: Alex
  * @Date:   2015-12-22 23:49:47
- * @Last Modified by:   Alex
- * @Last Modified time: 2015-12-27 23:52:47
+ * @Last Modified by:   harmenta
+ * @Last Modified time: 2015-12-28 14:10:33
  */
 
 'use strict';
@@ -21,15 +21,6 @@ $(document).ready(function() {
         // read the image file as a data URL.
         reader.readAsDataURL(this.files[0]);
     });
-    // Inventory formset
-    $('#InventoryFormset tbody tr').formset({ // Initialize django-formset plugin
-        prefix: 'infs',
-        formCssClass: 'inventory-formset',
-        addText: ' + ',
-        deleteText: ' X ',
-        addCssClass: 'btn btn-success btn-xs',
-        deleteCssClass: 'btn btn-danger btn-xs',
-    });
     // ItemVendor formset
     $('#ItemVendorFormset tbody tr').formset({ // Initialize django-formset plugin
         prefix: 'ivfs',
@@ -39,6 +30,16 @@ $(document).ready(function() {
         addCssClass: 'btn btn-success btn-xs',
         deleteCssClass: 'btn btn-danger btn-xs',
     });
+    // Inventory formset
+    $('#InventoryFormset tbody tr').formset({ // Initialize django-formset plugin
+        prefix: 'infs',
+        formCssClass: 'inventory-formset',
+        addText: ' + ',
+        deleteText: ' X ',
+        addCssClass: 'btn btn-success btn-xs',
+        deleteCssClass: 'btn btn-danger btn-xs',
+    });
+    
 
     $('#SaveInventBtn').on('click', function(event) {
         event.preventDefault();

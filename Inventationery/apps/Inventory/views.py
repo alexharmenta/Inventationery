@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:10:36
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-12-27 22:59:40
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-12-28 17:21:14
 from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
@@ -57,9 +57,10 @@ def createInventView(request):
     IN_list = []
     IV_list = []
     if request.method == 'POST':
-        item_form = ItemForm(request.POST)
+        item_form = ItemForm(request.POST, request.FILES)
         ecoResProductForm = EcoResProductForm(request.POST)
         if item_form.is_valid():
+            image = request.FILES.get('ItemImage')
             item = item_form.save()
             inventory_formset = InventoryFormset(
                 request.POST, instance=item, prefix='infs')
@@ -154,7 +155,7 @@ def updateInventView(request, ItemId):
         fields='__all__',
         form=ItemVendorForm)
     if request.method == 'POST':
-        item_form = ItemForm(request.POST, instance=Item)
+        item_form = ItemForm(request.POST, request.FILES, instance=Item)
         ecoResProductForm = EcoResProductForm(
             request.POST, instance=ecoResProduct)
         inventory_formset = InventoryFormset(
@@ -163,7 +164,9 @@ def updateInventView(request, ItemId):
             request.POST, instance=Item, prefix='ivfs')
 
         if item_form.is_valid():
+            image = request.FILES.get('ItemImage')
             item = item_form.save()
+            print request.FILES
         else:
             messages.error(request, 'Revise la información del artículo')
 

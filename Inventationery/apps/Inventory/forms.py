@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:12:08
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-12-27 13:23:03
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-12-28 13:42:23
 from django import forms
 from .models import (ItemModel, ItemVendorModel,
                      InventoryModel, LocationModel,

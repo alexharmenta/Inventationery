@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:10:36
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-12-27 22:20:06
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-12-28 12:21:51
 from django.db.models import Q
 from django.db import models
 from django.contrib.auth.models import User
@@ -35,7 +35,7 @@ class ItemModel(TimeStampedModel):
     Price = models.DecimalField(max_digits=10, decimal_places=2)
     # VendorPrice = models.DecimalField(max_digits=10, decimal_places=2)
     ItemImage = models.ImageField(
-        upload_to="ItemTable/", default=None, blank=True, null=True)
+        upload_to="ItemTable", default=None, blank=True, null=True)
 
     def __unicode__(self):
         return "{0}".format(self.ItemId)

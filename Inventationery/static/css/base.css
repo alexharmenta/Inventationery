@@ -6733,9 +6733,6 @@ ul.purch_options li {
     height: auto;
     margin: auto;
 }
-.inventory-formset-add {
-    display: block !important;
-}
 #id_PurchStatus option {
     display: none;
 }
@@ -6757,6 +6754,6 @@ ul.purch_options li {
     height: 0.1px;
     opacity: 0;
     overflow: hidden;
-    position: absolute;
     z-index: -1;
+    visibility: hidden;
 }

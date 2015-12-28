@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
 # @Last Modified by:   harmenta
-# @Last Modified time: 2015-12-24 12:43:44
+# @Last Modified time: 2015-12-28 12:50:19
 """Inventationery URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -20,7 +20,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from __future__ import unicode_literals
-
+from django.conf.urls.static import static
 from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
@@ -35,4 +35,4 @@ urlpatterns = [
     url(r'^', include('Inventationery.apps.Inventory.urls', namespace='inventory')),
     url(r'^', include('Inventationery.apps.Payments.urls', namespace='payment')),
     url(r'^', include('Inventationery.apps.Company.urls', namespace='company')),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
