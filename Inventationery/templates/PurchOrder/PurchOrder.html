@@ -249,7 +249,7 @@
 					            <th id="item_disc_h">$ Descuento</th>
 					            <th id="item_percent_h">Descuento %</th>
 					            <th id="item_total_h">$ Total linea</th>
-					            <th>Accion</th>
+					            <th id="item_action_h">Accion</th>
 					        </tr>
 					    </thead>
 					    <tbody class="purchline_formset">
@@ -317,7 +317,8 @@
 						    	</ul>				    			
 				    		</div>
 					    {% endif %}
-					    {% render_field purch_form.Enabled|append_attr:"style:visibility:hidden; class: form_disabled"%}
+					    {% render_field purch_form.Enabled|append_attr:"style:visibility:hidden"%}
+					    {% render_field purch_form.DocumentState|append_attr:"style:visibility:hidden"%}
 				    	<div class="col-md-4 col-sm-4 col-xs-12 pull-right">
 				    		<div class="form-group">
 				    			<div class="col-md-4 col-sm-4 col-xs 12">

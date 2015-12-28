@@ -2,7 +2,7 @@
  * @Author: Alex
  * @Date:   2015-11-16 18:59:28
  * @Last Modified by:   Alex
- * @Last Modified time: 2015-12-23 23:36:06
+ * @Last Modified time: 2015-12-27 14:32:20
  */
 
 'use strict';
@@ -18,7 +18,7 @@ $(document).ready(function() {
     });
     // Purch order table list initialize plugin
     $('#PurchOrderListTableId').DataTable({
-        "order": [[ 7, "desc" ]],
+        "order": [[ 0, "asc" ]],
         "language": {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
         }
@@ -51,6 +51,7 @@ $(document).ready(function() {
         autoclose: true,
         todayHighlight: true,
     });
+    
 }); /* Document Ending */
 
 
@@ -81,12 +82,36 @@ function getCharsBefore(str, chr) {
     return ("");
 }
 // Enable/Disable forms
-function EnableForm(form, enabled) {
-    var formId = '#' + form + ' ' + '*';
-    if (enabled) {
-        $(formId).not('form_disabled').prop('disabled', false);
+function EnableForm(form, enable) {
+    var formId = '#' + form + ' :input';
+    $(formId).each(function() {
+        var element = $(this);
+        if(!element.hasClass('form_disabled')){
+            if(enable){
+                element.attr('readonly', false);
+                if(element.is('select')){
+                    element.css('-webkit-appearance', '');
+                    element.css('-moz-appearance', '');
+                    element.css('text-indent', '');
+                    element.css('text-overflow', '');
+                    element.find('option').show();
+                }
+            } else {
+                element.attr('readonly', true);
+                if(element.is('select')){
+                    element.css('-webkit-appearance', 'none');
+                    element.css('-moz-appearance', 'none');
+                    element.css('text-indent', '0px');
+                    element.css('text-overflow', '');
+                    element.find('option').hide();
+                }
+            }
+        }
+    });
+    if(enable) {
+        $('#'+form).unbind('submit');
     } else {
-        $(formId).not('form_disabled').prop('disabled', true);
+        $('#'+form).bind('submit',function(e){e.preventDefault();});
     }
 }
     

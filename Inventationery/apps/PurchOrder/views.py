@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-23 23:47:27
+# @Last Modified time: 2015-12-27 18:20:20
 # from django.shortcuts import render
 from django.db.models import Q
 from django.contrib import messages
@@ -25,7 +25,8 @@ from datetime import date
 from .models import PurchOrderModel, PurchLineModel
 from .forms import PurchOrderForm, PurchOrderLinesForm
 from Inventationery.apps.Vendor.models import VendorModel
-from Inventationery.apps.Inventory.models import (ItemModel, InventoryModel)
+from Inventationery.apps.Inventory.models import (
+    ItemModel, InventoryModel, ItemVendorModel, EcoResProductModel)
 # Create your views here.
 
 
@@ -111,7 +112,6 @@ def createPurchOrderView(request):
         form=PurchOrderLinesForm)
 
     if request.method == 'POST':
-
         purch_form = PurchOrderForm(request.POST)
         purchline_formset = PurchLineFormset(
             request.POST, prefix='plfs')
@@ -121,41 +121,10 @@ def createPurchOrderView(request):
             action = request.POST.get('action', '')
             if action == 'get_purch_data':
                 Vendor_pk = request.POST.get('Vendor_pk', '')
-                try:
-                    Vendor = VendorModel.objects.get(pk=Vendor_pk)
-                    response_dict = {
-                        'NameAlias': Vendor.Party.NameAlias,
-                        'VATNum': Vendor.VATNum,
-                        'CurrencyCode': Vendor.CurrencyCode,
-                        'LanguageCode': Vendor.Party.LanguageCode,
-                        'OneTimeVendor': Vendor.OneTimeVendor,
-                        'DeliveryName': Vendor.get_PrimaryAddress(),
-                        'DeliveryContact': Vendor.get_PrimaryElectronic(),
-                    }
-                except:
-                    response_dict = {
-                        'Name': '',
-                        'VATNum': '',
-                        'CurrencyCode': '',
-                        'LanguageCode': '',
-                        'OneTimeVendor': '',
-                        'DeliveryName': '',
-                    }
+                response_dict = GetVendorInfo(Vendor_pk)
             elif action == 'get_purchline_data':
                 Item_pk = request.POST.get('Item_pk', '')
-                try:
-                    Invent = ItemModel.objects.get(pk=Item_pk)
-                    response_dict = {
-                        'ItemName': Invent.ItemName,
-                        'UnitId': Invent.UnitId,
-                        'VendorPrice': Invent.VendorPrice,
-                    }
-                except:
-                    response_dict = {
-                        'ItemName': '',
-                        'UnitId': '',
-                        'VendorPrice': '',
-                    }
+                response_dict = GetLineInfo(Item_pk)
             return JsonResponse(response_dict)
 
         if purch_form.is_valid():
@@ -196,7 +165,6 @@ def createPurchOrderView(request):
 def updatePurchOrderView(request, PurchId):
     PurchOrder = get_object_or_404(PurchOrderModel, PurchId=PurchId)
     PL_list = []
-
     PurchLineFormset = inlineformset_factory(
         PurchOrderModel,
         PurchLineModel,
@@ -213,54 +181,46 @@ def updatePurchOrderView(request, PurchId):
             action = request.POST.get('action', '')
             if action == 'get_purch_data':
                 Vendor_pk = request.POST.get('Vendor_pk', '')
-                try:
-                    Vendor = VendorModel.objects.get(pk=Vendor_pk)
-                    response_dict = {
-                        'NameAlias': Vendor.Party.NameAlias,
-                        'VATNum': Vendor.VATNum,
-                        'CurrencyCode': Vendor.CurrencyCode,
-                        'LanguageCode': Vendor.Party.LanguageCode,
-                        'OneTimeVendor': Vendor.OneTimeVendor,
-                        'DeliveryName': Vendor.get_PrimaryAddress(),
-                        'DeliveryContact': Vendor.get_PrimaryElectronic(),
-                    }
-                except:
-                    response_dict = {
-                        'Name': '',
-                        'VATNum': '',
-                        'CurrencyCode': '',
-                        'LanguageCode': '',
-                        'OneTimeVendor': '',
-                        'DeliveryName': '',
-                    }
+                response_dict = GetVendorInfo(Vendor_pk)
             elif action == 'get_purchline_data':
                 Item_pk = request.POST.get('Item_pk', '')
-                try:
-                    Invent = ItemModel.objects.get(pk=Item_pk)
-                    response_dict = {
-                        'ItemName': Invent.ItemName,
-                        'UnitId': Invent.UnitId,
-                        'VendorPrice': Invent.VendorPrice,
-                    }
-                except:
-                    response_dict = {
-                        'ItemName': '',
-                        'UnitId': '',
-                        'VendorPrice': '',
-                    }
+                response_dict = GetLineInfo(Item_pk)
             elif action == 'update_enabled':
+                PurchOrder = purch_form.save(commit=False)
                 enabled = request.POST.get('purch_enabled', '')
-                if enabled == 'true':
+                if enabled == 'true' and PurchOrder.DocumentState == 'Abierto':
                     PurchOrder.PurchStatus = 'CAN'
+                    PurchOrder.DocumentState = 'Cerrado'
                     PurchOrder.Enabled = False
+                elif (enabled == 'true' and
+                      PurchOrder.DocumentState == 'Proceso' and
+                      PurchOrder.PurchStatus == 'REC'):
+                    DelInventMovements(PurchOrder)
+                    PurchOrder.PurchStatus = 'OPE'
+                    PurchOrder.DocumentState = 'Abierto'
+                    PurchOrder.Enabled = True
+                elif(enabled == 'true' and
+                     PurchOrder.DocumentState == 'Cerrado'):
+                    PurchOrder.PurchStatus = 'OPE'
+                    PurchOrder.DocumentState = 'Abierto'
+                    PurchOrder.Enabled = True
+                elif(enabled == 'false' and
+                     PurchOrder.DocumentState == 'Cerrado' and
+                     PurchOrder.PurchStatus == 'RPA'):
+                    DelInventMovements(PurchOrder)
+                    PurchOrder.PurchStatus = 'OPE'
+                    PurchOrder.DocumentState = 'Abierto'
+                    PurchOrder.Enabled = True
                 else:
                     PurchOrder.PurchStatus = 'OPE'
+                    PurchOrder.DocumentState = 'Abierto'
                     PurchOrder.Enabled = True
                 PurchOrder.save()
 
                 response_dict = {
                     'Enabled': PurchOrder.Enabled,
                     'PurchStatus': PurchOrder.PurchStatus,
+                    'DocumentState': PurchOrder.DocumentState,
                 }
                 return JsonResponse(response_dict)
             elif action == 'receive_pay':
@@ -268,6 +228,7 @@ def updatePurchOrderView(request, PurchId):
                     PurchOrder = purch_form.save(commit=False)
                     PurchOrder.PurchStatus = 'RPA'
                     PurchOrder.Enabled = False
+                    PurchOrder.DocumentState = 'Cerrado'
                     PurchOrder.save()
 
                     for purchline_form in purchline_formset:
@@ -328,7 +289,7 @@ def updatePurchOrderView(request, PurchId):
                         PurchOrder.Enabled = False
                     else:
                         PurchOrder.PurchStatus = 'PAI'
-
+                    PurchOrder.DocumentState = 'Proceso'
                     PurchOrder.save()
 
                     for purchline_form in purchline_formset:
@@ -363,7 +324,7 @@ def updatePurchOrderView(request, PurchId):
                         PurchOrder.Enabled = False
                     else:
                         PurchOrder.PurchStatus = 'REC'
-
+                    PurchOrder.DocumentState = 'Proceso'
                     PurchOrder.save()
 
                     for purchline_form in purchline_formset:
@@ -441,7 +402,8 @@ def updatePurchOrderView(request, PurchId):
                 request, "Ocurrió un error al crear la orden de compra")
 
         if purchline_formset.is_valid():
-            PurchLineModel.objects.exclude(pk__in=list(PL_list)).delete()
+            pl = PurchLineModel.objects.filter(PurchOrder=PurchOrder)
+            pl.exclude(pk__in=list(PL_list)).delete()
 
     else:
         purch_form = PurchOrderForm(instance=PurchOrder)
@@ -555,3 +517,76 @@ def export_pdf(request):
     response.write(buff.getvalue())
     buff.close()
     return response
+
+
+# Function: Get Purchase Order header data
+def GetVendorInfo(Vendor_pk):
+    try:
+        Vendor = VendorModel.objects.get(pk=Vendor_pk)
+    except:
+        Vendor = None
+    NameAlias = (
+        Vendor.Party.NameAlias if Vendor.Party.NameAlias else '')
+    VATNum = (Vendor.VATNum if Vendor.VATNum else '')
+    CurrencyCode = (
+        Vendor.CurrencyCode if Vendor.CurrencyCode else '')
+    LanguageCode = (
+        (Vendor.Party.LanguageCode)
+        if Vendor.Party.LanguageCode else '')
+    OneTimeVendor = (
+        Vendor.OneTimeVendor if Vendor.OneTimeVendor else '')
+    DeliveryName = Vendor.get_PrimaryAddress(
+    ) if Vendor.get_PrimaryAddress() else ''
+    DeliveryContact = Vendor.get_PrimaryElectronic(
+    ) if Vendor.get_PrimaryElectronic() else ''
+    response_dict = {
+        'NameAlias': NameAlias,
+        'VATNum': VATNum,
+        'CurrencyCode': CurrencyCode,
+        'LanguageCode': LanguageCode,
+        'OneTimeVendor': OneTimeVendor,
+        'DeliveryName': DeliveryName,
+        'DeliveryContact': DeliveryContact,
+    }
+    return response_dict
+
+
+# Function: Get Purchase Order header data
+def GetLineInfo(Item_pk):
+    # Get item object
+    try:
+        Item = ItemModel.objects.get(pk=Item_pk)
+        ItemName = Item.ItemName
+    except:
+        ItemName = ''
+    # Get EcoResProduct object
+    try:
+        EcoResProduct = EcoResProductModel.objects.get(Item=Item)
+        PurchUnit = EcoResProduct.PurchUnit
+    except:
+        PurchUnit = ''
+    # Get item object
+    try:
+        ItemVendor = ItemVendorModel.objects.get(Item=Item)
+        VendorPrice = ItemVendor.VendorPrice
+    except:
+        VendorPrice = ''
+    response_dict = {
+        'ItemName': ItemName,
+        'UnitId': PurchUnit,
+        'VendorPrice': VendorPrice,
+    }
+    return response_dict
+
+
+# Function: Get Purchase Order header data
+def DelInventMovements(PurchOrder):
+    PurchLines = PurchLineModel.objects.filter(PurchOrder=PurchOrder)
+    for PurchLine in PurchLines:
+        try:
+            InventoryItem = InventoryModel.objects.get(
+                Q(Item=PurchLine.ItemId) & Q(Location=PurchOrder.Location))
+            InventoryItem.Qty -= PurchLine.PurchQty
+            InventoryItem.save()
+        except:
+            InventoryItem = None

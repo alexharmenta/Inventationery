@@ -26,6 +26,7 @@
 				        <tr>
 				            <th>Orden de compra</th>
 				            <th>Cuenta de proveedor</th>
+				            <th>Nombre del proveedor</th>
 				            <th>Nombre</th>
 				            <th>Fecha de la OV</th>
 				            <th>Tipo de compra</th>
@@ -39,6 +40,7 @@
 				    		<tr>
 					            <td><a href="{% url "purch:update" PurchId=order.PurchId %}" class="btn btn-link btn-xs">{{ order.PurchId }}</a></td>
 					            <td><a href="{% url "vendor:update" AccountNum=order.Vendor %}" class="btn btn-link btn-xs">{{ order.Vendor }}</a></td>
+					            <td>{{ order.Vendor.Party.NameAlias }}</td>
 					            <td>{{ order.PurchName }}</td>
 					            <td>{{ order.created|date:"d/m/y" }}</td>
 					            {% if order.PurchaseType == 'PO' %}
@@ -62,11 +64,7 @@
 								{% elif order.PurchStatus == 'RPA'%}
 									<td>Recibido/Pagado</td>
 					            {% endif %}
-					            {% if order.Enabled %}
-					            	<td>Abierto</td>
-				            	{% else %}
-				            		<td>Cerrado</td>
-					            {% endif %}
+					            <td>{{ order.DocumentState }}</td>
 					            <td class="text-center">
 									<a class='btn btn-info btn-xs' href="{% url "purch:update" PurchId=order.PurchId %}">
 										<span class="lnr lnr-pencil"></span> Editar

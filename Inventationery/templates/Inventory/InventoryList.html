@@ -24,10 +24,12 @@
 				        <tr>
 				            <th>Código de artículo</th>
 				            <th>Nombre de artículo</th>
-				            <th>Unidad</th>
+				            <th>Unidad de venta</th>
 				            <th>Precio de venta</th>
-				            <th>Precio de compra</th>
 				            <th>Proveedor principal</th>
+				            <th>Unidad de compra</th>
+				            <th>Precio de compra</th>
+				            <th>Cantidad en mano</th>
 				            <th>Acciones</th>
 				        </tr>
 				    </thead>
@@ -40,24 +42,29 @@
 									</a>
 								</td>
 					            <td>{{ item.ItemName }}</td>
-					            <td>{{ item.UnitId }}</td>
-					            <td>{{ item.Price }}</td>
-					            <td>{{ item.VendorPrice }}</td>
+					            <td>{{ item.getSalesUnit }}</td>
+					            <td class="amount">{{ item.Price }}</td>
 					            <td>
 					            {% if item.PrimaryVendor %}
 					            	<a class='btn btn-link btn-xs' href="{% url "vendor:update" AccountNum=item.PrimaryVendor %}">
 										{{ item.PrimaryVendor }}
 									</a>
 					            {% endif %}
-					            	
+					            <td>{{ item.getPurchUnit }}</td>
+					            <td class="amount">{{ item.getPurchPrice }}</td>
+								</td>
+								<td {% if item.GetInventoryTotalItems <= 0 %}class="qty btn-danger" {% else %} class="qty btn-success"{% endif %}>
+									{{ item.GetInventoryTotalItems }}
 								</td>
 					            <td class="text-center">
 									<a class='btn btn-info btn-xs' href="{% url "inventory:update" ItemId=item.ItemId %}">
 										<span class="lnr lnr-pencil"></span> Editar
 									</a> 
-									<a href="{% url "inventory:delete" ItemId=item.ItemId %}" class="btn btn-danger btn-xs">
-										<span class="lnr lnr-cross"></span> Eliminar
-									</a>
+									{% if item.CanDelete %}
+										<a href="{% url "inventory:delete" ItemId=item.ItemId %}" class="btn btn-danger btn-xs">
+											<span class="lnr lnr-cross"></span> Eliminar
+										</a>
+									{% endif %}
 								</td>
 					        </tr>
 				    	{% endfor %}

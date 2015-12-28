@@ -21,6 +21,24 @@
 		        </div>
 		    {% endfor %}
 		{% endif %}
+		
+		{% if ecoResProductForm.errors %}
+		    {% for field in ecoResProductForm %}
+		        {% for error in field.errors %}
+		        	<style>
+						#{{ field.id_for_label }} {
+							border: 1px solid #f64747;
+							border-radius: 2px;
+						}
+		        	</style>		            
+		        {% endfor %}
+		    {% endfor %}
+		    {% for error in ecoResProductForm.non_field_errors %}
+		        <div class="alert alert-error">
+		            <strong> {{ error|escape }}</strong>
+		        </div>
+		    {% endfor %}
+		{% endif %}
 
 		{% block page_title %}
 		{% endblock %}
@@ -36,103 +54,285 @@
 	                <div class="clearfix"></div>
             	</div>
 	            <div class="x_content">
-	                <div class="col-md-6 col-sm-6 col-xs-12">
-	                	<h2>General</h2>
-	                	<div class="col-md-6 col-sm-6 col-xs-12">
-	                		<div class="form-group">
-								{{ item_form.ItemId.errors }}
-								<label for="{{ item_form.ItemId.id_for_label }}">Código de artículo</label>
-								{% render_field item_form.ItemId class+="form-control" %}
-							</div>
-							<div class="form-group">
-								{{ item_form.ItemName.errors }}
-								<label for="{{ item_form.ItemName.id_for_label }}">Nombre de artículo</label>
-								{% render_field item_form.ItemName class+="form-control" %}
-							</div>
-							<div class="form-group">
-								{{ item_form.Description.errors }}
-								<label for="{{ item_form.Description.id_for_label }}">Descripción</label>
-								{% render_field item_form.Description|attr:"rows:4" class+="form-control" %}
-							</div>
-	                	</div>
-	                	<div class="col-md-6 col-sm-6 col-xs-12">
-							<div class="form-group">
-								{{ item_form.UnitId.errors }}
-								<label for="{{ item_form.UnitId.id_for_label }}">Unidad</label>
-								{% render_field item_form.UnitId class+="form-control" %}
-							</div>
-							<div class="form-group">
-								{{ item_form.Price.errors }}
-								<label for="{{ item_form.Price.id_for_label }}">Precio de venta</label>
-								{% render_field item_form.Price class+="form-control" %}
-							</div>
-							<div class="form-group">
-								{{ item_form.PrimaryVendor.errors }}
-								<label for="{{ item_form.PrimaryVendor.id_for_label }}">Proveedor principal</label>
-								{% render_field item_form.PrimaryVendor class+="form-control" %}
-							</div>
-							<div class="form-group">
-								{{ item_form.VendorPrice.errors }}
-								<label for="{{ item_form.VendorPrice.id_for_label }}">Precio de compra</label>
-								{% render_field item_form.VendorPrice class+="form-control" %}
-							</div>
-	                	</div>
+					  <!-- Nav tabs -->
+					  <ul class="nav nav-tabs" role="tablist">
+					    <li role="presentation" class="active">
+					    	<a href="#Info" aria-controls="Info" role="tab" data-toggle="tab">
+					    		Inf. Artículo
+			    			</a>
+		    			</li>
+					    <li role="presentation">
+					    	<a href="#Extra" aria-controls="Extra" role="tab" data-toggle="tab">
+					    		Inf. Adicional
+					    	</a>
+				    	</li>
+					    <li role="presentation">
+					    	<a href="#Vendor" aria-controls="Vendor" role="tab" data-toggle="tab">
+					    		Proveedores de artículo
+					    	</a>
+				    	</li>
+					    <li role="presentation">
+					    	<a href="#MovementHistory" aria-controls="MovementHistory" role="tab" data-toggle="tab">
+					    		Historial de movimientos
+					    	</a>
+				    	</li>
+					    <li role="presentation">
+					    	<a href="#PurchaseHistory" aria-controls="PurchaseHistory" role="tab" data-toggle="tab">
+					    		Historial de pedidos
+					    	</a>
+				    	</li>
+					  </ul>
 
-	                	<h2>Inventario</h2>
-	                	<div style="width: 400px; height: 150px; overflow-y: scroll;" class="table-responsive">
+					  <!-- Tab panes -->
+					  <div class="tab-content">
+					    <div role="tabpanel" class="tab-pane fade in active" id="Info">
+					    	<div class="col-md-6 col-sm-6 col-xs-12">
+					    		<div class="col-md-6 col-sm-6 col-xs-12">
+									<h2>Imagen</h2>
+				                	<div class="form-group file_upload">
+										{{ item_form.ItemImage.errors }}
+										{% render_field item_form.ItemImage class+="inputfile" %}
+										<label for="id_ItemImage" class="btn btn-success">Selecciona una imagen</label>
+										<div class="img_container">
+											<img class="img-responsive" id="item_image"/>
+										</div>
+									</div>
+			                	</div>
+			                	<div class="col-md-6 col-sm-6 col-xs-12">
+			                		<h2>General</h2>
+			                		<div class="form-group">
+										{{ item_form.ItemId.errors }}
+										<label for="{{ item_form.ItemId.id_for_label }}">Código de artículo</label>
+										{% render_field item_form.ItemId|append_attr:'required' class+="form-control" %}
+									</div>
+									<div class="form-group">
+										{{ item_form.ItemName.errors }}
+										<label for="{{ item_form.ItemName.id_for_label }}">Nombre de artículo</label>
+										{% render_field item_form.ItemName|append_attr:'required' class+="form-control" %}
+									</div>
+									<div class="form-group">
+										{{ item_form.Price.errors }}
+										<label for="{{ item_form.Price.id_for_label }}">Precio de venta</label>
+										{% render_field item_form.Price|append_attr:'required' class+="form-control" %}
+									</div>
+									<div class="form-group">
+										{{ item_form.PrimaryVendor.errors }}
+										<label for="{{ item_form.PrimaryVendor.id_for_label }}">Proveedor principal</label>
+										{% render_field item_form.PrimaryVendor class+="form-control" %}
+									</div>
+									<div class="form-group">
+										{{ item_form.Description.errors }}
+										<label for="{{ item_form.Description.id_for_label }}">Descripción</label>
+										{% render_field item_form.Description|attr:"rows:4" class+="form-control" %}
+									</div>
+			                	</div>
+			                </div>
+			                <div class="col-md-6 col-sm-6 col-xs-12">
+			                	<div class="table-responsive">
+			                		<h2>Inventario</h2>
+			                		<table border="0" cellpadding="0" cellspacing="0" class="table table-condensed table-hover table-striped" id="InventoryFormset">
+									    <thead>
+									        <tr>
+									            <th>Ubicación</th>
+									            <th>Cantidad</th>
+									            <th>Acción</th>
+									        </tr>
+									    </thead>
+									    <tbody class="inventory_formset">
+								            {% for invent_form in inventory_formset.forms %}
+								            	{% if invent_form.errors %}
+												    {% for field in invent_form %}
+												        {% for error in field.errors %}
+												        	<style>
+																#{{ field.id_for_label }} {
+																	border: 1px solid #f64747;
+																	border-radius: 2px;
+																}
+												        	</style>
+												        	{{ error }}				            
+												        {% endfor %}
+												    {% endfor %}
+												    {% for error in invent_form.non_field_errors %}
+												        <div class="alert alert-error">
+												            <strong> {{ error }}</strong>
+												        </div>
+												    {% endfor %}
+												    {{ invent_form.non_field_errors }}
+												{% endif %}
+									            <tr>
+													<td>{% render_field invent_form.Location class+="form-control" %}</td>
+													<td>{% render_field invent_form.Qty class+="form-control amount" %}</td>
+													<td></td>
+									            </tr>
+									            {% for hidden in invent_form.hidden_fields %}
+												    {{ hidden }}
+												{% endfor %}
+								            {% endfor %}
+								            {{ inventory_formset.management_form }}
+									    </tbody>
+									</table>
+							    </div>	
+			                </div>
+					    </div>
+					    <div role="tabpanel" class="tab-pane fade" id="Extra">
+						    <div class="row">
+								<div class="col-md-6 col-sm-6 col-xs-12">
+			                		<h2>Información adicional</h2>
+			                		<div class="form-group">
+										{{ ecoResProductForm.BarCode.errors }}
+										<label for="{{ ecoResProductForm.BarCode.id_for_label }}">Código de barras</label>
+										{% render_field ecoResProductForm.BarCode class+="form-control" %}
+									</div>
+									<div class="form-group">
+										{{ ecoResProductForm.DefaultLocation.errors }}
+										<label for="{{ ecoResProductForm.DefaultLocation.id_for_label }}">Ubicación predeterminada</label>
+										{% render_field ecoResProductForm.DefaultLocation class+="form-control" %}
+									</div>
+									<div class="form-group">
+										{{ ecoResProductForm.LastVendor.errors }}
+										<label for="{{ ecoResProductForm.LastVendor.id_for_label }}">Último proveedor</label>
+										{% render_field ecoResProductForm.LastVendor class+="form-control" %}
+									</div>
+									<div class="form-group">
+										{{ ecoResProductForm.StdUnit.errors }}
+										<label for="{{ ecoResProductForm.StdUnit.id_for_label }}">Unidad estándar</label>
+										{% render_field ecoResProductForm.StdUnit class+="form-control" %}
+									</div>
+									<div class="form-group">
+										{{ ecoResProductForm.SalesUnit.errors }}
+										<label for="{{ ecoResProductForm.SalesUnit.id_for_label }}">Unidad de venta</label>
+										{% render_field ecoResProductForm.SalesUnit class+="form-control" %}
+									</div>
+									<div class="form-group">
+										{{ ecoResProductForm.PurchUnit.errors }}
+										<label for="{{ ecoResProductForm.PurchUnit.id_for_label }}">Unidad de compra</label>
+										{% render_field ecoResProductForm.PurchUnit|attr:"rows:4" class+="form-control" %}
+									</div>
+			                	</div>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<h2>Observaciones</h2>
+			                		<div class="form-group">
+										{{ ecoResProductForm.Notes.errors }}
+										<label for="{{ ecoResProductForm.Notes.id_for_label }}"></label>
+										{% render_field ecoResProductForm.Notes|attr:"rows:4" class+="form-control" %}
+									</div>
+								</div>
+						    </div>
+					    </div>
+					    <div role="tabpanel" class="tab-pane fade" id="Vendor">
+					    	<div class="table-responsive">
+		                		<h2>Proveedores de artículo</h2>
+		                		<table border="0" cellpadding="0" cellspacing="0" class="table table-condensed table-hover table-striped" id="ItemVendorFormset">
+								    <thead>
+								        <tr>
+								            <th>Proveedor</th>
+								            <th>Precio del proveedor</th>
+								            <th>Código de producto del proveedor</th>
+								            <th>Acción</th>
+								        </tr>
+								    </thead>
+								    <tbody class="itemVendor_formset">
+							            {% for itemVendorForm in itemVendor_formset.forms %}
+							            	{% if itemVendorForm.errors %}
+											    {% for field in itemVendorForm %}
+											        {% for error in field.errors %}
+											        	<style>
+															#{{ field.id_for_label }} {
+																border: 1px solid #f64747;
+																border-radius: 2px;
+															}
+											        	</style>
+											        	{{ error }}				            
+											        {% endfor %}
+											    {% endfor %}
+											    {% for error in itemVendorForm.non_field_errors %}
+											        <div class="alert alert-error">
+											            <strong> {{ error }}</strong>
+											        </div>
+											    {% endfor %}
+											    {{ itemVendorForm.non_field_errors }}
+											{% endif %}
+								            <tr>
+												<td>{% render_field itemVendorForm.Vendor class+="form-control" %}</td>
+												<td>{% render_field itemVendorForm.VendorPrice class+="form-control amount" %}</td>
+												<td>{% render_field itemVendorForm.VendorItemId class+="form-control" %}</td>
+												<td></td>
+								            </tr>
+								            {% for hidden in itemVendorForm.hidden_fields %}
+										        {{ hidden }}
+										    {% endfor %}
+							            {% endfor %}
+							            {{ itemVendor_formset.management_form }}
+								    </tbody>
+								</table>
+						    </div>
+					    </div>
+					    <div role="tabpanel" class="tab-pane fade" id="MovementHistory">
+					    	<h2>Historial de movimientos de artículo</h2>
 	                		<table border="0" cellpadding="0" cellspacing="0" class="table table-condensed table-hover table-striped">
 							    <thead>
 							        <tr>
-							            <th style="width: 200px;">Ubicación</th>
+							            <th>Tipo de transacción</th>
+							            <th>Fecha</th>
+							            <th>Ubicación</th>
+							            <th>Observaciones</th>
 							            <th>Cantidad</th>
-							            <th>Accion</th>
+							            <th>Cantidad anterior</th>
+							            <th>Cantidad posterior</th>
+							            <th>Usuario</th>
 							        </tr>
 							    </thead>
-							    <tbody class="inventory_formset">
-						            {% for invent_form in inventory_formset.forms %}
-						            	{% if invent_form.errors %}
-										    {% for field in invent_form %}
-										        {% for error in field.errors %}
-										        	<style>
-														#{{ field.id_for_label }} {
-															border: 1px solid #f64747;
-															border-radius: 2px;
-														}
-										        	</style>
-										        	{{ error }}				            
-										        {% endfor %}
-										    {% endfor %}
-										    {% for error in invent_form.non_field_errors %}
-										        <div class="alert alert-error">
-										            <strong> {{ error }}</strong>
-										        </div>
-										    {% endfor %}
-										    {{ invent_form.non_field_errors }}
-										{% endif %}
+							    <tbody>
+							    	{% for movement in movement_history %}
 							            <tr>
-											<td>{% render_field invent_form.Location class+="form-control" %}</td>
-											<td>{% render_field invent_form.Qty class+="form-control" %}</td>
-											<td></td>
+											<td>{{ movement.TransactionType }}</td>
+											<td>{{ movement.created }}</td>
+											<td>{{ movement.Location }}</td>
+											<td>{{ movement.Notes }}</td>
+											<td>{{ movement.Qty }}</td>
+											<td>{{ movement.Qty_prev }}</td>
+											<td>{{ movement.Qty_after }}</td>
+											<td>{{ movement.user }}</td>
 							            </tr>
-							            {% for hidden in invent_form.hidden_fields %}
-									        {{ hidden }}
-									    {% endfor %}
-						            {% endfor %}
-						            {{ inventory_formset.management_form }}
+							    	{% endfor %}
 							    </tbody>
 							</table>
-					    </div>						
-	                </div>
-	                <div class="col-md-6 col-sm-6 col-xs-12">
-	                	<h2>Imagen</h2>
-	                	<div class="form-group file_upload">
-							{{ item_form.ItemImage.errors }}
-							{% render_field item_form.ItemImage class+="" %}
-							<div class="img_container">
-								<img id="item_image"/>
-							</div>
-						</div>
-	                </div>
+					    </div>
+					    <div role="tabpanel" class="tab-pane fade" id="PurchaseHistory">
+					    	<h2>Historial de pedidos</h2>
+	                		<table border="0" cellpadding="0" cellspacing="0" class="table table-condensed table-hover table-striped">
+							    <thead>
+							        <tr>
+							            <th>Tipo</th>
+							            <th>Pedido</th>
+							            <th>Nombre del Cliente / Proveedor</th>
+							            <th>Fecha de pedido</th>
+							            <th>Estado del pedido</th>
+							            <th>Total del pedido</th>
+							            <th>Cantidad</th>
+							            <th>Precio unitario</th>
+							            <th>Subtotal</th>
+							        </tr>
+							    </thead>
+							    <tbody>
+							    	{% for order in order_history %}
+							            <tr>
+											<td>{{ order.Type }}</td>
+											<td>{{ order.DocumentId }}</td>
+											<td>{{ order.CustVendName }}</td>
+											<td>{{ order.DocumentDate|date:"D d M Y" }}</td>
+											<td>{{ order.DocumentStatus }}</td>
+											<td>{{ order.DocumentTotal }}</td>
+											<td>{{ order.Qty }}</td>
+											<td>{{ order.Price }}</td>
+											<td>{{ order.SubTotal }}</td>
+							            </tr>
+							    	{% endfor %}
+							    </tbody>
+							</table>
+					    </div>
+					  </div>
+
 	            </div>
 	        </div>
 	    </div>

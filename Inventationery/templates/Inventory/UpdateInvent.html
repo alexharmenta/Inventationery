@@ -3,14 +3,22 @@
 
 {% block page_title%}
 	<div class="row">
-		<div class="col-md-6">
-			<h1>Artículo {{ form.object }}</h1>	
+		<div class="col-md-6 page_title">
+			<strong><h4>{{ Item.ItemId }} | &nbsp; </h4></strong>
+			<span> <h5> Última vez modificado: {{ Item.modified|date:"D d M Y" }} {{ Item.modified|time:"H:i" }}</h5> </span>
 		</div>
-		<div class="col-md-3">
-			
+		<div class="col-md-2">
+			<a href="{% url "inventory:delete" ItemId=Item.ItemId %}" class="btn btn-danger btn-block" id="DelInventBtn">
+				<i class="fa fa-times"></i> Eliminar
+			</a>
 		</div>
-		<div class="col-md-3">
-			<button type="submit" class="btn btn-success btn-block">Guardar</button>
+		<div class="col-md-2">
+			<a class='btn btn-purple pull-right btn-block' href="{% url "inventory:new" %}" title="Crear nuevo artículo" id="NewItemBtn">
+				<i class="fa fa-plus"></i> Nueva artículo
+			</a>
+		</div>
+		<div class="col-md-2">
+			<button type="submit" class="btn btn-success btn-block pull-right" id="SaveInventBtn"><i class="fa fa-check"></i> Guardar</button>
 		</div>
 	</div>
 {% endblock %}

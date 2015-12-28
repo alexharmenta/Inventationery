@@ -3,7 +3,8 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:10:36
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-21 22:01:25
+# @Last Modified time: 2015-12-27 22:59:40
+from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
@@ -18,110 +19,11 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import Table
-from .models import ItemModel, InventoryModel
-from .forms import InventoryForm, ItemForm
-
-
-# FBV: View to create a new Item on inventory
-def createInventView(request):
-    InventoryFormset = inlineformset_factory(
-        ItemModel,
-        InventoryModel,
-        extra=1,
-        fields='__all__',
-        form=InventoryForm)
-    if request.method == 'POST':
-        item_form = ItemForm(request.POST)
-
-        if item_form.is_valid():
-            item = item_form.save()
-            inventory_formset = InventoryFormset(
-                request.POST, instance=item, prefix='infs')
-        else:
-            inventory_formset = InventoryFormset(
-                request.POST, prefix='infs')
-            messages.error(request, 'Revise la información del artículo')
-
-        if inventory_formset.is_valid():
-            for invent_form in inventory_formset:
-                if invent_form.is_valid():
-                    qty = invent_form.cleaned_data.get('Qty')
-                    location = invent_form.cleaned_data.get('Location')
-                    if qty and location:
-                        invent = invent_form.save(commit=False)
-                        invent.Item = item
-                        invent.save()
-        else:
-            messages.error(request, 'Revise la información de inventario')
-
-        if item_form.is_valid() and inventory_formset.is_valid():
-            messages.success(
-                request, 'Artículo creado correctamente \
-                y asignado al inventario')
-
-            redirect_url = "/Item/update/" + str(item.ItemId)
-            return HttpResponseRedirect(redirect_url)
-    else:
-        item_form = ItemForm()
-        inventory_formset = InventoryFormset(prefix='infs')
-
-    return render_to_response('Inventory/CreateInvent.html',
-                              {'item_form': item_form,
-                               'inventory_formset': inventory_formset},
-                              context_instance=RequestContext(request))
-
-
-# FBV: View to update a new Item on inventory
-def updateInventView(request, ItemId):
-    Item = get_object_or_404(ItemModel, ItemId=ItemId)
-    IN_list = []
-    InventoryFormset = inlineformset_factory(
-        ItemModel,
-        InventoryModel,
-        extra=1,
-        fields='__all__',
-        form=InventoryForm)
-    if request.method == 'POST':
-        item_form = ItemForm(request.POST, instance=Item)
-        inventory_formset = InventoryFormset(
-            request.POST, instance=Item, prefix='infs')
-
-        if item_form.is_valid():
-            item = item_form.save()
-        else:
-            messages.error(request, 'Revise la información del artículo')
-
-        if inventory_formset.is_valid():
-            for invent_form in inventory_formset:
-                if invent_form.is_valid():
-                    qty = invent_form.cleaned_data.get('Qty')
-                    location = invent_form.cleaned_data.get('Location')
-                    if qty and location:
-                        invent = invent_form.save(commit=False)
-                        invent.Item = item
-                        invent.save()
-                        IN_list.append(invent.pk)
-            InventoryModel.objects.exclude(
-                pk__in=list(IN_list)).delete()
-        else:
-            messages.error(request, 'Revise la información de inventario')
-
-        if item_form.is_valid() and inventory_formset.is_valid():
-            messages.success(
-                request, 'Artículo actualizado correctamente \
-                y asignado al inventario')
-        else:
-            messages.error(
-                request, "Ocurrió un error al actualizar el artículo",
-                extra_tags='msg')
-    else:
-        item_form = ItemForm(instance=Item)
-        inventory_formset = InventoryFormset(prefix='infs', instance=Item)
-
-    return render_to_response('Inventory/UpdateInvent.html',
-                              {'item_form': item_form,
-                               'inventory_formset': inventory_formset},
-                              context_instance=RequestContext(request))
+from .models import (ItemModel, InventoryModel,
+                     ItemVendorModel, EcoResProductModel,
+                     MovementHistoryModel, OrderHistoryModel)
+from .forms import (InventoryForm, ItemForm, ItemVendorForm,
+                    EcoResProductForm)
 
 
 # CBV: View to list all inventory items
@@ -138,6 +40,221 @@ class InventListView(ListView):
         return queryset
 
 
+# FBV: View to create a new Item on inventory
+def createInventView(request):
+    InventoryFormset = inlineformset_factory(
+        ItemModel,
+        InventoryModel,
+        extra=1,
+        fields='__all__',
+        form=InventoryForm)
+    ItemVendorFormset = inlineformset_factory(
+        ItemModel,
+        ItemVendorModel,
+        extra=1,
+        fields='__all__',
+        form=ItemVendorForm)
+    IN_list = []
+    IV_list = []
+    if request.method == 'POST':
+        item_form = ItemForm(request.POST)
+        ecoResProductForm = EcoResProductForm(request.POST)
+        if item_form.is_valid():
+            item = item_form.save()
+            inventory_formset = InventoryFormset(
+                request.POST, instance=item, prefix='infs')
+            itemVendor_formset = ItemVendorFormset(
+                request.POST, instance=item, prefix='ivfs')
+        else:
+            inventory_formset = InventoryFormset(prefix='infs')
+            itemVendor_formset = ItemVendorFormset(prefix='ivfs')
+            messages.error(request, 'Revise la información del artículo')
+
+        if ecoResProductForm.is_valid():
+            ecoResProduct = ecoResProductForm.save(commit=False)
+            ecoResProduct.Item = item
+            ecoResProduct.save()
+        else:
+            messages.error(
+                request, 'Revise la información adicional del artículo')
+
+        if inventory_formset.is_valid():
+            for invent_form in inventory_formset:
+                if invent_form.is_valid():
+                    qty = invent_form.cleaned_data.get('Qty')
+                    location = invent_form.cleaned_data.get('Location')
+                    if qty and location:
+                        invent = invent_form.save(commit=False)
+                        invent.Item = item
+                        invent.save()
+                        # Set movement history
+                        SetMovementHistory(
+                            item, 'ADJUSTMENT', invent.created,
+                            invent.Location, '',
+                            invent.Qty, 0, invent.Qty, request.user)
+                        IN_list.append(invent.pk)
+            inl = InventoryModel.objects.filter(Item=item)
+            inl.exclude(pk__in=list(IN_list)).delete()
+        if itemVendor_formset.is_valid():
+            for itemVendorForm in itemVendor_formset:
+                if itemVendorForm.is_valid():
+                    vendorPrice = itemVendorForm.cleaned_data.get(
+                        'VendorPrice')
+                    vendor = itemVendorForm.cleaned_data.get('Vendor')
+                    if vendor and vendorPrice:
+                        itemVendor = itemVendorForm.save(commit=False)
+                        itemVendor.Item = item
+                        itemVendor.save()
+                        IV_list.append(itemVendor.pk)
+            ivl = ItemVendorModel.objects.filter(Item=item)
+            ivl.exclude(pk__in=list(IV_list)).delete()
+        else:
+            messages.error(request, 'Revise la información de inventario')
+
+        if item_form.is_valid() and inventory_formset.is_valid():
+            messages.success(
+                request, 'Artículo creado correctamente \
+                y asignado al inventario')
+
+            redirect_url = "/Item/update/" + str(item.ItemId)
+            return HttpResponseRedirect(redirect_url)
+    else:
+        item_form = ItemForm()
+        itemVendor_formset = ItemVendorFormset(prefix='ivfs')
+        ecoResProductForm = EcoResProductForm()
+        inventory_formset = InventoryFormset(prefix='infs')
+
+    return render_to_response('Inventory/CreateInvent.html',
+                              {'item_form': item_form,
+                               'itemVendor_formset': itemVendor_formset,
+                               'ecoResProductForm': ecoResProductForm,
+                               'inventory_formset': inventory_formset},
+                              context_instance=RequestContext(request))
+
+
+# FBV: View to update a new Item on inventory
+def updateInventView(request, ItemId):
+    Item = get_object_or_404(ItemModel, ItemId=ItemId)
+    try:
+        ecoResProduct = EcoResProductModel.objects.get(Item=Item)
+    except:
+        ecoResProduct = None
+    IN_list = []
+    IV_list = []
+    InventoryFormset = inlineformset_factory(
+        ItemModel,
+        InventoryModel,
+        extra=1,
+        fields='__all__',
+        form=InventoryForm)
+    ItemVendorFormset = inlineformset_factory(
+        ItemModel,
+        ItemVendorModel,
+        extra=1,
+        fields='__all__',
+        form=ItemVendorForm)
+    if request.method == 'POST':
+        item_form = ItemForm(request.POST, instance=Item)
+        ecoResProductForm = EcoResProductForm(
+            request.POST, instance=ecoResProduct)
+        inventory_formset = InventoryFormset(
+            request.POST, instance=Item, prefix='infs')
+        itemVendor_formset = ItemVendorFormset(
+            request.POST, instance=Item, prefix='ivfs')
+
+        if item_form.is_valid():
+            item = item_form.save()
+        else:
+            messages.error(request, 'Revise la información del artículo')
+
+        if ecoResProductForm.is_valid():
+            ecoResProduct = ecoResProductForm.save(commit=False)
+            ecoResProduct.Item = Item
+            ecoResProduct.save()
+        else:
+            messages.error(
+                request, 'Revise la información adicional del artículo')
+
+        if inventory_formset.is_valid():
+            for invent_form in inventory_formset:
+                if invent_form.is_valid():
+                    qty = invent_form.cleaned_data.get('Qty')
+                    location = invent_form.cleaned_data.get('Location')
+                    if qty and location:
+                        try:
+                            inventPrev = InventoryModel.objects.filter(
+                                Q(Location=location) & Q(Item=item)).get()
+                            prev_qty = inventPrev.Qty
+                        except:
+                            prev_qty = 0
+                        invent = invent_form.save(commit=False)
+                        invent.Item = item
+                        invent.save()
+                        IN_list.append(invent.pk)
+                        if qty != prev_qty:
+                            # Set movement history
+                            SetMovementHistory(
+                                item, 'ADJUSTMENT', invent.created,
+                                invent.Location, '',
+                                invent.Qty, inventPrev.Qty,
+                                invent.Qty, request.user)
+            inl = InventoryModel.objects.filter(Item=item)
+            inl.exclude(pk__in=list(IN_list)).delete()
+        else:
+            messages.error(request, 'Revise la información de inventario')
+
+        if itemVendor_formset.is_valid():
+            for itemVendorForm in itemVendor_formset:
+                if itemVendorForm.is_valid():
+                    vendorPrice = itemVendorForm.cleaned_data.get(
+                        'VendorPrice')
+                    vendor = itemVendorForm.cleaned_data.get('Vendor')
+                    if vendor and vendorPrice:
+                        itemVendor = itemVendorForm.save(commit=False)
+                        itemVendor.Item = item
+                        itemVendor.save()
+                        IV_list.append(itemVendor.pk)
+            ivl = ItemVendorModel.objects.filter(Item=Item)
+            ivl.exclude(pk__in=list(IV_list)).delete()
+        else:
+            messages.error(
+                request, 'Revise la información del proveedor de artículos')
+
+        if (item_form.is_valid() and
+                inventory_formset.is_valid() and
+                itemVendor_formset.is_valid()):
+            messages.success(
+                request, 'Artículo actualizado correctamente \
+                y asignado al inventario')
+        else:
+            messages.error(
+                request, "Ocurrió un error al actualizar el artículo",
+                extra_tags='msg')
+    else:
+        item_form = ItemForm(instance=Item)
+        itemVendor_formset = ItemVendorFormset(prefix='ivfs', instance=Item)
+        ecoResProductForm = EcoResProductForm(instance=ecoResProduct)
+        inventory_formset = InventoryFormset(prefix='infs', instance=Item)
+
+    try:
+        movement_history = MovementHistoryModel.objects.filter(Item=Item)
+    except:
+        movement_history = []
+    try:
+        order_history = OrderHistoryModel.objects.filter(Item=Item)
+    except:
+        order_history = []
+    return render_to_response('Inventory/UpdateInvent.html',
+                              {'Item': Item,
+                               'item_form': item_form,
+                               'itemVendor_formset': itemVendor_formset,
+                               'ecoResProductForm': ecoResProductForm,
+                               'movement_history': movement_history,
+                               'order_history': order_history,
+                               'inventory_formset': inventory_formset},
+                              context_instance=RequestContext(request))
+
+
 # CBV: View to delete an existing Item on inventory
 # ----------------------------------------------------------------------------
 class DeleteInventView(DeleteView):
@@ -145,6 +262,8 @@ class DeleteInventView(DeleteView):
     form_class = ItemForm
     template_name = 'Inventory/DeleteInvent.html'
     success_url = '/Item'
+    slug_field = 'ItemId'
+    slug_url_kwarg = 'ItemId'
 
     def delete(self, request, *args, **kwargs):
         """
@@ -171,20 +290,23 @@ def export_csv(request):
     writer.writerow(['Código',
                      'Nombre',
                      'Descripción',
-                     'Unidad',
+                     'Unidad venta',
                      'Precio venta',
                      'Proveedor principal',
                      'Precio compra'])
     try:
         item_list = ItemModel.objects.all().order_by('ItemId')
         for item in item_list:
+            ecoRes = EcoResProductModel.objects.filter(Item=item)
+            itemVend = ItemVendorModel.objects.filter(
+                Item=item, Vendor=item.PrimaryVendor)
             writer.writerow([item.ItemId,
                              item.ItemName,
                              item.Description,
-                             item.UnitId,
+                             ecoRes.SalesUnit,
                              item.Price,
                              item.PrimaryVendor,
-                             item.VendorPrice])
+                             itemVend.VendorPrice])
     except:
         return HttpResponseRedirect('/Item/')
 
@@ -224,7 +346,7 @@ def export_pdf(request):
                 'Unidad', 'Precio venta', 'Proveedor principal',
                 'Precio compra')
     items = [(i.ItemId, i.ItemName, i.Description,
-              i.UnitId, i.Price, i.PrimaryVendor,
+              i.Price, i.Price, i.PrimaryVendor,
               i.VendorPrice)
              for i in ItemModel.objects.all().order_by('ItemId')]
 
@@ -241,3 +363,25 @@ def export_pdf(request):
     response.write(buff.getvalue())
     buff.close()
     return response
+
+
+# Set history record for ADJUSTMENT movement
+def SetMovementHistory(_Item,
+                       _TransactionType,
+                       _Date,
+                       _Location,
+                       _Document,
+                       _qty,
+                       _qty_p,
+                       _qty_a,
+                       _user):
+
+    MovementHistoryModel.objects.create(Item=_Item,
+                                        TransactionType=_TransactionType,
+                                        Date=_Date,
+                                        Location=_Location,
+                                        Notes=_Document,
+                                        Qty=_qty,
+                                        Qty_prev=_qty_p,
+                                        Qty_after=_qty_a,
+                                        user=_user)

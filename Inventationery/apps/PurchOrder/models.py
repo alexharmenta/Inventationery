@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-21 22:26:28
+# @Last Modified time: 2015-12-26 19:09:43
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 from Inventationery.apps.Vendor.models import VendorModel
@@ -67,6 +67,16 @@ class PurchOrderModel(TimeStampedModel):
         (CANCELED, 'Cancelado'),
         (RECEIVED_PAID, 'Recibido/Pagado'),
     )
+    # DOCUMENT STATE OPTIONS
+    OPEN = 'Abierto'
+    PROCESS = 'Proceso'
+    CLOSED = 'Cerrado'
+
+    DOC_STATE = (
+        (OPEN, 'Abierto'),
+        (PROCESS, 'En proceso'),
+        (CLOSED, 'Cerrado'),
+    )
     # DELIVERY MODE
     HOME = 'HOM'
     BRANCH = 'BRA'
@@ -112,6 +122,8 @@ class PurchOrderModel(TimeStampedModel):
         max_digits=20, decimal_places=2, blank=True, null=True)
 
     Enabled = models.BooleanField(default=True)
+    DocumentState = models.CharField(
+        max_length=20, choices=DOC_STATE, default=CLOSED)
 
     Vendor = models.ForeignKey(VendorModel, default=None)
 
