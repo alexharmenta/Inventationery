@@ -72,10 +72,6 @@
 								<label for="{{ party_form.LanguageCode.id_for_label }}">Lenguaje</label>
 								{% render_field party_form.LanguageCode class+="form-control" %}
 							</div>
-							<div class="form-group">
-								{{ party_form.FirstLastName.errors }}
-								{% render_field party_form.FirstLastName|append_attr:"style:visibility:hidden" class+="form-control" %}
-							</div>
 						</div>
 						<div class="col-md-6 col-sm-6 col-xs-12">
 							<!-- Compañía -->
@@ -208,7 +204,7 @@
 						{% render_field companyInfoForm.CompanyImage class+="inputfile" %}
 						<label class="btn btn-info btn-block" for="id_CompanyImage">Seleccione una imagen</label>
                 		<div class="img_container">
-							<img {% if Company.CompanyImage %}src="{{ Company.CompanyImage.url }}"{% endif %} class="img-responsive" id="company_image"/>
+							<img {% if Company.CompanyImage %}src="{{ Company.CompanyImage.url }}"{% endif %} class="img-responsive img-thumbnail" id="company_image"/>
 						</div>
 					</div>
             	</div>

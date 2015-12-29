@@ -1,0 +1,24 @@
+{% extends 'SalesOrder/SalesOrder.html' %}
+{% load widget_tweaks %}
+
+{% block page_title%}
+	<div class="row">
+		<div class="col-md-6 page_title">
+			<strong class="btn-blue"><h4>{{ SalesOrder.SalesId }} | &nbsp; </h4></strong>
+			<span class="btn-info"> <h5>&nbsp; Última vez modificado: {{ SalesOrder.modified|date:"D d M Y" }} {{ SalesOrder.modified|time:"H:i" }} &nbsp;</h5> </span>
+		</div>
+		<div class="col-md-2">
+			<a href="{% url "sales:delete" pk=SalesOrder.pk %}" class="btn btn-danger btn-block pull-right btn-sm" id="delSalesOrderBtn">
+				<i class="fa fa-times"></i> Eliminar
+			</a>
+		</div>
+		<div class="col-md-2">
+			<a class='btn btn-purple pull-right btn-block btn-sm' href="{% url "sales:new" %}" title="Crear nueva orden de compra" id="NewVendorBtn">
+				<i class="fa fa-plus"></i> Nueva (OC)
+			</a>
+		</div>
+		<div class="col-md-2">
+			<button type="submit" class="btn btn-success btn-block pull-right btn-sm"><i class="fa fa-check"></i> Guardar</button>
+		</div>
+	</div>
+{% endblock %}

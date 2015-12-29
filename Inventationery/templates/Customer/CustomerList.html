@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+	
+	<div class="col-md-12 col-sm-12 col-xs-12"> <!-- Customers list -->
+        <div class="x_panel tile">
+            <div class="x_title">
+                <h2>Clientes</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+        	</div>
+            <div class="x_content table-responsive">
+                <a class='btn btn-purple pull-right' href="{% url "customer:new" %}" title="Agregar nuevo cliente" id="NewCustomerBtn">
+					<i class="fa fa-plus"></i> Nuevo cliente
+				</a>
+				<script>
+					var NewCustomerURL = '{% url "customer:new" %}';
+				</script>
+				<div><a href="{% url "customer:csv" %}" class="btn btn-warning" title="Exportar a CSV (Archivo separado por comas)">CSV <i class="fa fa-file-text-o"></i></a>
+				<a href="{% url "customer:pdf" %}" target="_blank" class="btn btn-danger" title="Exportar a PDF">PDF <i class="fa fa-file-pdf-o"></i></a></div>
+				<table id="CustomersListTableId" class="display table table-hover">
+				    <thead>
+				        <tr>
+				            <th>Número de cuenta</th>
+				            <th>Nombre</th>
+				            <th>Moneda</th>
+				            <th>RFC</th>
+				            <th>Dirección principal</th>
+				            <th>Contacto principal</th>
+				            <th>Acciones</th>
+				        </tr>
+				    </thead>
+				    <tbody>
+				    	{% for customer in customers %}
+				    		<tr>
+					            <td><a href="{% url "customer:update" AccountNum=customer.AccountNum %}" class="btn btn-link">{{ customer.AccountNum }}</a></td>
+					            <td>{{ customer.Party.NameAlias }}</td>
+					            <td>{{ customer.CurrencyCode }}</td>
+					            <td>{{ customer.VATNum }}</td>
+					            <td>{{ customer.get_PrimaryAddress }}</td>
+					            <td>{{ customer.get_PrimaryElectronic }}</td>
+					            <td class="text-center">
+									<a class='btn btn-info btn-xs' href="{% url "customer:update" AccountNum=customer.AccountNum %}">
+										<span class="lnr lnr-pencil"></span> Editar
+									</a> 
+									<a href="{% url "customer:delete" pk=customer.Party.pk %}" class="btn btn-danger btn-xs">
+										<span class="lnr lnr-cross"></span> Eliminar
+									</a>
+								</td>
+					        </tr>
+				    	{% endfor %}
+				        
+				    </tbody>
+				</table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -2,7 +2,7 @@
  * @Author: Alex
  * @Date:   2015-11-16 18:59:28
  * @Last Modified by:   Alex
- * @Last Modified time: 2015-12-27 14:32:20
+ * @Last Modified time: 2015-12-28 19:50:08
  */
 
 'use strict';
@@ -12,6 +12,12 @@ $(document).ready(function() {
     /* ----- INITIALIZE DATATABLES ----- */
     // Vendor table list initialize plugin
     $('#VendorsListTableId').DataTable({
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+        }
+    });
+    // Customer table list initialize plugin
+    $('#CustomersListTableId').DataTable({
         "language": {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
         }

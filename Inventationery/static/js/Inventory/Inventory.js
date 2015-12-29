@@ -1,8 +1,8 @@
 /* 
  * @Author: Alex
  * @Date:   2015-12-22 23:49:47
- * @Last Modified by:   harmenta
- * @Last Modified time: 2015-12-28 14:10:33
+ * @Last Modified by:   Alex
+ * @Last Modified time: 2015-12-28 19:17:03
  */
 
 'use strict';
@@ -39,7 +39,7 @@ $(document).ready(function() {
         addCssClass: 'btn btn-success btn-xs',
         deleteCssClass: 'btn btn-danger btn-xs',
     });
-    
+
 
     $('#SaveInventBtn').on('click', function(event) {
         event.preventDefault();

@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-12-28 12:50:19
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-12-28 20:50:30
 """Inventationery URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -35,4 +35,6 @@ urlpatterns = [
     url(r'^', include('Inventationery.apps.Inventory.urls', namespace='inventory')),
     url(r'^', include('Inventationery.apps.Payments.urls', namespace='payment')),
     url(r'^', include('Inventationery.apps.Company.urls', namespace='company')),
+    url(r'^', include('Inventationery.apps.Customer.urls', namespace='customer')),
+    url(r'^', include('Inventationery.apps.SalesOrder.urls', namespace='sales')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

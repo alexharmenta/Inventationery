@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+	
+	<div class="col-md-12 col-sm-12 col-xs-12"> <!-- Sales order list -->
+        <div class="x_panel tile">
+            <div class="x_title">
+            	{% block content_title %}
+            		<h2>Todas las órdenes de venta</h2>	
+            	{% endblock content_title %}
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+        	</div>
+            <div class="x_content table-responsive">
+            	<a class='btn btn-purple pull-right' href="{% url "sales:new" %}" title="Crear nueva orden de venta" id="NewCustomerBtn">
+					<i class="fa fa-plus"></i> Nueva orden de venta
+				</a>
+				<div><a href="{% url "sales:csv" %}" class="btn btn-warning" title="Exportar a CSV (Archivo separado por comas)">CSV <i class="fa fa-file-text-o"></i></a>
+				<a href="{% url "sales:pdf" %}" target="_blank" class="btn btn-danger" title="Exportar a PDF">PDF <i class="fa fa-file-pdf-o"></i></a></div>
+				<table id="SalesOrderListTableId" class="display table table-hover">
+				    <thead>
+				        <tr>
+				            <th>Orden de venta</th>
+				            <th>Cuenta de cliente</th>
+				            <th>Nombre del cliente</th>
+				            <th>Nombre</th>
+				            <th>Fecha de la OV</th>
+				            <th>Tipo de venta</th>
+				            <th>Estado del pedido</th>
+				            <th>Pedido</th>
+				            <th>Acciones</th>
+				        </tr>
+				    </thead>
+				    <tbody>
+				    	{% for order in orders %}
+				    		<tr>
+					            <td><a href="{% url "sales:update" SalesId=order.SalesId %}" class="btn btn-link btn-xs">{{ order.SalesId }}</a></td>
+					            <td><a href="{% url "customer:update" AccountNum=order.Customer %}" class="btn btn-link btn-xs">{{ order.Customer }}</a></td>
+					            <td>{{ order.Customer.Party.NameAlias }}</td>
+					            <td>{{ order.SalesName }}</td>
+					            <td>{{ order.created|date:"d/m/y" }}</td>
+					            {% if order.SalesType == 'SO' %}
+					            	<td>Orden de venta</td>
+				            	{% elif order.SalesType == 'RO' %}
+				            		<td>Devolución</td>
+					            {% endif %}
+					            
+					            {% if order.SalesStatus == 'OPE' %}
+					            	<td>Abierto</td>
+			            		{% elif order.SalesStatus == 'BAC'%}
+									<td>Back Order</td>
+								{% elif order.SalesStatus == 'RED'%}
+									<td>Reducido</td>
+								{% elif order.SalesStatus == 'INV'%}
+									<td>Facturado</td>
+								{% elif order.SalesStatus == 'CAS'%}
+									<td>Cobrado</td>
+								{% elif order.SalesStatus == 'CAN'%}
+									<td>Cancelado</td>
+								{% elif order.SalesStatus == 'RCA'%}
+									<td>Reducido/Cobrado</td>
+					            {% endif %}
+					            <td>{{ order.DocumentState }}</td>
+					            <td class="text-center">
+									<a class='btn btn-info btn-xs' href="{% url "sales:update" SalesId=order.SalesId %}">
+										<span class="lnr lnr-pencil"></span> Editar
+									</a>
+									{% if order.SalesStatus == 'OPE' or order.SalesStatus == 'CAN' %}
+										<a href="{% url "sales:delete" pk=order.pk %}" class="btn btn-danger btn-xs">
+											<span class="lnr lnr-cross"></span> Eliminar
+										</a>
+								 	{% endif %}
+								</td>
+					        </tr>
+				    	{% endfor %}
+				        
+				    </tbody>
+				</table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

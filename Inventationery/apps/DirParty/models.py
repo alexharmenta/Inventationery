@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex Armenta
 # @Date:   2015-11-16 19:08:22
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-12-24 13:44:09
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-12-28 19:18:33
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 
@@ -28,7 +28,7 @@ class DirPartyModel(TimeStampedModel):
     LanguageCode = models.CharField(max_length=5, default='es-mx')
     # Person
     SecondName = models.CharField(max_length=30, blank=True, null=True)
-    FirstLastName = models.CharField(max_length=30)
+    FirstLastName = models.CharField(max_length=30, blank=True, null=True)
     SecondLastName = models.CharField(max_length=30, blank=True, null=True)
     Gender = models.CharField(max_length=1,
                               choices=GENDER_CHOICES,

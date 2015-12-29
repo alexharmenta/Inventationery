@@ -8,10 +8,10 @@
 		{% block page_title %}
 		{% endblock %}
 		
-		<div class="col-md-6 col-sm-6 col-xs-6"> <!-- Vendor info -->
+		<div class="col-md-6 col-sm-6 col-xs-6"> <!-- Customer info -->
 	        <div class="x_panel tile">
 	            <div class="x_title">
-	                <h2>Información de proveedor</h2>
+	                <h2>Información de cliente</h2>
 	                <ul class="nav navbar-right panel_toolbox">
 	                    <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
 	                    </li>
@@ -19,8 +19,8 @@
 	                <div class="clearfix"></div>
             	</div>
 	            <div class="x_content">
-	                {% if vendor_form.errors %}
-					    {% for field in vendor_form %}
+	                {% if customer_form.errors %}
+					    {% for field in customer_form %}
 					        {% for error in field.errors %}
 					        	<style>
 									#{{ field.id_for_label }} {
@@ -30,7 +30,7 @@
 					        	</style>				            
 					        {% endfor %}
 					    {% endfor %}
-					    {% for error in vendor_form.non_field_errors %}
+					    {% for error in customer_form.non_field_errors %}
 					        <div class="alert alert-error">
 					            <strong> {{ error|escape }}</strong>
 					        </div>
@@ -38,49 +38,56 @@
 					{% endif %}
 					<div class="row form-group">
 						<div class="col-md-6 col-sm-6 col-xs-6">
-							<label for="{{ vendor_form.AccountNum.id_for_label }}">Número de cuenta
-							<span>{{ vendor_form.AccountNum.errors }}</span></label>
-							{% render_field vendor_form.AccountNum class+="form-control" %}
+							<label for="{{ customer_form.AccountNum.id_for_label }}">Número de cuenta
+							<span>{{ customer_form.AccountNum.errors }}</span></label>
+							{% render_field customer_form.AccountNum class+="form-control" %}
 						</div>
 						<div class="col-md-6 col-sm-6 col-xs-6">
-							<label for="{{ vendor_form.AccountType.id_for_label }}">Tipo de registro
-							<span>{{ vendor_form.AccountType.errors }}</span></label>
-								{% render_field vendor_form.AccountType class+="form-control" %}
+							<label for="{{ customer_form.AccountType.id_for_label }}">Tipo de registro
+							<span>{{ customer_form.AccountType.errors }}</span></label>
+								{% render_field customer_form.AccountType class+="form-control" %}
 						</div>
 					</div>
 					<div class="row form-group">
 						<div class="col-md-6 col-sm-6 col-xs-6">
-							<label for="{{ vendor_form.VendGroup.id_for_label }}">Grupo de proveedor
-							<span>{{ vendor_form.VendGroup.errors }}</span></label>
-							{% render_field vendor_form.VendGroup class+="form-control" %}
+							<label for="{{ customer_form.CustGroup.id_for_label }}">Grupo de cliente
+							<span>{{ customer_form.CustGroup.errors }}</span></label>
+							{% render_field customer_form.CustGroup class+="form-control" %}
 						</div>
 						<div class="col-md-6 col-sm-6 col-xs-6">
-							<label for="{{ vendor_form.OneTimeVendor.id_for_label }}">Proveedor de una sola vez
-							<span>{{ vendor_form.OneTimeVendor.errors }}</span></label>
-							{% render_field vendor_form.OneTimeVendor class+="form-control" %}
+							<label for="{{ customer_form.OneTimeCustomer.id_for_label }}">Cliente de una sola vez
+							<span>{{ customer_form.OneTimeCustomer.errors }}</span></label>
+							{% render_field customer_form.OneTimeCustomer class+="form-control" %}
 						</div>
 					</div>
 					<div class="row form-group">
 						<div class="col-md-6 col-sm-6 col-xs-6">
-							<label for="{{ vendor_form.CreditLimit.id_for_label }}">Límite de crédito ( $ )
-							<span>{{ vendor_form.CreditLimit.errors }}</span></label>
-							{% render_field vendor_form.CreditLimit class+="form-control" %}
+							<label for="{{ customer_form.CreditLimit.id_for_label }}">Límite de crédito ( $ )
+							<span>{{ customer_form.CreditLimit.errors }}</span></label>
+							{% render_field customer_form.CreditLimit class+="form-control" %}
 						</div>
 						<div class="col-md-6 col-sm-6 col-xs-6">
-							<label for="{{ vendor_form.CurrencyCode.id_for_label }}">Moneda
-							<span>{{ vendor_form.CurrencyCode.errors }}</span></label>
-							{% render_field vendor_form.CurrencyCode class+="form-control" %}
+							<label for="{{ customer_form.Discount.id_for_label }}">Descuento ( % )
+							<span>{{ customer_form.Discount.errors }}</span></label>
+							{% render_field customer_form.Discount class+="form-control" %}
+						</div>
+					</div>
+					<div class="row form-group">
+						<div class="col-md-6 col-sm-6 col-xs-6">
+							<label for="{{ customer_form.VATNum.id_for_label }}">RFC
+							<span>{{ customer_form.VATNum.errors }}</span></label>
+							{% render_field customer_form.VATNum class+="form-control" %}
+						</div>
+						<div class="col-md-6 col-sm-6 col-xs-6">
+							<label for="{{ customer_form.CurrencyCode.id_for_label }}">Moneda
+							<span>{{ customer_form.CurrencyCode.errors }}</span></label>
+							{% render_field customer_form.CurrencyCode class+="form-control" %}
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="{{ vendor_form.VATNum.id_for_label }}">RFC
-						<span>{{ vendor_form.VATNum.errors }}</span></label>
-						{% render_field vendor_form.VATNum class+="form-control" %}
-					</div>
-					<div class="form-group">
-						<label for="{{ vendor_form.Notes.id_for_label }}">Comentarios
-						<span>{{ vendor_form.Notes.errors }}</span></label>
-						{% render_field vendor_form.Notes|attr:"rows:3" class+="form-control" %}
+						<label for="{{ customer_form.Notes.id_for_label }}">Comentarios
+						<span>{{ customer_form.Notes.errors }}</span></label>
+						{% render_field customer_form.Notes|attr:"rows:3" class+="form-control" %}
 					</div>
 	            </div>
 	        </div>
@@ -135,7 +142,7 @@
 							<div class="form-group person-info">
 								<label for="{{ party_form.FirstLastName.id_for_label }}">*Apellido paterno 
 								<span>&nbsp; {{ party_form.FirstLastName.errors }}</span></label>
-								{% if Vendor.pk %}
+								{% if Customer.pk %}
 									{% render_field party_form.FirstLastName|append_attr:"required" class+="form-control" %}
 								{% else %}
 									{% render_field party_form.FirstLastName|append_attr:"required" class+="form-control fill-person" %}
@@ -358,5 +365,5 @@
 {% endblock %}
 
 {% block ExtraJS %}
-<script type="text/javascript" charset="utf8" src="{% static "js/Vendor/Vendor.js" %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static "js/Customer/Customer.js" %}"></script>
 {% endblock ExtraJS %}

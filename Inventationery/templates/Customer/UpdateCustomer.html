@@ -1,0 +1,24 @@
+{% extends 'Customer/Customer.html' %}
+
+
+{% block page_title %}
+<div class="row">
+	<div class="col-md-6 page_title">
+		<strong><h4>{{ Customer.AccountNum }} | &nbsp; </h4></strong>
+		<span> <h5> Última vez modificado: {{ Customer.modified|date:"D d M Y" }} {{ Customer.modified|time:"H:i" }}</h5> </span>
+	</div>
+	<div class="col-md-2">
+		<a href="{% url "vendor:delete" pk=Customer.Party.pk %}" class="btn btn-danger btn-block pull-right" id="DelCustomerBtn">
+			<i class="fa fa-times"></i> Eliminar
+		</a>
+	</div>
+	<div class="col-md-2">
+		<a class='btn btn-purple btn-block pull-right' href="{% url "vendor:new" %}" title="Agregar nuevo cliente" id="NewCustomerBtn">
+			<i class="fa fa-plus"></i> Nuevo cliente
+		</a>
+	</div>
+	<div class="col-md-2">
+		<button type="submit" class="btn btn-success btn-block pull-right" id="SaveCustomerBtn"><i class="fa fa-check"></i> Guardar</button>
+	</div>
+</div>
+{% endblock %}

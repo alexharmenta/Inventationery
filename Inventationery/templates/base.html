@@ -77,10 +77,21 @@
                                 </li>
                             </ul>
                             <ul class="nav side-menu">
+                                <li><a class="collapse-menu"><i class="fa fa-money"></i> Cuentas por cobrar <span class="lnr lnr-chevron-down"></span></a>
+                                    <ul class="nav child_menu" style="display: none">
+                                        <li><a href="{% url "customer:list" %}"><i class="fa fa-users"></i>Clientes</a></li>
+                                        <li><a href="{% url "sales:list" %}"><i class="fa fa-list-alt"></i>Ordenes de venta (OV)</a></li>
+                                        <li><a href="{% url "sales:recent" %}"><i class="fa fa-calendar"></i>(OV) recientes</a></li>
+                                        <li><a href="{% url "sales:open" %}"><i class="fa fa-circle-o-notch"></i>(OV) abiertas</a></li>
+                                        <li><a href="{% url "sales:sent" %}"><i class="fa fa-check"></i>(OV) enviadas</a></li>
+                                        <li><a href="{% url "sales:charged" %}"><i class="fa fa-money"></i>(OV) cobradas</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <ul class="nav side-menu">
                                 <li><a class="collapse-menu"> <i class="fa fa-building-o"></i> Administración de la organización <span class="lnr lnr-chevron-down"></span></a>
                                     <ul class="nav child_menu" style="display: none">
                                         <li><a href="{% url "company:data" %}"><i class="fa fa-building"></i>Empresa</a></li>
-                                        <li><a href="#"><i class="fa fa-users"></i>Usuarios</a></li>
                                     </ul>
                                 </li>
                             </ul>

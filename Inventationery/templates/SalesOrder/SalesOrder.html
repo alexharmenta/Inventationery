@@ -1,0 +1,372 @@
+{% extends 'base.html' %}
+{% load staticfiles i18n %}
+{% load widget_tweaks %}
+
+{% block content %}
+	<form action="" method="POST" id="SalesOrderForm"> {% csrf_token %}
+		{% if sales_form.errors %}
+		    {% for field in sales_form %}
+		        {% for error in field.errors %}
+		        	<style>
+						#{{ field.id_for_label }} {
+							border: 1px solid #f64747;
+							border-radius: 2px;
+						}
+		        	</style>				            
+		        {% endfor %}
+		    {% endfor %}
+		    {% for error in sales_form.non_field_errors %}
+		        <div class="alert alert-error">
+		            <strong> {{ error }}</strong>
+		        </div>
+		    {% endfor %}
+		{% endif %}
+
+		{% block page_title %}
+		{% endblock %}
+		<div class="col-md-12 col-sm-12 col-xs-12"> <!-- General info -->
+	        <div class="x_panel tile">
+	            <div class="x_title">
+	                <h2>General</h2>
+	                <ul class="nav navbar-right panel_toolbox">
+	                    <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
+	                    </li>
+	                </ul>
+	                <div class="clearfix"></div>
+            	</div>
+	            <div class="x_content">
+					<div class="row">
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<!-- Orden de venta -->
+							<h4><strong>Orden de venta</strong></h4>
+							<div class="form-group">
+								{{ sales_form.SalesId.errors }}
+								<label for="{{ sales_form.SalesId.id_for_label }}">*Orden de venta (OV)</label>
+								{% render_field sales_form.SalesId|append_attr:"readonly" class+="form-control form_disabled" %}
+							</div>
+							<div class="form-group">
+								{{ sales_form.SalesName.errors }}
+								<label for="{{ sales_form.SalesName.id_for_label }}">*Nombre (OV)</label>
+								{% render_field sales_form.SalesName|append_attr:"required" class+="form-control" %}
+							</div>
+							<div class="form-group">
+								{{ sales_form.SalesType.errors }}
+								<label for="{{ sales_form.SalesType.id_for_label }}">Tipo de orden</label>
+								{% render_field sales_form.SalesType class+="form-control" %}
+							</div>
+						</div>
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<!-- Cliente -->
+							<h4><strong>Cliente</strong></h4>
+							<div class="form-group">
+								<label for="">Cliente de una sola vez</label>
+								<input id="OneTimeCustomer" type="Checkbox" class="form-control form_disabled" readonly="True">
+							</div>
+							<div class="form-group">
+								{{ sales_form.Customer.errors }}
+								<label for="{{ sales_form.Customer.id_for_label }}">*Cuenta de cliente</label>
+								{% render_field sales_form.Customer class+="form-control" %}
+							</div>
+							<div class="form-group">
+								{{ sales_form.WorkerSalesPlacer.errors }}
+								<label for="{{ sales_form.WorkerSalesPlacer.id_for_label }}">Nombre del cliente</label>
+								{% render_field sales_form.WorkerSalesPlacer|append_attr:"readonly" class+="form-control form_disabled" %}
+							</div>
+						</div>
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<!-- Estado -->
+							<h4><strong>Estado</strong></h4>
+							<div class="row">
+								<div class="col-md-6 col-sm-6 col-xs12">
+									<div class="form-group">
+									<label for="">Estado de la orden</label>
+									{% render_field sales_form.SalesStatus class+="form-control form_disabled" %}
+								</div>
+								</div>
+								<div class="col-md-6 col-sm-6 col-xs12">
+									<div class="form-group">
+										<label for="">Fecha</label>
+										<div class="inner-addon right-addon">
+											<span class="lnr lnr-calendar-full"></span>
+											<input readonly class="form-control form_disabled" type="text" {% if SalesOrder.pk %}
+												value="{{ SalesOrder.created|date:"d/m/y" }}"
+												{% else %}
+												value="{{ Today|date:"d/m/y" }}"
+											{% endif %}>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- Observaciones -->
+							<h4><strong>Observaciones</strong></h4>
+							<div class="form-group">
+								{{ sales_form.Remarks.errors }}
+								{% render_field sales_form.Remarks|attr:"rows:4" class+="form-control" %}
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="row col-md-12">
+							<h2>Configurar</h2>
+						</div>
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<div class="form-group">
+								<label for="VATNum">RFC</label>
+								<input id="VATNum" type="text" class="form-control form_disabled" readonly value="{{ SalesOrder.Customer.VATNum }}">
+							</div>
+						</div>
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<div class="row col-md-6 col-sm-6 col-xs-6">
+								<div class="form-group">
+									{{ sales_form.CurrencyCode.errors }}
+									<label for="{{ sales_form.CurrencyCode.id_for_label }}">Moneda</label>
+									{% render_field sales_form.CurrencyCode class+="form-control" %}
+								</div>
+							</div>
+							<div class="row col-md-6 col-sm-6 col-xs-6">
+								<div class="form-group">
+									{{ sales_form.LanguageCode.errors }}
+									<label for="{{ sales_form.LanguageCode.id_for_label }}">Lenguaje</label>
+									{% render_field sales_form.LanguageCode|append_attr:"readonly" class+="form-control form_disabled" %}
+								</div>
+							</div>
+						</div>
+					</div>
+	            </div>
+	        </div>
+	    </div>
+		
+		<div class="col-md-12 col-sm-12 col-xs-12"> <!-- Postal and delivery info -->
+	        <div class="x_panel tile">
+	            <div class="x_title">
+	                <h2>Condiciones de envío y cobro</h2>
+	                <ul class="nav navbar-right panel_toolbox">
+	                    <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
+	                    </li>
+	                </ul>
+	                <div class="clearfix"></div>
+            	</div>
+	            <div class="x_content">
+					<div class="row">
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<!-- Dirección -->
+							<h4><strong>Dirección</strong></h4>
+							<div class="form-group">
+								<label for="{{ sales_form.DeliveryName.id_for_label }}">Dirección de envío</label>
+								<textarea readonly name="" id="{{ sales_form.DeliveryName.id_for_label }}" rows="3" class="form-control form_disabled">{{ SalesOrder.Customer.get_PrimaryAddress }}
+								</textarea>
+							</div>
+							<!-- Contacto -->
+							<h4><strong>Contacto</strong></h4>
+							<div class="form-group">
+								<label for="">Contacto de envío</label>
+								<input readonly type="text" class="form-control form_disabled" value="{{ SalesOrder.Customer.get_PrimaryElectronic }}" id="id_DeliveryContact">
+							</div>
+						</div>
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<!-- Entrega -->
+							<h4><strong>Entrega</strong></h4>
+							<div class="form-group">
+								{{ sales_form.DeliveryDate.errors }}
+								<label for="{{ sales_form.DeliveryDate.id_for_label }}">Fecha de envío</label>
+								<div class="inner-addon right-addon">
+									<span class="lnr lnr-calendar-full"></span>
+									{% render_field sales_form.DeliveryDate class+="datepicker form-control" %}
+								</div>
+							</div>
+							<div class="form-group">
+								{{ sales_form.ConfirmedDlv.errors }}
+								<label for="{{ sales_form.ConfirmedDlv.id_for_label }}">Fecha de confirmación</label>
+								<div class="inner-addon right-addon">
+									<span class="lnr lnr-calendar-full"></span>
+									{% render_field sales_form.ConfirmedDlv class+="datepicker form-control" %}
+								</div>
+							</div>
+							<div class="form-group">
+								{{ sales_form.DlvMode.errors }}
+								<label for="{{ sales_form.DlvMode.id_for_label }}">Modo de envío</label>
+								{% render_field sales_form.DlvMode class+="form-control" %}
+							</div>
+						</div>
+
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<!-- Pago -->
+							<h4><strong>Pago</strong></h4>
+							<div class="form-group">
+								{{ sales_form.Payment.errors }}
+								<label for="{{ sales_form.Payment.id_for_label }}">Condición de cobro</label>
+								<div class="col-md-11 col-sm-11">
+									{% render_field sales_form.Payment class+="form-control" %}
+								</div>
+								<div class="col-md-1 col-sm-1">
+									<a href="{% url "payment:new-payment" %}" target="_blank" class="btn btn-xs btn-success pull-right"><i class="fa fa-plus"></i></a>
+								</div>
+							</div>
+							<div class="form-group">
+								{{ sales_form.PaymMode.errors }}
+								<label for="{{ sales_form.PaymMode.id_for_label }}">Método de cobro</label>
+								<div class="col-md-11 col-sm-11">
+									{% render_field sales_form.PaymMode class+="form-control" %}
+								</div>
+								<div class="col-md-1 col-sm-1">
+									<a href="{% url "payment:new-paym" %}" target="_blank" class="btn btn-xs btn-success pull-right"><i class="fa fa-plus"></i></a>
+								</div>
+							</div>
+							<div class="form-group">
+								{{ sales_form.Location.errors }}
+								<label for="{{ sales_form.Location.id_for_label }}">Ubicación de inventario</label>
+								{% render_field sales_form.Location|append_attr:'required' class+="form-control" %}
+							</div>
+						</div>
+					</div>
+	            </div>
+	        </div>
+	    </div>
+		
+	    <div class="col-md-12 col-sm-12 col-xs-12">
+	        <div class="x_panel tile">
+	            <div class="x_title">
+	                <h2>Lineas de la orden</h2>
+	                <ul class="nav navbar-right panel_toolbox">
+	                    <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
+	                    </li>
+	                </ul>
+	                <div class="clearfix"></div>
+            	</div>
+	            <div class="x_content table-responsive">
+				    <table border="0" cellpadding="0" cellspacing="0" class="table table-condensed table-hover table-striped" id="salesline_table">
+					    <thead>
+					        <tr>
+					            <th id="item_id_h">Código de artículo</th>
+					            <th id="item_name_h">Nombre de artículo</th>
+					            <th id="item_qty_h">Cantidad</th>
+					            <th id="item_unit_h">Unidad</th>
+					            <th id="item_price_h">$ Precio</th>
+					            <th id="item_disc_h">$ Descuento</th>
+					            <th id="item_percent_h">Descuento %</th>
+					            <th id="item_total_h">$ Total linea</th>
+					            <th id="item_action_h">Accion</th>
+					        </tr>
+					    </thead>
+					    <tbody class="salesline_formset">
+				            {% for salesline_form in salesline_formset.forms %}
+				            	{% if salesline_form.errors %}
+								    {% for field in salesline_form %}
+								        {% for error in field.errors %}
+								        	<style>
+												#{{ field.id_for_label }} {
+													border: 1px solid #f64747;
+													border-radius: 2px;
+												}
+								        	</style>				            
+								        {% endfor %}
+								    {% endfor %}
+								    {% for error in salesline_form.non_field_errors %}
+								        <div class="alert alert-error">
+								            <strong> {{ error }}</strong>
+								        </div>
+								    {% endfor %}
+								    {{ salesline_form.non_field_errors }}
+								{% endif %}
+					            <tr>
+									<td>{% render_field salesline_form.ItemId class+="form-control item-id" %}</td>
+									<td>{% render_field salesline_form.ItemName class+="form-control" %}</td>
+									<td>{% render_field salesline_form.SalesQty class+="sl_amount form-control sl_qty" %}</td>
+									<td>{% render_field salesline_form.SalesUnit class+="form-control" %}</td>
+									<td>{% render_field salesline_form.SalesPrice class+="sl_amount form-control amount" %}</td>
+									<td>{% render_field salesline_form.LineDisc class+="sl_amount form-control sl_disc" %}</td>
+									<td>{% render_field salesline_form.LinePercent class+="sl_amount form-control sl_percent" %}</td>
+									<td>{% render_field salesline_form.LineAmount|append_attr:'readonly' class+="form-control amount total_amount form_disabled" %}</td>
+									<td></td>
+					            </tr>
+					            {% for hidden in salesline_form.hidden_fields %}
+							        {{ hidden }}
+							    {% endfor %}
+				            {% endfor %}
+				            {{ salesline_formset.management_form }}
+
+					    </tbody>
+					</table>
+				    <div class="row">
+				    	{% if SalesOrder.pk %}
+				    		<div class="form-group pull-left">
+						    	<ul class="sales_options">
+						    		{% if SalesOrder.Enabled %}
+						    			<li><a id="cancel_order_btn" class="btn btn-block btn-warning" href="javascript:void(0)">Cancelar pedido</a></li>
+					    			{% else %}
+					    				<li><a id="cancel_order_btn" class="btn btn-block btn-warning" href="javascript:void(0)">Reabrir pedido</a></li>
+						    		{% endif %}
+						    		<li>
+						    			<!-- Split button -->
+										<div class="btn-group" id="ReduceSplit">
+										  <button type="button" class="btn btn-info form_disabled" id="reduce_charge">Reducir y cobrar</button>
+										  <button type="button" class="btn btn-info form_disabled dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										    <span class="caret"></span>
+										    <span class="sr-only">Toggle Dropdown</span>
+										  </button>
+										  <ul class="dropdown-menu">
+										    <li><a href="#" id="reduce_invent">Reducir de inventario</a></li>
+										    <li><a href="#" id="charge_order">Cobrar al cliente</a></li>
+										  </ul>
+										</div>
+						    		</li>
+						    	</ul>				    			
+				    		</div>
+					    {% endif %}
+					    {% render_field sales_form.Enabled|append_attr:"style:visibility:hidden"%}
+					    {% render_field sales_form.DocumentState|append_attr:"style:visibility:hidden"%}
+				    	<div class="col-md-4 col-sm-4 col-xs-12 pull-right">
+				    		<div class="form-group">
+				    			<div class="col-md-4 col-sm-4 col-xs 12">
+					    			<label for="{{ sales_form.SubTotal.id_for_label }}" class="pull-right"><strong>SubTotal</strong></label>
+					    		</div>
+					    		<div class="col-md-8 col-sm-8 col-xs-12">
+					    			<div class="inner-addon left-addon">
+					    				<i class="lnr">$</i>
+					    				{% render_field sales_form.SubTotal|append_attr:'readonly' class+="form-control amount form_disabled" %}
+					    			</div>
+					    		</div>
+					    		<div class="col-md-4 col-sm-4 col-xs 12">
+					    			<label for="{{ sales_form.Total.id_for_label }}" class="pull-right"><strong>Total</strong></label>
+					    		</div>
+					    		<div class="col-md-8 col-sm-8 col-xs-12">
+					    			<div class="inner-addon left-addon">
+					    				<i class="lnr">$</i>
+					    				{% render_field sales_form.Total|append_attr:'readonly' class+="form-control amount form_disabled" %}
+					    			</div>
+					    		</div>
+					    		{% if SalesOrder.pk  %}
+						    		<div class="col-md-4 col-sm-4 col-xs 12">
+						    			<label for="{{ sales_form.Paid.id_for_label }}" class="pull-right"><strong>Pagado</strong></label>
+						    		</div>
+						    		<div class="col-md-8 col-sm-8 col-xs-12">
+						    			<div class="inner-addon left-addon">
+						    				<i class="lnr">$</i>
+						    				{% render_field sales_form.Paid class+="form-control amount" %}
+						    			</div>
+						    		</div>
+						    		<div class="col-md-4 col-sm-4 col-xs 12">
+						    			<label for="{{ sales_form.Balance.id_for_label }}" class="pull-right"><strong>Balance</strong></label>
+						    		</div>
+						    		<div class="col-md-8 col-sm-8 col-xs-12">
+						    			<div class="inner-addon left-addon">
+						    				<i class="lnr">$</i>
+						    				{% render_field sales_form.Balance|append_attr:'readonly' class+="form-control amount form_disabled" %}
+						    			</div>
+						    		</div>
+					    		{% endif %}
+				    		</div>
+				    	</div>				    	
+				    </div>
+	            </div>
+	        </div>
+	    </div>
+
+	</form>
+</div>
+{% endblock %}
+
+
+{% block ExtraJS %}
+<script type="text/javascript" charset="utf8" src="{% static "js/SalesOrder/SalesOrder.js" %}"></script>
+{% endblock ExtraJS %}

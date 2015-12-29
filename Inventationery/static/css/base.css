@@ -3150,7 +3150,7 @@ select.parsley-error {
 .table>tfoot>tr>th,
 .table>thead>tr>td,
 .table>thead>tr>th {
-    padding: 4px;
+    padding: 2px;
     line-height: 1.42857143;
     vertical-align: middle;
     border: none;
@@ -4145,6 +4145,28 @@ html > body > .ui-pnotify {
     border-color: #9175bd;
 }
 
+.btn-blue {
+    color: #fff;
+    background-color: #355C7D;
+    border-color: #355C7D;
+}
+
+.btn-blue:hover {
+    color: #fff;
+    background-color: #2A363B;
+    border-color: #2A363B;
+}
+.btn-beige {
+    color: #5E6C82;
+    background-color: #FFDFBD;
+    border-color: #FFDFBD;
+}
+
+.btn-beige:hover {
+    color: #5E6C82;
+    background-color: #FAC994;
+    border-color: #FAC994;
+}
 .btn.btn-outline {
     background: transparent;
 }
@@ -6638,6 +6660,18 @@ input[type=radio] {
     padding-left: 1px;
     font-size: 12px;
 }
+.salesline_formset tbody tr td {
+    padding-right: 0px;
+    padding-left: 1px;
+}
+.salesline_formset tbody tr td * {
+    font-size: 12px;
+}
+.salesline_formset thead tr th {
+    padding-right: 0px;
+    padding-left: 1px;
+    font-size: 12px;
+}
 #item_id_h {
     width: 10%;
 }
@@ -6666,10 +6700,17 @@ label {
     font-weight: 500;
 }
 .page_title {
-    margin: 0 auto;
     display: flex;
+    margin-left: 0px;
+    border-top-right-radius: 50px;
+    border-bottom-right-radius: 50px;
 }
-
+.page_title > strong > h4 {
+    margin-left: 5px;
+}
+.page_title > span > h5 {
+    padding-top: 3px;
+}
 /* enable absolute positioning */
 .inner-addon {
     position: relative;
@@ -6717,6 +6758,14 @@ ul.purch_options {
 ul.purch_options li {
     display: inline-block;
 }
+ul.sales_options {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+ul.sales_options li {
+    display: inline-block;
+}
 .img_container {
     margin: 20px auto;
     min-height: 200px;
@@ -6737,6 +6786,15 @@ ul.purch_options li {
     display: none;
 }
 #id_PurchStatus {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 1px;
+    text-overflow: '';
+}
+#id_SalesStatus option {
+    display: none;
+}
+#id_SalesStatus {
     -webkit-appearance: none;
     -moz-appearance: none;
     text-indent: 1px;
