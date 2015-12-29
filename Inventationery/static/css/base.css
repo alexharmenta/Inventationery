@@ -4138,7 +4138,6 @@ html > body > .ui-pnotify {
     background-color: #a88cd5;
     border-color: #a88cd5;
 }
-
 .btn-purple:hover {
     color: #fff;
     background-color: #9175bd;
@@ -4150,23 +4149,23 @@ html > body > .ui-pnotify {
     background-color: #355C7D;
     border-color: #355C7D;
 }
-
 .btn-blue:hover {
     color: #fff;
     background-color: #2A363B;
     border-color: #2A363B;
 }
+
 .btn-beige {
     color: #5E6C82;
     background-color: #FFDFBD;
     border-color: #FFDFBD;
 }
-
 .btn-beige:hover {
     color: #5E6C82;
     background-color: #FAC994;
     border-color: #FAC994;
 }
+
 .btn.btn-outline {
     background: transparent;
 }
@@ -4207,18 +4206,8 @@ html > body > .ui-pnotify {
 }
 
 .btn-warning {
-    background: #f0ad4e;
-    border-color: #f0ad4e;
-}
-
-.btn-danger {
-    background: #f84545;
-    border-color: #f84545;
-}
-
-.btn-danger:hover {
-    background-color: #cc0000;
-    border-color: #cc0000;
+    background: #FED45A;
+    border-color: #FED45A;
 }
 
 .btn-primary {
@@ -4271,8 +4260,8 @@ html > body > .ui-pnotify {
 .btn-warning:active,
 .btn-warning.active,
 .open .dropdown-toggle.btn-warning {
-    background-color: #d58512;
-    border-color: #d58512;
+    background-color: #f3bc65;
+    border-color: #f3bc65;
     color: #FFFFFF;
 }
 
@@ -4320,7 +4309,15 @@ html > body > .ui-pnotify {
     border-radius: 30px;
 }
 
+.btn-danger {
+    background: #f84545;
+    border-color: #f84545;
+}
 
+.btn-danger:hover {
+    background-color: #cc0000;
+    border-color: #cc0000;
+}
 /* *********  /notifications  **************************** */
 
 
