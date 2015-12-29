@@ -1,8 +1,8 @@
 /* 
  * @Author: Alex
  * @Date:   2015-12-22 19:23:28
- * @Last Modified by:   Alex
- * @Last Modified time: 2015-12-27 16:29:21
+ * @Last Modified by:   harmenta
+ * @Last Modified time: 2015-12-29 17:51:24
  */
 
 'use strict';
@@ -70,15 +70,15 @@ $(document).ready(function() {
     // Get purchase line info with AJAX
     $('.purchline_formset').on('change', 'tr td select,input', function() {
         var id = $(this).attr('id');
-        var id_lower = id.toLowerCase()
+        var id_lower = id.toLowerCase();
         var rownum = id.replace(/\D/g, '');
-        var ItemName_id = '#id_plfs-' + rownum + '-ItemName'
-        var PurchUnit_id = '#id_plfs-' + rownum + '-PurchUnit'
-        var PurchPrice_id = '#id_plfs-' + rownum + '-PurchPrice'
-        var PurchQty_id = '#id_plfs-' + rownum + '-PurchQty'
-        var LineDisc_id = '#id_plfs-' + rownum + '-LineDisc'
-        var LinePercent_id = '#id_plfs-' + rownum + '-LinePercent'
-        var Total_id = '#id_plfs-' + rownum + '-LineAmount'
+        var ItemName_id = '#id_plfs-' + rownum + '-ItemName';
+        var PurchUnit_id = '#id_plfs-' + rownum + '-PurchUnit';
+        var PurchPrice_id = '#id_plfs-' + rownum + '-PurchPrice';
+        var PurchQty_id = '#id_plfs-' + rownum + '-PurchQty';
+        var LineDisc_id = '#id_plfs-' + rownum + '-LineDisc';
+        var LinePercent_id = '#id_plfs-' + rownum + '-LinePercent';
+        var Total_id = '#id_plfs-' + rownum + '-LineAmount';
 
         if (id_lower.indexOf('itemid') != -1) {
             var Item_pk = getCharsBefore($('#' + id + ' option:selected').val(), ' ');
@@ -150,6 +150,41 @@ $(document).ready(function() {
         $(Total_id).val(total);
         SetAmounts(true);
     });
+    
+    // Set tooltip info
+    $('.purchline_formset').on('focus', 'tr td select,input', function() {
+        var id = $(this).attr('id');
+        if (id.indexOf('PurchQty') != -1) {
+            /*$.ajax({
+                url: window.location.href, // the endpoint,commonly same url
+                type: "POST",
+                data: formData + action + purch_enabled, // data sent with the post request
+                // handle a successful response
+                success: function(json) {
+                    //console.log(json); // another sanity check
+                    //On success show the data posted to server as a message
+                    $('#id_Enabled').prop('checked', json.Enabled);
+                    if (!json.Enabled) {
+                        notie.alert(2, 'Pedido cancelado.', 1.5);
+                    } else {
+                        notie.alert(4, 'Pedido abierto.', 1.5);
+                    }
+                    $('#id_Paid').val(0);
+                    SetBalance();
+                    ChangePurchaseStatus(json.PurchStatus);
+                },
+
+                // handle a non-successful response
+                error: function(xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                    swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
+                }
+            });*/
+            $(this).attr('data-toggle', 'tooltip');
+            $(this).attr('data-placement', 'bottom');
+            $(this).attr('title', 'Tooltip');
+        }
+    });
 
     // Set balance on Paid change
     $('#id_Paid').on('change', function() {
@@ -200,7 +235,6 @@ $(document).ready(function() {
                         console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                         swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
                     }
-
                 });
                 break;
             case 'Proceso':
