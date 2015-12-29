@@ -2,16 +2,18 @@
 # -*- coding: utf-8 -*-
 # @Author: harmenta
 # @Date:   2015-12-24 11:10:51
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-12-28 17:19:56
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-12-28 23:45:40
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib import messages
 from .models import CompanyInfoModel
-from .forms import (CompanyInfoForm, PartyForm, LogisticsPostalForm)
+from django.contrib.auth.decorators import login_required
+from .forms import (CompanyInfoForm, PartyForm)
 
 
 # FBV: View for create new Company
+@login_required
 def CompanyInfoView(request):
     try:
         Company = CompanyInfoModel.objects.all()[:1].get()

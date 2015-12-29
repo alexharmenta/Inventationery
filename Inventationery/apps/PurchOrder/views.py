@@ -3,8 +3,10 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-27 18:20:20
+# @Last Modified time: 2015-12-28 23:59:04
 # from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.db.models import Q
 from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
@@ -42,6 +44,10 @@ class PurchOrderListView(ListView):
         queryset = PurchOrderModel.objects.all().order_by('created')
         return queryset
 
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+
 
 # CBV: View to list recent 10 PurchOrders ordered by created
 # ----------------------------------------------------------------------------
@@ -54,6 +60,10 @@ class PurchOrderRecentListView(ListView):
         queryset = super(PurchOrderRecentListView, self).get_queryset()
         queryset = PurchOrderModel.objects.reverse().order_by('created')[:10]
         return queryset
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
 
 
 # CBV: View to list open PurchOrders ordered by created
@@ -71,6 +81,10 @@ class PurchOrderOpenListView(ListView):
             Q(PurchStatus='PAI')).order_by('created')
         return queryset
 
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+
 
 # CBV: View to list received PurchOrders ordered by created
 # ----------------------------------------------------------------------------
@@ -85,6 +99,10 @@ class PurchOrderReceivedListView(ListView):
             Q(PurchStatus='REC') |
             Q(PurchStatus='RPA')).order_by('created')
         return queryset
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
 
 
 # CBV: View to list paid PurchOrders ordered by created
@@ -101,8 +119,13 @@ class PurchOrderPaidListView(ListView):
             Q(PurchStatus='RPA')).order_by('created')
         return queryset
 
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+
 
 # FBV: View for create new Purchase Orders
+@login_required
 def createPurchOrderView(request):
     PurchLineFormset = inlineformset_factory(
         PurchOrderModel,
@@ -162,6 +185,7 @@ def createPurchOrderView(request):
 
 
 # FBV: View for update new Purchase Orders
+@login_required
 def updatePurchOrderView(request, PurchId):
     PurchOrder = get_object_or_404(PurchOrderModel, PurchId=PurchId)
     PL_list = []
@@ -438,9 +462,13 @@ class DeletePurchOrderView(DeleteView):
                          extra_tags='msg')
         return HttpResponseRedirect(success_url)
 
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+
 
 # FBV: Export to csv
-# ----------------------------------------------------------------------------
+@login_required
 def export_csv(request):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
@@ -470,7 +498,7 @@ def export_csv(request):
 
 
 # FBV: Export to pdf
-# ----------------------------------------------------------------------------
+@login_required
 def export_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     # pdf_name = "proveedores.pdf"  # llamado proveedores

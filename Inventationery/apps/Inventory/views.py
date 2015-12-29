@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:10:36
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-12-28 17:21:14
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-12-28 23:57:50
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
@@ -39,8 +41,13 @@ class InventListView(ListView):
         queryset = ItemModel.objects.all().order_by('ItemId')
         return queryset
 
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+
 
 # FBV: View to create a new Item on inventory
+@login_required
 def createInventView(request):
     InventoryFormset = inlineformset_factory(
         ItemModel,
@@ -134,6 +141,7 @@ def createInventView(request):
 
 
 # FBV: View to update a new Item on inventory
+@login_required
 def updateInventView(request, ItemId):
     Item = get_object_or_404(ItemModel, ItemId=ItemId)
     try:
@@ -281,9 +289,13 @@ class DeleteInventView(DeleteView):
                          extra_tags='msg')
         return HttpResponseRedirect(success_url)
 
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+
 
 # FBV: Export to csv
-# ----------------------------------------------------------------------------
+@login_required
 def export_csv(request):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
@@ -317,7 +329,7 @@ def export_csv(request):
 
 
 # FBV: Export to pdf
-# ----------------------------------------------------------------------------
+@login_required
 def export_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     # pdf_name = "proveedores.pdf"  # llamado proveedores
@@ -378,7 +390,6 @@ def SetMovementHistory(_Item,
                        _qty_p,
                        _qty_a,
                        _user):
-
     MovementHistoryModel.objects.create(Item=_Item,
                                         TransactionType=_TransactionType,
                                         Date=_Date,

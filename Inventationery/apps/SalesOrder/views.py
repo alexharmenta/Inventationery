@@ -3,8 +3,10 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-28 22:31:22
+# @Last Modified time: 2015-12-28 23:59:55
 # from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.db.models import Q
 from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
@@ -42,6 +44,10 @@ class SalesOrderListView(ListView):
         queryset = SalesOrderModel.objects.all().order_by('created')
         return queryset
 
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+
 
 # CBV: View to list recent 10 SalesOrders ordered by created
 # ----------------------------------------------------------------------------
@@ -54,6 +60,10 @@ class SalesOrderRecentListView(ListView):
         queryset = super(SalesOrderRecentListView, self).get_queryset()
         queryset = SalesOrderModel.objects.reverse().order_by('created')[:10]
         return queryset
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
 
 
 # CBV: View to list open SalesOrders ordered by created
@@ -71,6 +81,10 @@ class SalesOrderOpenListView(ListView):
             Q(SalesStatus='CAS')).order_by('created')
         return queryset
 
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+
 
 # CBV: View to list reduced SalesOrders ordered by created
 # ----------------------------------------------------------------------------
@@ -85,6 +99,10 @@ class SalesOrderSentListView(ListView):
             Q(SalesStatus='RED') |
             Q(SalesStatus='RCA')).order_by('created')
         return queryset
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
 
 
 # CBV: View to list paid SalesOrders ordered by created
@@ -101,8 +119,13 @@ class SalesOrderChargedListView(ListView):
             Q(SalesStatus='RCA')).order_by('created')
         return queryset
 
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+
 
 # FBV: View for create new Sales Orders
+@login_required
 def createSalesOrderView(request):
     SalesLineFormset = inlineformset_factory(
         SalesOrderModel,
@@ -162,6 +185,7 @@ def createSalesOrderView(request):
 
 
 # FBV: View for update new Sales Orders
+@login_required
 def updateSalesOrderView(request, SalesId):
     SalesOrder = get_object_or_404(SalesOrderModel, SalesId=SalesId)
     SL_list = []
@@ -442,9 +466,13 @@ class DeleteSalesOrderView(DeleteView):
                          extra_tags='msg')
         return HttpResponseRedirect(success_url)
 
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+
 
 # FBV: Export to csv
-# ----------------------------------------------------------------------------
+@login_required
 def export_csv(request):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
@@ -474,7 +502,7 @@ def export_csv(request):
 
 
 # FBV: Export to pdf
-# ----------------------------------------------------------------------------
+@login_required
 def export_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     # pdf_name = "proveedores.pdf"  # llamado proveedores
