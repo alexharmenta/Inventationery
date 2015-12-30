@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-28 23:59:04
+# @Last Modified time: 2015-12-29 20:58:18
 # from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -28,7 +28,10 @@ from .models import PurchOrderModel, PurchLineModel
 from .forms import PurchOrderForm, PurchOrderLinesForm
 from Inventationery.apps.Vendor.models import VendorModel
 from Inventationery.apps.Inventory.models import (
-    ItemModel, InventoryModel, ItemVendorModel, EcoResProductModel)
+    ItemModel, InventoryModel, ItemVendorModel,
+    EcoResProductModel, LocationModel)
+from Inventationery.apps.SalesOrder.models import (
+    SalesOrderModel, SalesLineModel)
 # Create your views here.
 
 
@@ -148,6 +151,10 @@ def createPurchOrderView(request):
             elif action == 'get_purchline_data':
                 Item_pk = request.POST.get('Item_pk', '')
                 response_dict = GetLineInfo(Item_pk)
+            elif action == 'get_invent':
+                item_pk = request.POST.get('item_pk', '')
+                location = request.POST.get('location', '')
+                response_dict = GetInventory(item_pk, location)
             return JsonResponse(response_dict)
 
         if purch_form.is_valid():
@@ -209,6 +216,10 @@ def updatePurchOrderView(request, PurchId):
             elif action == 'get_purchline_data':
                 Item_pk = request.POST.get('Item_pk', '')
                 response_dict = GetLineInfo(Item_pk)
+            elif action == 'get_invent':
+                item_pk = request.POST.get('item_pk', '')
+                location = request.POST.get('location', '')
+                response_dict = GetInventory(item_pk, location)
             elif action == 'update_enabled':
                 PurchOrder = purch_form.save(commit=False)
                 enabled = request.POST.get('purch_enabled', '')
@@ -618,3 +629,50 @@ def DelInventMovements(PurchOrder):
             InventoryItem.save()
         except:
             InventoryItem = None
+
+
+# Function: Get Purchase Order header data
+def GetInventory(Item_pk, Location):
+    # Get item object
+    try:
+        Item = ItemModel.objects.get(pk=Item_pk)
+        Location = LocationModel.objects.get(pk=Location)
+        reserved = GetReservedInvent(Item, Location)
+    except:
+        Item = None
+        Location = None
+        reserved = 0
+    # Get Inventory info
+    try:
+        InventoryItem = InventoryModel.objects.get(
+            Q(Item=Item) & Q(Location=Location))
+        on_stock = InventoryItem.Qty
+    except:
+        on_stock = 0
+
+    available = on_stock - reserved
+    response_dict = {
+        'on_stock': on_stock,
+        'available': available,
+        'reserved': reserved,
+        'item': Item.ItemId,
+        'location': Location.LocationName,
+    }
+    return response_dict
+
+
+# Function: Get Total items in SOs
+def GetReservedInvent(Item, Location):
+    qty = 0
+    try:
+        orders = SalesOrderModel.objects.filter(Location=Location)
+        for order in orders:
+            order = SalesOrderModel.objects.get(pk=order.pk)
+            lines = SalesLineModel.objects.filter(
+                SalesOrder=order, ItemId=Item)
+            for line in lines:
+                qty += line.SalesQty
+    except:
+        qty = 0
+
+    return qty

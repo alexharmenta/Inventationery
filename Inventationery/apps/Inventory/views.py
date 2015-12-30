@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:10:36
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-28 23:57:50
+# @Last Modified time: 2015-12-29 19:52:29
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.db.models import Q
@@ -207,7 +207,7 @@ def updateInventView(request, ItemId):
                             SetMovementHistory(
                                 item, 'ADJUSTMENT', invent.created,
                                 invent.Location, '',
-                                invent.Qty, inventPrev.Qty,
+                                invent.Qty, prev_qty,
                                 invent.Qty, request.user)
             inl = InventoryModel.objects.filter(Item=item)
             inl.exclude(pk__in=list(IN_list)).delete()

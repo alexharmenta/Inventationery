@@ -4,8 +4,8 @@
 {% block page_title %}
 <div class="row">
 	<div class="col-md-6 page_title">
-		<strong><h4>{{ Customer.AccountNum }} | &nbsp; </h4></strong>
-		<span> <h5> Última vez modificado: {{ Customer.modified|date:"D d M Y" }} {{ Customer.modified|time:"H:i" }}</h5> </span>
+		<strong class="btn-blue"><h4>{{ Customer.AccountNum }} | &nbsp; </h4></strong>
+		<span class="btn-info"> <h5> Última vez modificado: {{ Customer.modified|date:"D d M Y" }} {{ Customer.modified|time:"H:i" }}</h5> </span>
 	</div>
 	<div class="col-md-2">
 		<a href="{% url "vendor:delete" pk=Customer.Party.pk %}" class="btn btn-danger btn-block pull-right" id="DelCustomerBtn">

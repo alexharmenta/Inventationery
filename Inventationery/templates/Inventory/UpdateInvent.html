@@ -4,8 +4,8 @@
 {% block page_title%}
 	<div class="row">
 		<div class="col-md-6 page_title">
-			<strong><h4>{{ Item.ItemId }} | &nbsp; </h4></strong>
-			<span> <h5> Última vez modificado: {{ Item.modified|date:"D d M Y" }} {{ Item.modified|time:"H:i" }}</h5> </span>
+			<strong class="btn-primary"><h4>{{ Item.ItemId }} | &nbsp; </h4></strong>
+			<span class="btn-beige"> <h5> &nbsp;Última vez modificado: {{ Item.modified|date:"D d M Y" }} {{ Item.modified|time:"H:i" }} &nbsp;</h5> </span>
 		</div>
 		<div class="col-md-2">
 			<a href="{% url "inventory:delete" ItemId=Item.ItemId %}" class="btn btn-danger btn-block" id="DelInventBtn">

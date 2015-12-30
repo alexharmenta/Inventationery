@@ -1,8 +1,8 @@
 /* 
  * @Author: Alex
  * @Date:   2015-12-22 19:23:28
- * @Last Modified by:   harmenta
- * @Last Modified time: 2015-12-29 17:51:24
+ * @Last Modified by:   Alex
+ * @Last Modified time: 2015-12-29 20:53:59
  */
 
 'use strict';
@@ -154,35 +154,39 @@ $(document).ready(function() {
     // Set tooltip info
     $('.purchline_formset').on('focus', 'tr td select,input', function() {
         var id = $(this).attr('id');
+        var element = $(this);
         if (id.indexOf('PurchQty') != -1) {
-            /*$.ajax({
+            csrftoken = getCookie('csrftoken');
+            var item_id = $(this).parent().parent().find("td:first").children('select').attr('id');
+            var item_pk = $('#'+item_id+' option:selected').val();
+            var location = $('#id_Location').val();
+            $.ajax({
                 url: window.location.href, // the endpoint,commonly same url
                 type: "POST",
-                data: formData + action + purch_enabled, // data sent with the post request
+                data: {
+                    item_pk: item_pk,
+                    location: location,
+                    csrfmiddlewaretoken: csrftoken,
+                    action: 'get_invent',
+                }, // data sent with the post request
                 // handle a successful response
-                success: function(json) {
-                    //console.log(json); // another sanity check
+                success: function(data) {
+                    //console.log(data); // another sanity check
                     //On success show the data posted to server as a message
-                    $('#id_Enabled').prop('checked', json.Enabled);
-                    if (!json.Enabled) {
-                        notie.alert(2, 'Pedido cancelado.', 1.5);
-                    } else {
-                        notie.alert(4, 'Pedido abierto.', 1.5);
-                    }
-                    $('#id_Paid').val(0);
-                    SetBalance();
-                    ChangePurchaseStatus(json.PurchStatus);
+                    $('#item_info').text(data.item);
+                    $('#location_info').text(data.location);
+                    $('#stock_info').text(data.on_stock);
+                    $('#available_info').text(data.available);
+                    $('#reserved_info').text(data.reserved);
                 },
 
                 // handle a non-successful response
                 error: function(xhr, errmsg, err) {
                     console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                    swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
+                    //swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
                 }
-            });*/
-            $(this).attr('data-toggle', 'tooltip');
-            $(this).attr('data-placement', 'bottom');
-            $(this).attr('title', 'Tooltip');
+            });
+            
         }
     });
 

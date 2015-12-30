@@ -2,7 +2,7 @@
  * @Author: Alex
  * @Date:   2015-12-22 19:23:28
  * @Last Modified by:   Alex
- * @Last Modified time: 2015-12-28 22:23:11
+ * @Last Modified time: 2015-12-29 22:48:26
  */
 
 'use strict';
@@ -149,7 +149,44 @@ $(document).ready(function() {
         $(Total_id).val(total);
         SetAmounts(true);
     });
+    // Set tooltip info
+    $('.salesline_formset').on('focus', 'tr td select,input', function() {
+        var id = $(this).attr('id');
+        var element = $(this);
+        if (id.indexOf('SalesQty') != -1) {
+            csrftoken = getCookie('csrftoken');
+            var item_id = $(this).parent().parent().find("td:first").children('select').attr('id');
+            var item_pk = $('#'+item_id+' option:selected').val();
+            var location = $('#id_Location').val();
+            $.ajax({
+                url: window.location.href, // the endpoint,commonly same url
+                type: "POST",
+                data: {
+                    item_pk: item_pk,
+                    location: location,
+                    csrfmiddlewaretoken: csrftoken,
+                    action: 'get_invent',
+                }, // data sent with the post request
+                // handle a successful response
+                success: function(data) {
+                    //console.log(data); // another sanity check
+                    //On success show the data posted to server as a message
+                    $('#item_info').text(data.item);
+                    $('#location_info').text(data.location);
+                    $('#stock_info').text(data.on_stock);
+                    $('#available_info').text(data.available);
+                    $('#reserved_info').text(data.reserved);
+                },
 
+                // handle a non-successful response
+                error: function(xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                    //swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
+                }
+            });
+            
+        }
+    });
     // Set balance on Cashed change
     $('#id_Paid').on('change', function() {
         SetBalance();
@@ -158,7 +195,36 @@ $(document).ready(function() {
         }
         ChangeSalesStatus('OPE');
     });
+    // Apply discount to saleslines
+    $('#apply_discount').on('click', function() {
+        var customer_pk = $('#id_Customer option:selected').val();
+        csrftoken = getCookie('csrftoken');
+        $.ajax({
+            url: window.location.href, // the endpoint,commonly same url
+            type: "POST",
+            data: {
+                customer_pk: customer_pk,
+                csrfmiddlewaretoken: csrftoken,
+                action: 'get_customer_discount',
+            },
+            // handle a successful response
+            success: function(data) {
+                $('.sl_percent').each(function() {
+                    if($(this).val()){
+                        $(this).val(data.discount).change();
+                    }
+                });
+                $('#id_Paid').val(0);
+                SetBalance();
+            },
+            // handle a non-successful response
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                swal('Error','El servidor no responde','error');
+            }
 
+        });
+    });
     // Enable/Disable sales order on click
     $('#cancel_order_btn').on('click', function(event) {
         event.preventDefault();
@@ -283,7 +349,6 @@ $(document).ready(function() {
                     });
                 break;
         }
-
     });
     //Charge
     $('#charge_order').on('click', function(event) {
@@ -346,6 +411,7 @@ $(document).ready(function() {
     $('#reduce_charge').on('click', function(event) {
         event.preventDefault();
         if ($('#id_SalesStatus').val() != 'RED' && $('#id_SalesStatus').val() != 'RCA' && $('#id_SalesStatus').val() != 'CAN') {
+            //GetItemsAvailable();
             swal({
                     title: 'Se cobrará un total de: ' + getSalesTotal(),
                     text: 'Reducirá ' + getTotalItems().toString() + ' artículos',
@@ -385,7 +451,7 @@ $(document).ready(function() {
                         // handle a non-successful response
                         error: function(xhr, errmsg, err) {
                             console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                            swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
+                            swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error");
                             $('#id_Paid').val(CashedAmount); // Restore Cashed    
                             $('#id_Balance').val(BalanceAmount); // Restore Balance
                             $('#id_Total').val(TotalAmount); // Restore Total
@@ -619,4 +685,46 @@ function EnableDiscounts() {
     });
 }
 /* .---- Status control section ----- */
+// Check if there's available items to sell
+function GetItemsAvailable() {
+    var csrftoken = getCookie('csrftoken');
+    var element;
+    var qty_element;
+    var id;
+    var item_pk;
+    var location = $('#id_Location').val();
+    var CanReduce = true;
+    $('.item-id').each( function(index) {
+        element = $(this);
+        id = element.attr('id');
+        item_pk = $('#'+id+' option:selected').val();
+        if (item_pk) {
+            qty_element = element.parent('td').parent('tr').find('input').eq(1);
+            $.ajax({
+                url: window.location.href, // the endpoint,commonly same url
+                type: "POST",
+                data: {
+                    item_pk: item_pk,
+                    location: location,
+                    csrfmiddlewaretoken: csrftoken,
+                    action: 'get_invent',
+                },
+                // handle a successful response
+                success: function(data) {
+                    console.log(qty_element.val());
+                    if(data.available < qty_element.val()) {
+                        
+                    }
+                },
+                // handle a non-successful response
+                error: function(xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+
+            });
+        }
+    });
+}
+
+
 /* ----- LOCAL FUNCTIONS ----- */

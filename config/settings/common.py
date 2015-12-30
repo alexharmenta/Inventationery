@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-28 20:50:48
+# @Last Modified time: 2015-12-29 23:09:22
 """
 Django settings for Inventationery project.
 
@@ -231,3 +231,5 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Location of root django.contrib.admin URL, use {% url 'admin:index' %}
 ADMIN_URL = r'^admin/'
+
+LOGIN_URL = 'login'

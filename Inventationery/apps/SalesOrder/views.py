@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-28 23:59:55
+# @Last Modified time: 2015-12-29 22:44:45
 # from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -28,7 +28,7 @@ from .models import SalesOrderModel, SalesLineModel
 from .forms import SalesOrderForm, SalesOrderLinesForm
 from Inventationery.apps.Customer.models import CustomerModel
 from Inventationery.apps.Inventory.models import (
-    ItemModel, InventoryModel, EcoResProductModel)
+    ItemModel, InventoryModel, EcoResProductModel, LocationModel)
 # Create your views here.
 
 
@@ -148,6 +148,10 @@ def createSalesOrderView(request):
             elif action == 'get_salesline_data':
                 Item_pk = request.POST.get('Item_pk', '')
                 response_dict = GetLineInfo(Item_pk)
+            elif action == 'get_invent':
+                item_pk = request.POST.get('item_pk', '')
+                location = request.POST.get('location', '')
+                response_dict = GetInventory(item_pk, location)
             return JsonResponse(response_dict)
 
         if sales_form.is_valid():
@@ -209,6 +213,13 @@ def updateSalesOrderView(request, SalesId):
             elif action == 'get_salesline_data':
                 Item_pk = request.POST.get('Item_pk', '')
                 response_dict = GetLineInfo(Item_pk)
+            elif action == 'get_invent':
+                item_pk = request.POST.get('item_pk', '')
+                location = request.POST.get('location', '')
+                response_dict = GetInventory(item_pk, location)
+            elif action == 'get_customer_discount':
+                customer_pk = request.POST.get('customer_pk', '')
+                response_dict = GetCustomerDiscount(customer_pk)
             elif action == 'update_enabled':
                 if sales_form.is_valid():
                     SalesOrder = sales_form.save(commit=False)
@@ -618,3 +629,64 @@ def DelInventMovements(SalesOrder):
             InventoryItem.save()
         except:
             InventoryItem = None
+
+
+# Function: Get Purchase Order header data
+def GetInventory(Item_pk, Location):
+    # Get item object
+    try:
+        Item = ItemModel.objects.get(pk=Item_pk)
+        Location = LocationModel.objects.get(pk=Location)
+        reserved = GetReservedInvent(Item, Location)
+    except:
+        Item = None
+        Location = None
+        reserved = 0
+    # Get Inventory info
+    try:
+        InventoryItem = InventoryModel.objects.get(
+            Q(Item=Item) & Q(Location=Location))
+        on_stock = InventoryItem.Qty
+    except:
+        on_stock = 0
+
+    available = on_stock - reserved
+    response_dict = {
+        'on_stock': on_stock,
+        'available': available,
+        'reserved': reserved,
+        'item': Item.ItemId,
+        'location': Location.LocationName,
+    }
+    return response_dict
+
+
+# Function: Get Total items in SOs
+def GetReservedInvent(Item, Location):
+    qty = 0
+    try:
+        orders = SalesOrderModel.objects.filter(Location=Location)
+        for order in orders:
+            order = SalesOrderModel.objects.get(pk=order.pk)
+            lines = SalesLineModel.objects.filter(
+                SalesOrder=order, ItemId=Item)
+            for line in lines:
+                qty += line.SalesQty
+    except:
+        qty = 0
+
+    return qty
+
+
+# Function: Get Customer discount
+def GetCustomerDiscount(customer_pk):
+    try:
+        Customer = CustomerModel.objects.get(pk=customer_pk)
+        discount = Customer.Discount
+    except:
+        discount = 0
+
+    response_dict = {
+        'discount': discount,
+    }
+    return response_dict

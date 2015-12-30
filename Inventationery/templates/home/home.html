@@ -10,7 +10,7 @@
 	            <div class="x_content">
 					<div class="row panel_no_space">
 					  <div class="col-sm-6 col-md-4">
-					      <img class="img-responsive" src="{% static "img/LogoPapeleria.png" %}" alt="Papelería Janette">
+					      <img {% if Company.CompanyImage %}src="{{ Company.CompanyImage.url }}"{% endif %} class="img-responsive img-thumbnail" id="company_image"/>
 					  </div>
 					</div>
 	            </div>

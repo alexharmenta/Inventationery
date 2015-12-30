@@ -233,6 +233,18 @@
 	                </ul>
 	                <div class="clearfix"></div>
             	</div>
+            	<div class="row">
+            		<div class="col-md-1 col-sm-1 col-xs-1">Artículo:</div>
+            		<div class="col-md-1 col-sm-1 col-xs-1 btn-xs btn-dark" id="item_info"></div>
+            		<div class="col-md-1 col-sm-1 col-xs-1">Ubicacion:</div>
+            		<div class="col-md-1 col-sm-1 col-xs-1 btn-xs btn-beige" id="location_info"></div>
+            		<div class="col-md-1 col-sm-1 col-xs-1">Stock</div>
+            		<div class="col-md-1 col-sm-1 col-xs-1 btn-xs btn-info" id="stock_info"></div>
+            		<div class="col-md-1 col-sm-1 col-xs-1">Disponible:</div>
+            		<div class="col-md-1 col-sm-1 col-xs-1 btn-xs btn-success" id="available_info"></div>
+            		<div class="col-md-1 col-sm-1 col-xs-1">Reservado:</div>
+            		<div class="col-md-1 col-sm-1 col-xs-1 btn-xs btn-danger" id="reserved_info"></div>
+            	</div>
 	            <div class="x_content table-responsive">
 				    <table border="0" cellpadding="0" cellspacing="0" class="table table-condensed table-hover table-striped" id="salesline_table">
 					    <thead>
@@ -310,6 +322,7 @@
 										  </ul>
 										</div>
 						    		</li>
+						    		<li><a id="apply_discount" class="btn btn-block btn-primary" href="javascript:void(0)">Aplicar descuento</a></li>
 						    	</ul>				    			
 				    		</div>
 					    {% endif %}

@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-28 20:50:30
+# @Last Modified time: 2015-12-29 23:05:47
 """Inventationery URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -29,6 +29,7 @@ urlpatterns = [
     # url(r'^admin/', include(admin.site.urls)),
     # Django Admin, use {% url 'admin:index' %}
     url(settings.ADMIN_URL, include(admin.site.urls)),
+    url(r'^', include('Inventationery.apps.login.urls')),
     url(r'^', include('Inventationery.apps.home.urls', namespace='home')),
     url(r'^', include('Inventationery.apps.Vendor.urls', namespace='vendor')),
     url(r'^', include('Inventationery.apps.PurchOrder.urls', namespace='purch')),
