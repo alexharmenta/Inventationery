@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:10:36
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-12-29 19:52:29
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-12-30 17:54:39
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.db.models import Q
@@ -12,7 +12,7 @@ from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.forms import inlineformset_factory
-from django.views.generic import (ListView, DeleteView)
+from django.views.generic import (ListView, DeleteView, CreateView, UpdateView)
 import csv
 import time
 from io import BytesIO
@@ -23,9 +23,9 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import Table
 from .models import (ItemModel, InventoryModel,
                      ItemVendorModel, EcoResProductModel,
-                     MovementHistoryModel, OrderHistoryModel)
+                     MovementHistoryModel, OrderHistoryModel, LocationModel)
 from .forms import (InventoryForm, ItemForm, ItemVendorForm,
-                    EcoResProductForm)
+                    EcoResProductForm, LocationForm)
 
 
 # CBV: View to list all inventory items
@@ -39,6 +39,26 @@ class InventListView(ListView):
     def get_queryset(self):
         queryset = super(InventListView, self).get_queryset()
         queryset = ItemModel.objects.all().order_by('ItemId')
+        return queryset
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+
+
+# CBV: View to list all items in existance
+# ----------------------------------------------------------------------------
+class InventExistingListView(ListView):
+    model = ItemModel
+    form_class = ItemForm
+    template_name = 'Inventory/InventoryList.html'
+    context_object_name = 'items'
+
+    def get_queryset(self):
+        queryset = super(InventListView, self).get_queryset()
+        queryset = ItemModel.objects.filter(
+            InventoryModel__Item=self.request.Item)
+        # queryset = ItemModel.objects.all().order_by('ItemId')
         return queryset
 
     @method_decorator(login_required)
@@ -399,3 +419,59 @@ def SetMovementHistory(_Item,
                                         Qty_prev=_qty_p,
                                         Qty_after=_qty_a,
                                         user=_user)
+
+
+# CBV: View to list locations for inventory
+# ----------------------------------------------------------------------------
+class ListLocationView(ListView):
+    model = LocationModel
+    form_class = LocationForm
+    template_name = 'Inventory/LocationList.html'
+    context_object_name = 'locations'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+
+
+# CBV: View to create a location for inventory
+# ----------------------------------------------------------------------------
+class CreateLocationView(CreateView):
+    model = LocationModel
+    form_class = LocationForm
+    template_name = 'Inventory/CreateLocation.html'
+    success_url = '/Location'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+
+
+# CBV: View to update a location for inventory
+# ----------------------------------------------------------------------------
+class UpdateLocationView(UpdateView):
+    model = LocationModel
+    form_class = LocationForm
+    template_name = 'Inventory/UpdateLocation.html'
+    slug_url_kwarg = 'LocationName'
+    slug_field = 'LocationName'
+    context_object_name = 'Location'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+
+
+# CBV: View to delete a location for inventory
+# ----------------------------------------------------------------------------
+class DeleteLocationView(DeleteView):
+    model = LocationModel
+    form_class = LocationForm
+    template_name = 'Inventory/DeleteLocation.html'
+    slug_url_kwarg = 'LocationName'
+    slug_field = 'LocationName'
+    context_object_name = 'Location'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(self.__class__, self).dispatch(request, *args, **kwargs)

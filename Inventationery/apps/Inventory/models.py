@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:10:36
 # @Last Modified by:   harmenta
-# @Last Modified time: 2015-12-28 12:21:51
+# @Last Modified time: 2015-12-30 17:25:51
 from django.db.models import Q
 from django.db import models
 from django.contrib.auth.models import User
@@ -93,10 +93,22 @@ class ItemVendorModel(TimeStampedModel):
 # Class: Model for pruduct locations
 # ----------------------------------------------------------------------------
 class LocationModel(TimeStampedModel):
-    LocationName = models.CharField(max_length=50, default='Default')
+    LocationName = models.CharField(
+        max_length=50, default='Default', unique=True)
 
     def __unicode__(self):
         return "{0}".format(self.LocationName)
+
+    def GetTotalItems(self):
+        qty = 0
+        try:
+            Inventory = InventoryModel.objects.filter(Location=self).get()
+            for inventory in Inventory:
+                qty += inventory.Qty
+        except:
+            qty = 0
+
+        return qty
 
 
 # Class: Model for product vendors

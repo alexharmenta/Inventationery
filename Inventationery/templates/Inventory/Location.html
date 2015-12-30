@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load staticfiles i18n %}
+{% load widget_tweaks %}
+
+{% block content %}
+	<form action="" method="POST" id="LocationForm" enctype="multipart/form-data"> {% csrf_token %}
+		{% if form.errors %}
+		    {% for field in form %}
+		        {% for error in field.errors %}
+		        	<style>
+						#{{ field.id_for_label }} {
+							border: 1px solid #f64747;
+							border-radius: 2px;
+						}
+		        	</style>		            
+		        {% endfor %}
+		    {% endfor %}
+		    {% for error in form.non_field_errors %}
+		        <div class="alert alert-error">
+		            <strong> {{ error|escape }}</strong>
+		        </div>
+		    {% endfor %}
+		{% endif %}
+
+		{% block page_title %}
+		{% endblock %}
+
+		<div class="col-md-12 col-sm-12 col-xs-12">
+	        <div class="x_panel tile">
+	            <div class="x_title">
+	                <h2>Información de ubicación</h2>
+	                <ul class="nav navbar-right panel_toolbox">
+	                    <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
+	                    </li>
+	                </ul>
+	                <div class="clearfix"></div>
+            	</div>
+	            <div class="x_content">
+			    	<div class="col-md-6 col-sm-6 col-xs-12">
+	                	<div class="col-md-6 col-sm-6 col-xs-12">
+	                		<h2>Ubicación</h2>
+	                		<div class="form-group">
+								{{ form.LocationName.errors }}
+								<label for="{{ form.LocationName.id_for_label }}">Nombre de la ubicación</label>
+								{% render_field form.LocationName|append_attr:'required' class+="form-control" %}
+							</div>
+	                	</div>
+	                </div>    
+	            </div>
+	        </div>
+	    </div>
+
+	</form>
+
+{% endblock %}
+
+{% block ExtraJS %}
+<!-- <script type="text/javascript" charset="utf8" src="{% static "js/Location/Location.js" %}"></script> -->
+{% endblock ExtraJS %}

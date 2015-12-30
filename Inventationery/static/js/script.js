@@ -1,8 +1,8 @@
 /* 
  * @Author: Alex
  * @Date:   2015-11-16 18:59:28
- * @Last Modified by:   Alex
- * @Last Modified time: 2015-12-28 19:50:08
+ * @Last Modified by:   harmenta
+ * @Last Modified time: 2015-12-30 17:32:46
  */
 
 'use strict';
@@ -10,6 +10,13 @@
 $(document).ready(function() {
 
     /* ----- INITIALIZE DATATABLES ----- */
+    
+    // Location table list initialize plugin
+    $('#LocationListTableId').DataTable({
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+        }
+    });
     // Vendor table list initialize plugin
     $('#VendorsListTableId').DataTable({
         "language": {

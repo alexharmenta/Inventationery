@@ -1,0 +1,27 @@
+{% extends 'Inventory/Location.html' %}
+{% load widget_tweaks %}
+
+{% block page_title%}
+	<div class="row">
+		<div class="col-md-6 page_title">
+			<strong class="btn-primary"><h4>{{ Location.LocationName }} | &nbsp; </h4></strong>
+			<span class="btn-beige"> <h5> &nbsp;Última vez modificado: {{ Location.modified|date:"D d M Y" }} {{ Location.modified|time:"H:i" }} &nbsp;</h5> </span>
+		</div>
+		{% if Location.GetTotalItems <= 0 %}
+			<div class="col-md-2">
+				<a href="{% url "inventory:delete-location" LocationName=Location.LocationName %}" class="btn btn-danger btn-block" id="DelLocationBtn">
+					<i class="fa fa-times"></i> Eliminar
+				</a>
+			</div>
+		{% endif %}
+		
+		<div class="col-md-2">
+			<a class='btn btn-purple pull-right btn-block' href="{% url "inventory:new" %}" title="Crear nuevo artículo" id="NewLocationBtn">
+				<i class="fa fa-plus"></i> Nueva ubicación
+			</a>
+		</div>
+		<div class="col-md-2">
+			<button type="submit" class="btn btn-success btn-block pull-right" id="SaveLocationBtn"><i class="fa fa-check"></i> Guardar</button>
+		</div>
+	</div>
+{% endblock %}

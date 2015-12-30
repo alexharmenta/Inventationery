@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+	
+	<div class="col-md-12 col-sm-12 col-xs-12"> <!-- Vendors list -->
+        <div class="x_panel tile">
+            <div class="x_title">
+                <h2>Ubicaciones</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+        	</div>
+            <div class="x_content">
+                <form action="" method="POST">{% csrf_token %}
+				    <h3 class="page_title">Seguro que desea eliminar la ubicación: <strong>{{ object }}"?</strong></h3>
+				    <a href="/Location" class="btn btn-default">Cancelar</a>
+				    <input class="btn btn-danger" type="submit" value="Eliminar" />
+				</form>
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}

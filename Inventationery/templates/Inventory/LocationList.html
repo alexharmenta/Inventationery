@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+	
+	<div class="col-md-12 col-sm-12 col-xs-12"> <!-- Purch order list -->
+        <div class="x_panel tile">
+            <div class="x_title">
+                <h2>Ubicaciones de inventario</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+        	</div>
+            <div class="x_content table-responsive">
+            	<a class='btn btn-purple pull-right' href="{% url "inventory:new-location" %}" title="Agregar nueva ubicación" id="NewVendorBtn">
+					<i class="fa fa-plus"></i> Nueva ubicación
+				</a>
+				<div><a href="{% url "inventory:csv" %}" class="btn btn-warning" title="Exportar a CSV (Archivo separado por comas)">CSV <i class="fa fa-file-text-o"></i></a>
+				<a href="{% url "inventory:pdf" %}" target="_blank" class="btn btn-danger" title="Exportar a PDF">PDF <i class="fa fa-file-pdf-o"></i></a></div>
+				<table id="LocationListTableId" class="display table table-hover">
+				    <thead>
+				        <tr>
+				            <th>Ubicación</th>
+				            <th>Activa desde</th>
+				            <th>Artículos</th>
+				            <th>Acciones</th>
+				        </tr>
+				    </thead>
+				    <tbody>
+				    	{% for location in locations %}
+				    		<tr>
+					            <td>
+					            	<a class='btn btn-link btn-xs' href="{% url "inventory:update-location" LocationName=location.LocationName %}">
+										{{ location.LocationName }}
+									</a>
+								</td>
+					            <td>{{ location.created|date:"D d M Y" }}</td>
+					            <td {% if location.GetTotalItems <= 0 %}class="qty btn-danger" {% else %} class="qty btn-success"{% endif %}>
+									{{ location.GetTotalItems }}
+								</td>
+					            <td class="text-center">
+									<a class='btn btn-info btn-xs' href="{% url "inventory:update-location" LocationName=location.LocationName %}">
+										<span class="lnr lnr-pencil"></span> Editar
+									</a> 
+									{% if location.GetTotalItems <= 0 %}
+										<a href="{% url "inventory:delete-location" LocationName=location.LocationName %}" class="btn btn-danger btn-xs">
+											<span class="lnr lnr-cross"></span> Eliminar
+										</a>
+									{% endif %}
+								</td>
+					        </tr>
+				    	{% endfor %}
+				        
+				    </tbody>
+				</table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

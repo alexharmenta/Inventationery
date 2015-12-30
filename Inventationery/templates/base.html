@@ -72,7 +72,8 @@
                                 <li><a class="collapse-menu"> <i class="fa fa-cubes"></i> Inventario <span class="lnr lnr-chevron-down"></span></a>
                                     <ul class="nav child_menu" style="display: none">
                                         <li><a href="{% url "inventory:list" %}"><i class="fa fa-database"></i>Artículos</a></li>
-                                        <li><a href="#"><i class="fa fa-archive"></i>Artículos en existencia</a></li>
+                                        <li><a href="{% url "inventory:list-existing" %}"><i class="fa fa-archive"></i>Artículos en existencia</a></li>
+                                        <li><a href="{% url "inventory:list-location" %}"><i class="fa fa-location-arrow"></i>Ubicación</a></li>
                                     </ul>
                                 </li>
                             </ul>
