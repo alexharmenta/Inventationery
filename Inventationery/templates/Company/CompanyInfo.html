@@ -109,7 +109,7 @@
 								{% render_field companyInfoForm.AddressDescription class+="form-control" %}
 							</div>
 							<div class="row">
-								<div class="col-md-9 col-sm-9 col-xs-6">
+								<div class="col-md-9 col-sm-9 col-xs-12">
 									<div class="form-group postal-info">
 										<label{{ companyInfoForm.Purpose.id_for_label }} for="">Propósito
 										<span>&nbsp; {{ companyInfoForm.Purpose.errors }}</span></label>
@@ -118,14 +118,14 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="form-group postal-info">
 										<label{{ companyInfoForm.CountryRegionId.id_for_label }} for="">*País
 										<span>&nbsp; {{ companyInfoForm.CountryRegionId.errors }}</span></label>
 										{% render_field companyInfoForm.CountryRegionId class+="form-control" %}
 									</div>
 								</div>
-								<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="form-group postal-info">
 										<label{{ companyInfoForm.ZipCode.id_for_label }} for="">Código postal
 										<span>&nbsp; {{ companyInfoForm.ZipCode.errors }}</span></label>
@@ -134,14 +134,14 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-md-8 col-sm-8 col-xs-6">
+								<div class="col-md-8 col-sm-8 col-xs-12">
 									<div class="form-group postal-info">
 										<label{{ companyInfoForm.Street.id_for_label }} for="">Calle
 										<span>&nbsp; {{ companyInfoForm.Street.errors }}</span></label>
 										{% render_field companyInfoForm.Street class+="form-control" %}
 									</div>
 								</div>
-								<div class="col-md-4 col-sm-4 col-xs-6">
+								<div class="col-md-4 col-sm-4 col-xs-12">
 									<div class="form-group postal-info">
 										<label{{ companyInfoForm.StreetNumber.id_for_label }} for="">Número
 										<span>&nbsp; {{ companyInfoForm.StreetNumber.errors }}</span></label>
@@ -150,14 +150,14 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-md-3 col-sm-3 col-xs-6">
+								<div class="col-md-3 col-sm-3 col-xs-12">
 									<div class="form-group postal-info">
 										<label{{ companyInfoForm.BuildingCompliment.id_for_label }} for="">Interior
 										<span>&nbsp; {{ companyInfoForm.BuildingCompliment.errors }}</span></label>
 										{% render_field companyInfoForm.BuildingCompliment class+="form-control" %}
 									</div>
 								</div>
-								<div class="col-md-9 col-sm-9 col-xs-6">
+								<div class="col-md-9 col-sm-9 col-xs-12">
 									<div class="form-group postal-info">
 										<label{{ companyInfoForm.City.id_for_label }} for="">Ciudad
 										<span>&nbsp; {{ companyInfoForm.City.errors }}</span></label>
@@ -197,7 +197,7 @@
 						</div>
 					</div>
             	</div>
-            	<div class="col-md4 col-sm-4 col-xs-6">
+            	<div class="col-md4 col-sm-4 col-xs-12">
 					<h2>Imagen</h2>
                 	<div class="form-group file_upload">
 						{{ companyInfoForm.CompanyImage.errors }}

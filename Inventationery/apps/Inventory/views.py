@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:10:36
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-12-30 17:54:39
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-12-30 22:51:26
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
@@ -55,9 +56,9 @@ class InventExistingListView(ListView):
     context_object_name = 'items'
 
     def get_queryset(self):
-        queryset = super(InventListView, self).get_queryset()
+        queryset = super(InventExistingListView, self).get_queryset()
         queryset = ItemModel.objects.filter(
-            InventoryModel__Item=self.request.Item)
+            Item__isnull=False).annotate(Count('Item'))
         # queryset = ItemModel.objects.all().order_by('ItemId')
         return queryset
 
@@ -440,7 +441,7 @@ class CreateLocationView(CreateView):
     model = LocationModel
     form_class = LocationForm
     template_name = 'Inventory/CreateLocation.html'
-    success_url = '/Location'
+    success_url = '/Location/'
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -456,6 +457,7 @@ class UpdateLocationView(UpdateView):
     slug_url_kwarg = 'LocationName'
     slug_field = 'LocationName'
     context_object_name = 'Location'
+    success_url = '/Location/'
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):

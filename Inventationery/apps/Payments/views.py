@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-12-20 22:05:42
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-29 00:03:05
+# @Last Modified time: 2015-12-30 23:43:56
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import DeleteView, CreateView, UpdateView

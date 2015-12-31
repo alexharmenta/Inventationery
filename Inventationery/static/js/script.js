@@ -1,8 +1,8 @@
 /* 
  * @Author: Alex
  * @Date:   2015-11-16 18:59:28
- * @Last Modified by:   harmenta
- * @Last Modified time: 2015-12-30 17:32:46
+ * @Last Modified by:   Alex
+ * @Last Modified time: 2015-12-31 00:04:01
  */
 
 'use strict';
@@ -10,34 +10,36 @@
 $(document).ready(function() {
 
     /* ----- INITIALIZE DATATABLES ----- */
-    
     // Location table list initialize plugin
-    $('#LocationListTableId').DataTable({
+    var locationTable = $('#LocationListTableId').DataTable({
         "language": {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
         }
     });
     // Vendor table list initialize plugin
-    $('#VendorsListTableId').DataTable({
+    var vendorTable = $('#VendorsListTableId').DataTable({
         "language": {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
         }
     });
     // Customer table list initialize plugin
-    $('#CustomersListTableId').DataTable({
+    var customerTable = $('#CustomersListTableId').DataTable({
         "language": {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
         }
     });
     // Purch order table list initialize plugin
-    $('#PurchOrderListTableId').DataTable({
+    /* Custom filtering function which will search data in column four between two values */
+    
+    var purchTable = $('#PurchOrderListTableId').DataTable({
         "order": [[ 0, "asc" ]],
         "language": {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
         }
     });
+    
     // Inventory table list initialize plugin
-    $('#InventoryListTableId').DataTable({
+    var inventoryTable = $('#InventoryListTableId').DataTable({
         "language": {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
         }

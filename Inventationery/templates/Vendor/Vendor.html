@@ -8,7 +8,7 @@
 		{% block page_title %}
 		{% endblock %}
 		
-		<div class="col-md-6 col-sm-6 col-xs-6"> <!-- Vendor info -->
+		<div class="col-md-6 col-sm-6 col-xs-12"> <!-- Vendor info -->
 	        <div class="x_panel tile">
 	            <div class="x_title">
 	                <h2>Información de proveedor</h2>
@@ -37,36 +37,36 @@
 					    {% endfor %}
 					{% endif %}
 					<div class="row form-group">
-						<div class="col-md-6 col-sm-6 col-xs-6">
+						<div class="col-md-6 col-sm-6 col-xs-12">
 							<label for="{{ vendor_form.AccountNum.id_for_label }}">Número de cuenta
 							<span>{{ vendor_form.AccountNum.errors }}</span></label>
 							{% render_field vendor_form.AccountNum class+="form-control" %}
 						</div>
-						<div class="col-md-6 col-sm-6 col-xs-6">
+						<div class="col-md-6 col-sm-6 col-xs-12">
 							<label for="{{ vendor_form.AccountType.id_for_label }}">Tipo de registro
 							<span>{{ vendor_form.AccountType.errors }}</span></label>
 								{% render_field vendor_form.AccountType class+="form-control" %}
 						</div>
 					</div>
 					<div class="row form-group">
-						<div class="col-md-6 col-sm-6 col-xs-6">
+						<div class="col-md-6 col-sm-6 col-xs-12">
 							<label for="{{ vendor_form.VendGroup.id_for_label }}">Grupo de proveedor
 							<span>{{ vendor_form.VendGroup.errors }}</span></label>
 							{% render_field vendor_form.VendGroup class+="form-control" %}
 						</div>
-						<div class="col-md-6 col-sm-6 col-xs-6">
+						<div class="col-md-6 col-sm-6 col-xs-12">
 							<label for="{{ vendor_form.OneTimeVendor.id_for_label }}">Proveedor de una sola vez
 							<span>{{ vendor_form.OneTimeVendor.errors }}</span></label>
 							{% render_field vendor_form.OneTimeVendor class+="form-control" %}
 						</div>
 					</div>
 					<div class="row form-group">
-						<div class="col-md-6 col-sm-6 col-xs-6">
+						<div class="col-md-6 col-sm-6 col-xs-12">
 							<label for="{{ vendor_form.CreditLimit.id_for_label }}">Límite de crédito ( $ )
 							<span>{{ vendor_form.CreditLimit.errors }}</span></label>
 							{% render_field vendor_form.CreditLimit class+="form-control" %}
 						</div>
-						<div class="col-md-6 col-sm-6 col-xs-6">
+						<div class="col-md-6 col-sm-6 col-xs-12">
 							<label for="{{ vendor_form.CurrencyCode.id_for_label }}">Moneda
 							<span>{{ vendor_form.CurrencyCode.errors }}</span></label>
 							{% render_field vendor_form.CurrencyCode class+="form-control" %}
@@ -86,7 +86,7 @@
 	        </div>
 	    </div>
 
-	    <div class="col-md-6 col-sm-6 col-xs-6"> <!-- General info -->
+	    <div class="col-md-6 col-sm-6 col-xs-12"> <!-- General info -->
 	        <div class="x_panel tile">
 	            <div class="x_title">
 	                <h2>General</h2>
@@ -157,14 +157,14 @@
 						{% render_field party_form.NameAlias class+="form-control" %}
 					</div>
 					<div class="row">
-						<div class="col-md-6 col-sm-6 col-xs-6">
+						<div class="col-md-6 col-sm-6 col-xs-12">
 							<div class="form-group person-info">
 								<label for="{{ party_form.LanguageCode.id_for_label }}">Lenguaje 
 								<span>&nbsp; {{ party_form.LanguageCode.errors }}</span></label>
 								{% render_field party_form.LanguageCode class+="form-control" %}
 							</div>
 						</div>
-						<div class="col-md-6 col-sm-6 col-xs-6">
+						<div class="col-md-6 col-sm-6 col-xs-12">
 							<div class="form-group person-info">
 								<label{{ party_form.Gender.id_for_label }} for="">Género 
 								<span>&nbsp; {{ party_form.Gender.errors }}</span></label>
@@ -245,7 +245,7 @@
 			{% for hidden in postal_form.hidden_fields %}
 			    {{ hidden }}
 			{% endfor %}
-		    <div class="col-md-4 col-sm-4 col-xs-6 party_formset"> 
+		    <div class="col-md-4 col-sm-4 col-xs-12 party_formset"> 
 		        <div class="x_panel tile">
 		            <div class="x_title">
 		                <h2>Dirección</h2>
@@ -279,14 +279,14 @@
 							{% render_field postal_form.Description class+="form-control" %}
 						</div>
 						<div class="row">
-							<div class="col-md-9 col-sm-9 col-xs-6">
+							<div class="col-md-9 col-sm-9 col-xs-12">
 								<div class="form-group postal-info">
 									<label{{ postal_form.Purpose.id_for_label }} for="">Propósito
 									<span>&nbsp; {{ postal_form.Purpose.errors }}</span></label>
 									{% render_field postal_form.Purpose class+="form-control" %}
 								</div>
 							</div>
-							<div class="col-md-3 col-sm-3 col-xs-6">
+							<div class="col-md-3 col-sm-3 col-xs-12">
 								<div class="form-group postal-info">
 									<label{{ postal_form.IsPrimary.id_for_label }} for="">Principal
 									<span>&nbsp; {{ postal_form.IsPrimary.errors }}</span></label>
@@ -295,14 +295,14 @@
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-md-6 col-sm-6 col-xs-6">
+							<div class="col-md-6 col-sm-6 col-xs-12">
 								<div class="form-group postal-info">
 									<label{{ postal_form.CountryRegionId.id_for_label }} for="">*País
 									<span>&nbsp; {{ postal_form.CountryRegionId.errors }}</span></label>
 									{% render_field postal_form.CountryRegionId class+="form-control" %}
 								</div>
 							</div>
-							<div class="col-md-6 col-sm-6 col-xs-6">
+							<div class="col-md-6 col-sm-6 col-xs-12">
 								<div class="form-group postal-info">
 									<label{{ postal_form.ZipCode.id_for_label }} for="">Código postal
 									<span>&nbsp; {{ postal_form.ZipCode.errors }}</span></label>
@@ -311,14 +311,14 @@
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-md-8 col-sm-8 col-xs-6">
+							<div class="col-md-8 col-sm-8 col-xs-12">
 								<div class="form-group postal-info">
 									<label{{ postal_form.Street.id_for_label }} for="">Calle
 									<span>&nbsp; {{ postal_form.Street.errors }}</span></label>
 									{% render_field postal_form.Street class+="form-control" %}
 								</div>
 							</div>
-							<div class="col-md-4 col-sm-4 col-xs-6">
+							<div class="col-md-4 col-sm-4 col-xs-12">
 								<div class="form-group postal-info">
 									<label{{ postal_form.StreetNumber.id_for_label }} for="">Número
 									<span>&nbsp; {{ postal_form.StreetNumber.errors }}</span></label>
@@ -327,14 +327,14 @@
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-md-3 col-sm-3 col-xs-6">
+							<div class="col-md-3 col-sm-3 col-xs-12">
 								<div class="form-group postal-info">
 									<label{{ postal_form.BuildingCompliment.id_for_label }} for="">Interior
 									<span>&nbsp; {{ postal_form.BuildingCompliment.errors }}</span></label>
 									{% render_field postal_form.BuildingCompliment class+="form-control" %}
 								</div>
 							</div>
-							<div class="col-md-9 col-sm-9 col-xs-6">
+							<div class="col-md-9 col-sm-9 col-xs-12">
 								<div class="form-group postal-info">
 									<label{{ postal_form.City.id_for_label }} for="">Ciudad
 									<span>&nbsp; {{ postal_form.City.errors }}</span></label>

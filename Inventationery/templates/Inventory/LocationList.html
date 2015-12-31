@@ -36,7 +36,7 @@
 										{{ location.LocationName }}
 									</a>
 								</td>
-					            <td>{{ location.created|date:"D d M Y" }}</td>
+					            <td>{{ location.created }}</td>
 					            <td {% if location.GetTotalItems <= 0 %}class="qty btn-danger" {% else %} class="qty btn-success"{% endif %}>
 									{{ location.GetTotalItems }}
 								</td>

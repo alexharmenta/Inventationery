@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:12:26
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-12-30 17:53:47
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-12-30 20:18:13
 from django.conf.urls import url
 from .views import (createInventView, InventListView, InventExistingListView,
                     DeleteInventView, updateInventView,

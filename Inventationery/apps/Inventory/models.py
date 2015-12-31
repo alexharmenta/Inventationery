@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:10:36
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-12-30 17:25:51
+# @Last Modified by:   Alex
+# @Last Modified time: 2015-12-30 22:59:51
 from django.db.models import Q
 from django.db import models
 from django.contrib.auth.models import User
@@ -102,13 +102,21 @@ class LocationModel(TimeStampedModel):
     def GetTotalItems(self):
         qty = 0
         try:
-            Inventory = InventoryModel.objects.filter(Location=self).get()
+            Inventory = InventoryModel.objects.filter(Location=self)
             for inventory in Inventory:
                 qty += inventory.Qty
         except:
             qty = 0
 
         return qty
+
+    def GetLocationItems(self):
+        try:
+            Inventory = InventoryModel.objects.filter(Location=self)
+        except:
+            Inventory = []
+
+        return Inventory
 
 
 # Class: Model for product vendors
