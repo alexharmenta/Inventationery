@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-12-29 23:09:22
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-12-31 13:11:39
 """
 Django settings for Inventationery project.
 
@@ -42,6 +42,7 @@ DJANGO_APPS = (
 THIRD_PARTY_APPS = (
     'widget_tweaks',
     'django_extensions',
+    # 'haystack',
 )
 
 # Apps specific for this project go here.
@@ -233,3 +234,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 ADMIN_URL = r'^admin/'
 
 LOGIN_URL = 'login'
+
+"""HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'haystack',
+    },
+}"""

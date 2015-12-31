@@ -3,15 +3,18 @@
 {% load widget_tweaks %}
 
 {% block content %}
-	<div class="panel_no_space">
+	<div class="">
 		<div class="col-md-4 col-sm-4 col-xs-4">
+			<div class="col-md-4 col-sm-6">
+					  		{% for company in Company  %}
+					  			<img {% if company.CompanyImage %}src="{{ company.CompanyImage.url }}"{% endif %} class="img-responsive img-thumbnail" id="company_image"/>
+					  		{% endfor %}
+					  </div>
 	        <div class="x_panel tile">
 	            
 	            <div class="x_content">
 					<div class="row panel_no_space">
-					  <div class="col-sm-6 col-md-4">
-					      <img {% if Company.CompanyImage %}src="{{ Company.CompanyImage.url }}"{% endif %} class="img-responsive img-thumbnail" id="company_image"/>
-					  </div>
+					  
 					</div>
 	            </div>
 	        </div>

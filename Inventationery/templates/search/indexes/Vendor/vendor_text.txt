@@ -1,0 +1,3 @@
+{{ object.AccountNum }}
+{{ object.Party.NameAlias }}
+{{ object.created }}

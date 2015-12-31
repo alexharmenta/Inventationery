@@ -104,43 +104,56 @@
 
                 </div>
             </div>
-            <form id="search-input">
-                <input type="search" placeholder="Buscar..." class="form-control">
-            </form>
+            
             <!-- top navigation -->
             <div class="top_nav">
-
                 <div class="nav_menu">
-                    <nav class="" role="navigation">
-                        <div class="nav toggle">
-                            <a id="menu_toggle"><i class="fa fa-bars"></i></a>
-                        </div>
-                        <ul class="nav navbar-nav navbar-right">
-                            <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                    <img src="{% static "img/alex.jpg" %} " alt=""> {{ user.get_username }}
-                                    <span class=" fa fa-angle-down"></span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-usermenu animated fadeIn pull-right">
-                                    <li><a href="javascript:;">Perfil<i class="lnr lnr-user pull-right"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:;">
-                                        	<i class="lnr lnr-cog pull-right"></i>Configuración
+                    <nav role="navigation">
+                        <div class="row">
+                            <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
+                                <div class="nav toggle">
+                                    <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 col-md-5 col-sm-8 col-xs-8">
+                                <form>
+                                    <div class="inner-addon left-addon">
+                                        <span class="lnr lnr-magnifier"></span>
+                                        <input id="search-input" type="search" placeholder="Buscar..." class="form-control">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-2 col-xs-2">
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li class="">
+                                        <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                            <img src="{% static "img/alex.jpg" %} " alt="">
+                                            <span>{{ user.get_username }}</span>
+                                            <span class=" fa fa-angle-down"></span>
                                         </a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:;">Ayuda <i class="lnr lnr-question-circle pull-right"></i></a>
-                                    </li>
-                                    <li class="divider"></li>
-                                    <li><a href="{% url 'django.contrib.auth.views.logout' %}" style="color: #F64747;">Salir <i class="lnr lnr-cross-circle pull-right"></i></a>
+                                        <ul class="dropdown-menu dropdown-usermenu animated fadeIn pull-right">
+                                            <li><a href="javascript:;">Perfil<i class="lnr lnr-user pull-right"></i></a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;">
+                                                    <i class="lnr lnr-cog pull-right"></i>Configuración
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;">Ayuda <i class="lnr lnr-question-circle pull-right"></i></a>
+                                            </li>
+                                            <li class="divider"></li>
+                                            <li><a href="{% url 'django.contrib.auth.views.logout' %}" style="color: #F64747;">Salir <i class="lnr lnr-cross-circle pull-right"></i></a>
+                                            </li>
+                                        </ul>
                                     </li>
                                 </ul>
-                            </li>
-                        </ul>
+                            </div>
+                        </div>
+                        
+                        
                     </nav>
                 </div>
-                
             </div>
             <!-- /top navigation -->
             <!-- page content -->
@@ -162,15 +175,13 @@
                     {% endfor %}
                 </ul>
                 {% endif %}
-                <!--
                 <footer>
                     <div class="">
-                        <p class="pull-right">Inventationery by <a>Alex Armenta</a>.
-                        </p>
+                        <!-- <p class="pull-right">Inventationery by <a>Alex Armenta</a>.
+                        </p> -->
                     </div>
                     <div class="clearfix"></div>
                 </footer>
-                -->
                 <!-- /footer content -->
             </div>
             <!-- /page content -->

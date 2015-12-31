@@ -2,17 +2,22 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-14 15:29:39
-# @Last Modified by:   Alex
-# @Last Modified time: 2015-12-29 23:04:23
-from django.views.generic import TemplateView
+# @Last Modified by:   harmenta
+# @Last Modified time: 2015-12-31 13:31:28
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from Inventationery.apps.Company.models import CompanyInfoModel
 # Create your views here.
 
 
-class TemplateView(TemplateView):
-    template_name = 'home/home.html'
+@login_required
+def Home(request):
+    try:
+        Company = CompanyInfoModel.objects.all()[:1]
+    except:
+        Company = None
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+    return render_to_response('home/home.html',
+                              {'Company': Company, },
+                              context_instance=RequestContext(request))
