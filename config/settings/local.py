@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 17:50:15
 # @Last Modified by:   Alex
-# @Last Modified time: 2016-01-02 18:03:43
+# @Last Modified time: 2016-01-03 15:25:40
 '''
 Local settings
 
@@ -48,7 +48,7 @@ CACHES = {
 MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
 INSTALLED_APPS += ('debug_toolbar', )
 
-INTERNAL_IPS = ('127.0.0.1', '10.0.2.2',)
+INTERNAL_IPS = ('127.0.0.1', '10.0.2.2', '0.0.0.0')
 
 DEBUG_TOOLBAR_CONFIG = {
     'DISABLE_PANELS': [
