@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:10:36
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-30 22:51:26
+# @Last Modified time: 2016-01-02 14:43:41
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator

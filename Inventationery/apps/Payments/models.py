@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-12-20 22:05:42
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-20 22:09:01
+# @Last Modified time: 2016-01-02 18:57:39
 from django.db import models
 from Inventationery.core.models import TimeStampedModel
 
@@ -13,8 +13,8 @@ from Inventationery.core.models import TimeStampedModel
 # Class: Model for payment catalog
 # ---------------------------------------------------------------------------
 class PaymentModel(TimeStampedModel):
-    PaymCode = models.CharField(max_length=5)
-    PaymName = models.CharField(max_length=50)
+    PaymCode = models.CharField(max_length=5, blank=True, null=True)
+    PaymName = models.CharField(max_length=50, blank=True, null=True)
 
     def __unicode__(self):
         return "{0}" .format(self.PaymName)
@@ -23,8 +23,8 @@ class PaymentModel(TimeStampedModel):
 # Class: Model for payment catalog
 # ---------------------------------------------------------------------------
 class PaymModeModel(TimeStampedModel):
-    PaymModeCode = models.CharField(max_length=5)
-    PaymModeName = models.CharField(max_length=50)
+    PaymModeCode = models.CharField(max_length=5, blank=True, null=True)
+    PaymModeName = models.CharField(max_length=50, blank=True, null=True)
 
     def __unicode__(self):
         return "{0}" .format(self.PaymModeName)

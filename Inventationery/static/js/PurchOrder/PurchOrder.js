@@ -2,7 +2,7 @@
  * @Author: Alex
  * @Date:   2015-12-22 19:23:28
  * @Last Modified by:   Alex
- * @Last Modified time: 2015-12-29 20:53:59
+ * @Last Modified time: 2016-01-02 23:47:35
  */
 
 'use strict';
@@ -495,6 +495,158 @@ $(document).ready(function() {
     });
 
     /* ----- Purchase Order Functions ----- */
+    /* ----- Fill info selects Functions ----- */
+    $('#id_Vendor').on('focus', function(){
+        var element = document.getElementById('id_Vendor');;
+        csrftoken = getCookie('csrftoken');
+        $.ajax({
+            url: window.location.href, // the endpoint,commonly same url
+            type: "POST",
+            dataType: 'json',
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                action: 'get_vendors',
+            }, // data sent with the post request
+            // handle a successful response
+            success: function(data) {
+                //console.log(json); // another sanity check
+                //On success show the data posted to server as a message
+                element.options.length = 0;
+                element.options.add(new Option("---------", ''));
+                $.each(JSON.parse(data), function(idx) {
+                    var pk = JSON.parse(data)[idx].pk;
+                    var value = JSON.parse(data)[idx].fields.AccountNum;
+                    element.options.add(new Option(value, pk));
+                });
+            },
+            // handle a non-successful response
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
+            }
+        });
+    });
+    $('#id_Payment').on('focus', function(){
+        var element = document.getElementById('id_Payment');;
+        csrftoken = getCookie('csrftoken');
+        $.ajax({
+            url: window.location.href, // the endpoint,commonly same url
+            type: "POST",
+            dataType: 'json',
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                action: 'get_payments',
+            }, // data sent with the post request
+            // handle a successful response
+            success: function(data) {
+                //console.log(json); // another sanity check
+                //On success show the data posted to server as a message
+                element.options.length = 0;
+                element.options.add(new Option("---------", ''));
+                $.each(JSON.parse(data), function(idx) {
+                    var pk = JSON.parse(data)[idx].pk;
+                    var value = JSON.parse(data)[idx].fields.PaymName;
+                    element.options.add(new Option(value, pk));
+                });
+            },
+            // handle a non-successful response
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
+            }
+        });
+    });
+    $('#id_PaymMode').on('focus', function(){
+        var element = document.getElementById('id_PaymMode');;
+        csrftoken = getCookie('csrftoken');
+        $.ajax({
+            url: window.location.href, // the endpoint,commonly same url
+            type: "POST",
+            dataType: 'json',
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                action: 'get_paymmodes',
+            }, // data sent with the post request
+            // handle a successful response
+            success: function(data) {
+                //console.log(json); // another sanity check
+                //On success show the data posted to server as a message
+                element.options.length = 0;
+                element.options.add(new Option("---------", ''));
+                $.each(JSON.parse(data), function(idx) {
+                    var pk = JSON.parse(data)[idx].pk;
+                    var value = JSON.parse(data)[idx].fields.PaymModeName;
+                    element.options.add(new Option(value, pk));
+                });
+            },
+            // handle a non-successful response
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
+            }
+        });
+    });
+    $('#id_Location').on('focus', function(){
+        var element = document.getElementById('id_Location');;
+        csrftoken = getCookie('csrftoken');
+        $.ajax({
+            url: window.location.href, // the endpoint,commonly same url
+            type: "POST",
+            dataType: 'json',
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                action: 'get_locations',
+            }, // data sent with the post request
+            // handle a successful response
+            success: function(data) {
+                //console.log(json); // another sanity check
+                //On success show the data posted to server as a message
+                element.options.length = 0;
+                element.options.add(new Option("---------", ''));
+                $.each(JSON.parse(data), function(idx) {
+                    var pk = JSON.parse(data)[idx].pk;
+                    var value = JSON.parse(data)[idx].fields.LocationName;
+                    element.options.add(new Option(value, pk));
+                });
+            },
+            // handle a non-successful response
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
+            }
+        });
+    });
+    $('.item-id').on('focus', function(){
+        var element = document.getElementById($(this).attr('id'));;
+        csrftoken = getCookie('csrftoken');
+        $.ajax({
+            url: window.location.href, // the endpoint,commonly same url
+            type: "POST",
+            dataType: 'json',
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                action: 'get_items',
+            }, // data sent with the post request
+            // handle a successful response
+            success: function(data) {
+                //console.log(json); // another sanity check
+                //On success show the data posted to server as a message
+                element.options.length = 0;
+                element.options.add(new Option("---------", ''));
+                $.each(JSON.parse(data), function(idx) {
+                    var pk = JSON.parse(data)[idx].pk;
+                    var value = JSON.parse(data)[idx].fields.ItemId;
+                    element.options.add(new Option(value, pk));
+                });
+            },
+            // handle a non-successful response
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
+            }
+        });
+    });
+    /* ----- Fill info selects Functions ----- */
 
 });
 

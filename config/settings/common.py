@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-12-31 13:11:39
+# @Last Modified by:   Alex
+# @Last Modified time: 2016-01-02 18:00:22
 """
 Django settings for Inventationery project.
 
@@ -35,7 +35,7 @@ DJANGO_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'django.contrib.sitemaps',
     # Useful template tags:
     # 'django.contrib.humanize',
 )

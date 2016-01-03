@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load staticfiles i18n %}
+{% load widget_tweaks %}
+
+{% block content %}
+	<form action="" method="POST" id="PaymentForm"> {% csrf_token %}
+		<div class="row">
+			<div class="col-md-2">
+				<button type="submit" class="btn btn-success btn-block pull-right" id="SavePaymentsBtn"><i class="fa fa-check"></i> Guardar</button>
+			</div>
+		</div>
+		<div class="col-md-6 col-sm-6 col-xs-12"> <!-- Payment info -->
+	        <div class="x_panel tile">
+	            <div class="x_title">
+	                <h2>Condiciones de pago</h2>
+	                <ul class="nav navbar-right panel_toolbox">
+	                    <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
+	                    </li>
+	                </ul>
+	                <div class="clearfix"></div>
+	            </div>
+	            <div class="x_content">
+					{{ payments_formset.management_form }}
+		            <table border="0" cellpadding="0" cellspacing="0" class="table table-condensed payments_formset table-hover table-striped" id="PaymentsFormset">
+		            	<thead>
+					        <tr>
+					            <th><label for="{{ payment_form.PaymMode }}">*Código
+					            <span>&nbsp; {{ payment_form.PaymMode.errors }}</span></label></th>
+					            <th><label for="{{ payment_form.PaymName }}">Nombre
+					            <span>&nbsp; {{ payment_form.PaymName.errors }}</span></label></th>
+					            <th>Acción</th>
+					        </tr>
+					    </thead>
+				        <tbody>
+				            {% for payment_form in payments_formset.forms %}
+				            	{% for hidden in payment_form.hidden_fields %}
+								    {{ hidden }}
+								{% endfor %}
+					            <tr>
+					               <td>{% render_field payment_form.PaymCode class+="form-control" %}</td>
+					               <td>{% render_field payment_form.PaymName class+="form-control" %}</td>
+					               <td></td>
+					            </tr>
+					            {% if payment_form.errors %}
+								    {% for field in payment_form %}
+								        {% for error in field.errors %}
+								        	<style>
+												#{{ field.id_for_label }} {
+													border: 1px solid #f64747;
+													border-radius: 2px;
+												}
+								        	</style>				            
+								        {% endfor %}
+								    {% endfor %}
+								    {% for error in payment_form.non_field_errors %}
+								        <div class="alert alert-error">
+								            <strong> {{ error|escape }}</strong>
+								        </div>
+								    {% endfor %}
+								{% endif %}
+				            {% endfor %}
+				        </tbody>
+				    </table>
+	            </div>
+	        </div>
+	    </div>
+	    <div class="col-md-6 col-sm-6 col-xs-12"> <!-- Payment info -->
+	        <div class="x_panel tile">
+	            <div class="x_title">
+	                <h2>Métodos de pago</h2>
+	                <ul class="nav navbar-right panel_toolbox">
+	                    <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
+	                    </li>
+	                </ul>
+	                <div class="clearfix"></div>
+	            </div>
+	            <div class="x_content">
+					{{ paymmodes_formset.management_form }}
+		            <table border="0" cellpadding="0" cellspacing="0" class="table table-condensed paymmodes_formset table-hover table-striped" id="PaymModesFormset">
+		            	<thead>
+					        <tr>
+					            <th><label for="{{ paymmode.PaymModeCode }}">*Código
+					            <span>&nbsp; {{ paymmode.PaymModeCode.errors }}</span></label></th>
+					            <th><label for="{{ paymmode.PaynModeName }}">Nombre
+					            <span>&nbsp; {{ paymmode.PaynModeName.errors }}</span></label></th>
+					            <th>Acción</th>
+					        </tr>
+					    </thead>
+				        <tbody>
+				            {% for paymmode in paymmodes_formset.forms %}
+				            	{% for hidden in paymmode.hidden_fields %}
+								    {{ hidden }}
+								{% endfor %}
+					            <tr>
+					               <td>{% render_field paymmode.PaymModeCode class+="form-control" %}</td>
+					               <td>{% render_field paymmode.PaymModeName class+="form-control" %}</td>
+					               <td></td>
+					            </tr>
+					            {% if paymmode.errors %}
+								    {% for field in paymmode %}
+								        {% for error in field.errors %}
+								        	<style>
+												#{{ field.id_for_label }} {
+													border: 1px solid #f64747;
+													border-radius: 2px;
+												}
+								        	</style>				            
+								        {% endfor %}
+								    {% endfor %}
+								    {% for error in paymmode.non_field_errors %}
+								        <div class="alert alert-error">
+								            <strong> {{ error|escape }}</strong>
+								        </div>
+								    {% endfor %}
+								{% endif %}
+				            {% endfor %}
+				        </tbody>
+				    </table>
+	            </div>
+	        </div>
+	    </div>
+	</form>
+</div>
+{% endblock %}
+
+
+{% block ExtraJS %}
+<script type="text/javascript" charset="utf8" src="{% static "js/Payment/Payment.js" %}"></script>
+{% endblock ExtraJS %}

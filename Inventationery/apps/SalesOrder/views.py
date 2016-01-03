@@ -3,9 +3,10 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-29 22:44:45
+# @Last Modified time: 2016-01-02 23:53:14
 # from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.core import serializers
 from django.utils.decorators import method_decorator
 from django.db.models import Q
 from django.contrib import messages
@@ -29,6 +30,8 @@ from .forms import SalesOrderForm, SalesOrderLinesForm
 from Inventationery.apps.Customer.models import CustomerModel
 from Inventationery.apps.Inventory.models import (
     ItemModel, InventoryModel, EcoResProductModel, LocationModel)
+from Inventationery.apps.Payments.models import (
+    PaymentModel, PaymModeModel)
 # Create your views here.
 
 
@@ -126,6 +129,7 @@ class SalesOrderChargedListView(ListView):
 
 # FBV: View for create new Sales Orders
 @login_required
+@permission_required('Ventas')
 def createSalesOrderView(request):
     SalesLineFormset = inlineformset_factory(
         SalesOrderModel,
@@ -151,7 +155,29 @@ def createSalesOrderView(request):
             elif action == 'get_invent':
                 item_pk = request.POST.get('item_pk', '')
                 location = request.POST.get('location', '')
-                response_dict = GetInventory(item_pk, location)
+                qty = request.POST.get('sl_qty', '')
+                order = request.POST.get('SalesId', '')
+                response_dict = GetInventory(item_pk, location, qty, order)
+            elif action == 'get_customers':
+                customers = CustomerModel.objects.all()
+                response_dict = serializers.serialize("json", customers)
+                return JsonResponse(response_dict, safe=False)
+            elif action == 'get_payments':
+                payments = PaymentModel.objects.all()
+                response_dict = serializers.serialize("json", payments)
+                return JsonResponse(response_dict, safe=False)
+            elif action == 'get_paymmodes':
+                paymmodes = PaymModeModel.objects.all()
+                response_dict = serializers.serialize("json", paymmodes)
+                return JsonResponse(response_dict, safe=False)
+            elif action == 'get_locations':
+                locations = LocationModel.objects.all()
+                response_dict = serializers.serialize("json", locations)
+                return JsonResponse(response_dict, safe=False)
+            elif action == 'get_items':
+                items = ItemModel.objects.all()
+                response_dict = serializers.serialize("json", items)
+                return JsonResponse(response_dict, safe=False)
             return JsonResponse(response_dict)
 
         if sales_form.is_valid():
@@ -190,6 +216,7 @@ def createSalesOrderView(request):
 
 # FBV: View for update new Sales Orders
 @login_required
+@permission_required('Ventas')
 def updateSalesOrderView(request, SalesId):
     SalesOrder = get_object_or_404(SalesOrderModel, SalesId=SalesId)
     SL_list = []
@@ -216,7 +243,29 @@ def updateSalesOrderView(request, SalesId):
             elif action == 'get_invent':
                 item_pk = request.POST.get('item_pk', '')
                 location = request.POST.get('location', '')
-                response_dict = GetInventory(item_pk, location)
+                qty = request.POST.get('sl_qty', '')
+                order = request.POST.get('SalesId', '')
+                response_dict = GetInventory(item_pk, location, qty, order)
+            elif action == 'get_customers':
+                customers = CustomerModel.objects.all()
+                response_dict = serializers.serialize("json", customers)
+                return JsonResponse(response_dict, safe=False)
+            elif action == 'get_payments':
+                payments = PaymentModel.objects.all()
+                response_dict = serializers.serialize("json", payments)
+                return JsonResponse(response_dict, safe=False)
+            elif action == 'get_paymmodes':
+                paymmodes = PaymModeModel.objects.all()
+                response_dict = serializers.serialize("json", paymmodes)
+                return JsonResponse(response_dict, safe=False)
+            elif action == 'get_locations':
+                locations = LocationModel.objects.all()
+                response_dict = serializers.serialize("json", locations)
+                return JsonResponse(response_dict, safe=False)
+            elif action == 'get_items':
+                items = ItemModel.objects.all()
+                response_dict = serializers.serialize("json", items)
+                return JsonResponse(response_dict, safe=False)
             elif action == 'get_customer_discount':
                 customer_pk = request.POST.get('customer_pk', '')
                 response_dict = GetCustomerDiscount(customer_pk)
@@ -484,6 +533,7 @@ class DeleteSalesOrderView(DeleteView):
 
 # FBV: Export to csv
 @login_required
+@permission_required('Ventas')
 def export_csv(request):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
@@ -514,6 +564,7 @@ def export_csv(request):
 
 # FBV: Export to pdf
 @login_required
+@permission_required('Ventas')
 def export_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     # pdf_name = "proveedores.pdf"  # llamado proveedores
@@ -632,16 +683,20 @@ def DelInventMovements(SalesOrder):
 
 
 # Function: Get Purchase Order header data
-def GetInventory(Item_pk, Location):
+def GetInventory(Item_pk, Location, Qty, Order):
     # Get item object
     try:
         Item = ItemModel.objects.get(pk=Item_pk)
+        item = Item.ItemId
         Location = LocationModel.objects.get(pk=Location)
-        reserved = GetReservedInvent(Item, Location)
+        location = Location.LocationName
+        reserved = GetReservedInvent(Item, Location, Qty, Order)
     except:
-        Item = None
-        Location = None
+        on_stock = 0
+        available = 0
         reserved = 0
+        item = ''
+        location = ''
     # Get Inventory info
     try:
         InventoryItem = InventoryModel.objects.get(
@@ -655,14 +710,14 @@ def GetInventory(Item_pk, Location):
         'on_stock': on_stock,
         'available': available,
         'reserved': reserved,
-        'item': Item.ItemId,
-        'location': Location.LocationName,
+        'item': item,
+        'location': location,
     }
     return response_dict
 
 
 # Function: Get Total items in SOs
-def GetReservedInvent(Item, Location):
+def GetReservedInvent(Item, Location, Qty, Order):
     qty = 0
     try:
         orders = SalesOrderModel.objects.filter(Location=Location)
@@ -671,11 +726,12 @@ def GetReservedInvent(Item, Location):
             lines = SalesLineModel.objects.filter(
                 SalesOrder=order, ItemId=Item)
             for line in lines:
-                qty += line.SalesQty
+                if Order != order.SalesId:
+                    qty += line.SalesQty
     except:
         qty = 0
 
-    return qty
+    return qty + int(Qty)
 
 
 # Function: Get Customer discount

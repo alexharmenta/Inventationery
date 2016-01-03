@@ -67,7 +67,12 @@
 							<div class="form-group">
 								{{ purch_form.Vendor.errors }}
 								<label for="{{ purch_form.Vendor.id_for_label }}">*Cuenta de proveedor</label>
-								{% render_field purch_form.Vendor class+="form-control" %}
+								<div class="col-md-11 col-sm-11">
+									{% render_field purch_form.Vendor class+="form-control" %}
+								</div>
+								<div class="col-md-1 col-sm-1">
+									<a href="{% url "vendor:new" %}" target="_blank" class="btn btn-xs btn-success pull-right"><i class="fa fa-plus"></i></a>
+								</div>
 							</div>
 							<div class="form-group">
 								{{ purch_form.WorkerPurchPlacer.errors }}
@@ -219,7 +224,12 @@
 							<div class="form-group">
 								{{ purch_form.Location.errors }}
 								<label for="{{ purch_form.Location.id_for_label }}">Ubicación de inventario</label>
-								{% render_field purch_form.Location|append_attr:'required' class+="form-control" %}
+								<div class="col-md-11 col-sm-11">
+									{% render_field purch_form.Location|append_attr:'required' class+="form-control" %}
+								</div>
+								<div class="col-md-1 col-sm-1">
+									<a href="{% url "inventory:new-location" %}" target="_blank" class="btn btn-xs btn-success pull-right"><i class="fa fa-plus"></i></a>
+								</div>
 							</div>
 						</div>
 					</div>

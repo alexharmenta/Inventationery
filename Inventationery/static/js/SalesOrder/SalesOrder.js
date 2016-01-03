@@ -2,7 +2,7 @@
  * @Author: Alex
  * @Date:   2015-12-22 19:23:28
  * @Last Modified by:   Alex
- * @Last Modified time: 2015-12-29 22:48:26
+ * @Last Modified time: 2016-01-02 23:54:08
  */
 
 'use strict';
@@ -16,6 +16,7 @@ $(document).ready(function() {
     var total = 0;
     var LineAmount = 0.00;
     var sales_enabled; // Sales Enabled Form
+    var SalesId = $('#id_SalesId').val();
     /* ----- Local Variables ----- */
     
     /* ----- INITIALIZE VALUES ----- */
@@ -97,7 +98,6 @@ $(document).ready(function() {
                 },
                 // handle a successful response
                 success: function(data) {
-                    console.log(data);
                     //This will execute when where Django code returns a dictionary called 'data' back to us.
                     $(ItemName_id).val(data.ItemName);
                     $(SalesUnit_id).val(data.UnitId);
@@ -150,7 +150,7 @@ $(document).ready(function() {
         SetAmounts(true);
     });
     // Set tooltip info
-    $('.salesline_formset').on('focus', 'tr td select,input', function() {
+    $('.salesline_formset').on('focus change', 'tr td select,input', function() {
         var id = $(this).attr('id');
         var element = $(this);
         if (id.indexOf('SalesQty') != -1) {
@@ -164,6 +164,8 @@ $(document).ready(function() {
                 data: {
                     item_pk: item_pk,
                     location: location,
+                    sl_qty: element.val(),
+                    SalesId, SalesId,
                     csrfmiddlewaretoken: csrftoken,
                     action: 'get_invent',
                 }, // data sent with the post request
@@ -197,33 +199,44 @@ $(document).ready(function() {
     });
     // Apply discount to saleslines
     $('#apply_discount').on('click', function() {
-        var customer_pk = $('#id_Customer option:selected').val();
-        csrftoken = getCookie('csrftoken');
-        $.ajax({
-            url: window.location.href, // the endpoint,commonly same url
-            type: "POST",
-            data: {
-                customer_pk: customer_pk,
-                csrfmiddlewaretoken: csrftoken,
-                action: 'get_customer_discount',
-            },
-            // handle a successful response
-            success: function(data) {
-                $('.sl_percent').each(function() {
-                    if($(this).val()){
-                        $(this).val(data.discount).change();
-                    }
-                });
-                $('#id_Paid').val(0);
-                SetBalance();
-            },
-            // handle a non-successful response
-            error: function(xhr, errmsg, err) {
-                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                swal('Error','El servidor no responde','error');
-            }
+        if ($('#id_SalesStatus').val() != 'CAS' && $('#id_SalesStatus').val() != 'RCA' && $('#id_SalesStatus').val() != 'CAN') {
+            var customer_pk = $('#id_Customer option:selected').val();
+            csrftoken = getCookie('csrftoken');
+            $.ajax({
+                url: window.location.href, // the endpoint,commonly same url
+                type: "POST",
+                data: {
+                    customer_pk: customer_pk,
+                    csrfmiddlewaretoken: csrftoken,
+                    action: 'get_customer_discount',
+                },
+                // handle a successful response
+                success: function(data) {
+                    $('.sl_percent').each(function() {
+                        var itemId = $('td:first', $(this).parents('tr')).find('select').attr('id');
+                        if($('#' + itemId + ' option:selected').val()) {
+                            $(this).val(data.discount).change();
+                        }
+                    });
+                    $('#id_Paid').val(0);
+                    SetBalance();
+                },
+                // handle a non-successful response
+                error: function(xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                    swal('Error','El servidor no responde','error');
+                }
 
-        });
+            });
+        } else {
+            swal({
+                title: "Pedido cobrado ó cancelado",
+                text: "",
+                type: 'info',
+                timer: 3000,
+                showConfirmButton: true,
+            });
+        }
     });
     // Enable/Disable sales order on click
     $('#cancel_order_btn').on('click', function(event) {
@@ -411,55 +424,63 @@ $(document).ready(function() {
     $('#reduce_charge').on('click', function(event) {
         event.preventDefault();
         if ($('#id_SalesStatus').val() != 'RED' && $('#id_SalesStatus').val() != 'RCA' && $('#id_SalesStatus').val() != 'CAN') {
-            //GetItemsAvailable();
-            swal({
-                    title: 'Se cobrará un total de: ' + getSalesTotal(),
-                    text: 'Reducirá ' + getTotalItems().toString() + ' artículos',
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Si, cobrar!',
-                    closeOnConfirm: false
-                },
-                function() {
-                    // var csrftoken = getCookie('csrftoken'); Not necesary through serialization
-                    // Change values to send form
-                    var CashedAmount = parseFloat($('#id_Paid').val());
-                    var BalanceAmount = parseFloat($('#id_Balance').val());
-                    var TotalAmount = parseFloat($('#id_Total').val());
+            if(GetItemsAvailable()) {
+                swal({
+                        title: 'Se cobrará un total de: ' + getSalesTotal(),
+                        text: 'Reducirá ' + getTotalItems().toString() + ' artículos',
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Si, cobrar!',
+                        closeOnConfirm: false
+                    },
+                    function() {
+                        // var csrftoken = getCookie('csrftoken'); Not necesary through serialization
+                        // Change values to send form
+                        var CashedAmount = parseFloat($('#id_Paid').val());
+                        var BalanceAmount = parseFloat($('#id_Balance').val());
+                        var TotalAmount = parseFloat($('#id_Total').val());
 
-                    ChargeSalesOrder();
+                        ChargeSalesOrder();
 
-                    var formData = $('#SalesOrderForm').serialize(); // Serialized form data
-                    var action = '&action=reduce_charge'; //Action to execute on Django View
+                        var formData = $('#SalesOrderForm').serialize(); // Serialized form data
+                        var action = '&action=reduce_charge'; //Action to execute on Django View
 
-                    $.ajax({
-                        url: window.location.href, // the endpoint,commonly same url
-                        type: "POST",
-                        data: formData + action,
-                        // handle a successful response
-                        success: function(data) {
-                            //On success show the data posted to server as a message
-                            swal(
-                                'Orden de venta cobrada',
-                                'Redujo ' + getTotalItems().toString() + ' artículos',
-                                'success'
-                            );
-                            ChangeSalesStatus(data.SalesStatus);
-                        },
-                        // handle a non-successful response
-                        error: function(xhr, errmsg, err) {
-                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                            swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error");
-                            $('#id_Paid').val(CashedAmount); // Restore Cashed    
-                            $('#id_Balance').val(BalanceAmount); // Restore Balance
-                            $('#id_Total').val(TotalAmount); // Restore Total
-                            $('#id_SalesStatus').val(SalesStatus).change();
-                        }
+                        $.ajax({
+                            url: window.location.href, // the endpoint,commonly same url
+                            type: "POST",
+                            data: formData + action,
+                            // handle a successful response
+                            success: function(data) {
+                                //On success show the data posted to server as a message
+                                swal(
+                                    'Orden de venta cobrada',
+                                    'Redujo ' + getTotalItems().toString() + ' artículos',
+                                    'success'
+                                );
+                                ChangeSalesStatus(data.SalesStatus);
+                            },
+                            // handle a non-successful response
+                            error: function(xhr, errmsg, err) {
+                                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                                swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error");
+                                $('#id_Paid').val(CashedAmount); // Restore Cashed    
+                                $('#id_Balance').val(BalanceAmount); // Restore Balance
+                                $('#id_Total').val(TotalAmount); // Restore Total
+                                $('#id_SalesStatus').val(SalesStatus).change();
+                            }
 
+                        });
                     });
+            } else {
+                swal({
+                    title: "Sin stock suficiente para cumplir con todos los pedidos",
+                    text: "Realice una orden de compra para cumplir con la capacidad de venta",
+                    type: 'warning',
+                    showConfirmButton: true,
                 });
+            }
         } else {
             swal({
                 title: "Pedido reducido y cobrado ó cancelado",
@@ -474,42 +495,51 @@ $(document).ready(function() {
     $('#reduce_invent').on('click', function(event) {
         event.preventDefault();
         if ($('#id_SalesStatus').val() != 'RED' && $('#id_SalesStatus').val() != 'RCA' && $('#id_SalesStatus').val() != 'CAN') { // Prevent receiving again
-            swal({
-                    title: 'Se reducirá completamente la orden de venta, no se cobrará ningún monto',
-                    text: 'Reducirá un total de ' + getTotalItems().toString() + ' artículos',
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Si, reducir!',
-                    closeOnConfirm: false
-                },
-                function() {
-                    var formData = $('#SalesOrderForm').serialize(); // Serialized form data
-                    var action = '&action=reduce'; //Action to execute on Django View
+            if(GetItemsAvailable()) {
+                swal({
+                        title: 'Se reducirá completamente la orden de venta, no se cobrará ningún monto',
+                        text: 'Reducirá un total de ' + getTotalItems().toString() + ' artículos',
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Si, reducir!',
+                        closeOnConfirm: false
+                    },
+                    function() {
+                        var formData = $('#SalesOrderForm').serialize(); // Serialized form data
+                        var action = '&action=reduce'; //Action to execute on Django View
 
-                    $.ajax({
-                        url: window.location.href, // the endpoint,commonly same url
-                        type: "POST",
-                        data: formData + action,
-                        // handle a successful response
-                        success: function(data) {
-                            //On success show the data posted to server as a message
-                            swal(
-                                'Orden de venta recibida',
-                                'Redujo ' + getTotalItems().toString() + ' artículos',
-                                'success'
-                            );
-                            ChangeSalesStatus(data.SalesStatus);
-                        },
-                        // handle a non-successful response
-                        error: function(xhr, errmsg, err) {
-                            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                            swal("Error al reducir pedido", "La información del pedido no se ha modificado", "error");
-                        }
+                        $.ajax({
+                            url: window.location.href, // the endpoint,commonly same url
+                            type: "POST",
+                            data: formData + action,
+                            // handle a successful response
+                            success: function(data) {
+                                //On success show the data posted to server as a message
+                                swal(
+                                    'Orden de venta recibida',
+                                    'Redujo ' + getTotalItems().toString() + ' artículos',
+                                    'success'
+                                );
+                                ChangeSalesStatus(data.SalesStatus);
+                            },
+                            // handle a non-successful response
+                            error: function(xhr, errmsg, err) {
+                                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                                swal("Error al reducir pedido", "La información del pedido no se ha modificado", "error");
+                            }
 
+                        });
                     });
+            } else {
+                swal({
+                    title: "Sin stock suficiente para cumplir con todos los pedidos",
+                    text: "Realice una orden de compra para cumplir con la capacidad de venta",
+                    type: 'warning',
+                    showConfirmButton: true,
                 });
+            }            
         } else {
             swal({
                 title: "Pedido reducido ó cancelado",
@@ -522,7 +552,158 @@ $(document).ready(function() {
     });
 
     /* ----- Sales Order Functions ----- */
-
+    /* ----- Fill info selects Functions ----- */
+    $('#id_Customer').on('focus', function(){
+        var element = document.getElementById('id_Customer');;
+        csrftoken = getCookie('csrftoken');
+        $.ajax({
+            url: window.location.href, // the endpoint,commonly same url
+            type: "POST",
+            dataType: 'json',
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                action: 'get_customers',
+            }, // data sent with the post request
+            // handle a successful response
+            success: function(data) {
+                //console.log(json); // another sanity check
+                //On success show the data posted to server as a message
+                element.options.length = 0;
+                element.options.add(new Option("---------", ''));
+                $.each(JSON.parse(data), function(idx) {
+                    var pk = JSON.parse(data)[idx].pk;
+                    var value = JSON.parse(data)[idx].fields.AccountNum;
+                    element.options.add(new Option(value, pk));
+                });
+            },
+            // handle a non-successful response
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
+            }
+        });
+    });
+    $('#id_Payment').on('focus', function(){
+        var element = document.getElementById('id_Payment');;
+        csrftoken = getCookie('csrftoken');
+        $.ajax({
+            url: window.location.href, // the endpoint,commonly same url
+            type: "POST",
+            dataType: 'json',
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                action: 'get_payments',
+            }, // data sent with the post request
+            // handle a successful response
+            success: function(data) {
+                //console.log(json); // another sanity check
+                //On success show the data posted to server as a message
+                element.options.length = 0;
+                element.options.add(new Option("---------", ''));
+                $.each(JSON.parse(data), function(idx) {
+                    var pk = JSON.parse(data)[idx].pk;
+                    var value = JSON.parse(data)[idx].fields.PaymName;
+                    element.options.add(new Option(value, pk));
+                });
+            },
+            // handle a non-successful response
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
+            }
+        });
+    });
+    $('#id_PaymMode').on('focus', function(){
+        var element = document.getElementById('id_PaymMode');;
+        csrftoken = getCookie('csrftoken');
+        $.ajax({
+            url: window.location.href, // the endpoint,commonly same url
+            type: "POST",
+            dataType: 'json',
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                action: 'get_paymmodes',
+            }, // data sent with the post request
+            // handle a successful response
+            success: function(data) {
+                //console.log(json); // another sanity check
+                //On success show the data posted to server as a message
+                element.options.length = 0;
+                element.options.add(new Option("---------", ''));
+                $.each(JSON.parse(data), function(idx) {
+                    var pk = JSON.parse(data)[idx].pk;
+                    var value = JSON.parse(data)[idx].fields.PaymModeName;
+                    element.options.add(new Option(value, pk));
+                });
+            },
+            // handle a non-successful response
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
+            }
+        });
+    });
+    $('#id_Location').on('focus', function(){
+        var element = document.getElementById('id_Location');;
+        csrftoken = getCookie('csrftoken');
+        $.ajax({
+            url: window.location.href, // the endpoint,commonly same url
+            type: "POST",
+            dataType: 'json',
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                action: 'get_locations',
+            }, // data sent with the post request
+            // handle a successful response
+            success: function(data) {
+                //console.log(json); // another sanity check
+                //On success show the data posted to server as a message
+                element.options.length = 0;
+                element.options.add(new Option("---------", ''));
+                $.each(JSON.parse(data), function(idx) {
+                    var pk = JSON.parse(data)[idx].pk;
+                    var value = JSON.parse(data)[idx].fields.LocationName;
+                    element.options.add(new Option(value, pk));
+                });
+            },
+            // handle a non-successful response
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
+            }
+        });
+    });
+    $('.item-id').on('focus', function(){
+        var element = document.getElementById($(this).attr('id'));;
+        csrftoken = getCookie('csrftoken');
+        $.ajax({
+            url: window.location.href, // the endpoint,commonly same url
+            type: "POST",
+            dataType: 'json',
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                action: 'get_items',
+            }, // data sent with the post request
+            // handle a successful response
+            success: function(data) {
+                //console.log(json); // another sanity check
+                //On success show the data posted to server as a message
+                element.options.length = 0;
+                element.options.add(new Option("---------", ''));
+                $.each(JSON.parse(data), function(idx) {
+                    var pk = JSON.parse(data)[idx].pk;
+                    var value = JSON.parse(data)[idx].fields.ItemId;
+                    element.options.add(new Option(value, pk));
+                });
+            },
+            // handle a non-successful response
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                swal("Error al cancelar pedido", "La información del pedido no se ha modificado", "error")
+            }
+        });
+    });
+    /* ----- Fill info selects Functions ----- */
 });
 
 /* ----- GLOBAL FUNCTIONS ----- */
@@ -689,7 +870,7 @@ function EnableDiscounts() {
 function GetItemsAvailable() {
     var csrftoken = getCookie('csrftoken');
     var element;
-    var qty_element;
+    var sl_qty;
     var id;
     var item_pk;
     var location = $('#id_Location').val();
@@ -698,22 +879,26 @@ function GetItemsAvailable() {
         element = $(this);
         id = element.attr('id');
         item_pk = $('#'+id+' option:selected').val();
+        var SalesId = $('#id_SalesId').val();
         if (item_pk) {
-            qty_element = element.parent('td').parent('tr').find('input').eq(1);
+            sl_qty = element.closest('td').siblings('.sl_qty').find('input').val();
             $.ajax({
                 url: window.location.href, // the endpoint,commonly same url
                 type: "POST",
                 data: {
                     item_pk: item_pk,
                     location: location,
+                    sl_qty: sl_qty,
+                    SalesId, SalesId,
                     csrfmiddlewaretoken: csrftoken,
                     action: 'get_invent',
                 },
                 // handle a successful response
                 success: function(data) {
-                    console.log(qty_element.val());
-                    if(data.available < qty_element.val()) {
-                        
+                    if(parseInt(data.available) > 0) {
+                        CanReduce = true;
+                    } else {
+                        CanReduce = false;
                     }
                 },
                 // handle a non-successful response
@@ -724,6 +909,8 @@ function GetItemsAvailable() {
             });
         }
     });
+
+    return CanReduce;
 }
 
 

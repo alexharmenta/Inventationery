@@ -3,17 +3,19 @@
 # @Author: harmenta
 # @Date:   2015-12-24 11:10:51
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-28 23:45:40
+# @Last Modified time: 2016-01-02 18:30:09
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib import messages
 from .models import CompanyInfoModel
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,permission_required
+from django.contrib.admin.views.decorators import staff_member_required
 from .forms import (CompanyInfoForm, PartyForm)
 
 
 # FBV: View for create new Company
 @login_required
+@permission_required('is_staff')
 def CompanyInfoView(request):
     try:
         Company = CompanyInfoModel.objects.all()[:1].get()

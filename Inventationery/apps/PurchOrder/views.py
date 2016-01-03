@@ -3,9 +3,10 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-29 20:58:18
+# @Last Modified time: 2016-01-02 23:49:55
 # from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.core import serializers
 from django.utils.decorators import method_decorator
 from django.db.models import Q
 from django.contrib import messages
@@ -32,6 +33,8 @@ from Inventationery.apps.Inventory.models import (
     EcoResProductModel, LocationModel)
 from Inventationery.apps.SalesOrder.models import (
     SalesOrderModel, SalesLineModel)
+from Inventationery.apps.Payments.models import (
+    PaymentModel, PaymModeModel)
 # Create your views here.
 
 
@@ -129,6 +132,7 @@ class PurchOrderPaidListView(ListView):
 
 # FBV: View for create new Purchase Orders
 @login_required
+@permission_required('Compras')
 def createPurchOrderView(request):
     PurchLineFormset = inlineformset_factory(
         PurchOrderModel,
@@ -155,6 +159,26 @@ def createPurchOrderView(request):
                 item_pk = request.POST.get('item_pk', '')
                 location = request.POST.get('location', '')
                 response_dict = GetInventory(item_pk, location)
+            elif action == 'get_vendors':
+                vendors = VendorModel.objects.all()
+                response_dict = serializers.serialize("json", vendors)
+                return JsonResponse(response_dict, safe=False)
+            elif action == 'get_payments':
+                payments = PaymentModel.objects.all()
+                response_dict = serializers.serialize("json", payments)
+                return JsonResponse(response_dict, safe=False)
+            elif action == 'get_paymmodes':
+                paymmodes = PaymModeModel.objects.all()
+                response_dict = serializers.serialize("json", paymmodes)
+                return JsonResponse(response_dict, safe=False)
+            elif action == 'get_locations':
+                locations = LocationModel.objects.all()
+                response_dict = serializers.serialize("json", locations)
+                return JsonResponse(response_dict, safe=False)
+            elif action == 'get_items':
+                items = ItemModel.objects.all()
+                response_dict = serializers.serialize("json", items)
+                return JsonResponse(response_dict, safe=False)
             return JsonResponse(response_dict)
 
         if purch_form.is_valid():
@@ -193,6 +217,7 @@ def createPurchOrderView(request):
 
 # FBV: View for update new Purchase Orders
 @login_required
+@permission_required('Compras')
 def updatePurchOrderView(request, PurchId):
     PurchOrder = get_object_or_404(PurchOrderModel, PurchId=PurchId)
     PL_list = []
@@ -220,6 +245,26 @@ def updatePurchOrderView(request, PurchId):
                 item_pk = request.POST.get('item_pk', '')
                 location = request.POST.get('location', '')
                 response_dict = GetInventory(item_pk, location)
+            elif action == 'get_vendors':
+                vendors = VendorModel.objects.all()
+                response_dict = serializers.serialize("json", vendors)
+                return JsonResponse(response_dict, safe=False)
+            elif action == 'get_payments':
+                payments = PaymentModel.objects.all()
+                response_dict = serializers.serialize("json", payments)
+                return JsonResponse(response_dict, safe=False)
+            elif action == 'get_paymmodes':
+                paymmodes = PaymModeModel.objects.all()
+                response_dict = serializers.serialize("json", paymmodes)
+                return JsonResponse(response_dict, safe=False)
+            elif action == 'get_locations':
+                locations = LocationModel.objects.all()
+                response_dict = serializers.serialize("json", locations)
+                return JsonResponse(response_dict, safe=False)
+            elif action == 'get_items':
+                items = ItemModel.objects.all()
+                response_dict = serializers.serialize("json", items)
+                return JsonResponse(response_dict, safe=False)
             elif action == 'update_enabled':
                 PurchOrder = purch_form.save(commit=False)
                 enabled = request.POST.get('purch_enabled', '')
@@ -480,6 +525,7 @@ class DeletePurchOrderView(DeleteView):
 
 # FBV: Export to csv
 @login_required
+@permission_required('Compras')
 def export_csv(request):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
@@ -510,6 +556,7 @@ def export_csv(request):
 
 # FBV: Export to pdf
 @login_required
+@permission_required('Compras')
 def export_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     # pdf_name = "proveedores.pdf"  # llamado proveedores

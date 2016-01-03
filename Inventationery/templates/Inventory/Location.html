@@ -53,6 +53,7 @@
 							    <thead>
 							        <tr>
 							            <th>Artículo</th>
+							            <th>Nombre</th>
 							            <th>Cantidad</th>
 							            <th>Último movimiento</th>
 							        </tr>
@@ -60,7 +61,12 @@
 							    <tbody>
 							    	{% for item in Location.GetLocationItems %}
 							            <tr>
-											<td>{{ item.Item }}</td>
+								            <td>
+								            	<a class='btn btn-link btn-xs' href="{% url "inventory:update" ItemId=item.Item.ItemId %}">
+													{{ item.Item.ItemId }}
+												</a>
+								            </td>
+								            <td>{{ item.Item.ItemName }}</td>
 											<td>{{ item.Qty }}</td>
 											<td>{{ item.modified }}</td>
 							            </tr>

@@ -3,14 +3,15 @@
 # @Author: Alex
 # @Date:   2015-12-20 22:09:47
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-20 22:18:22
+# @Last Modified time: 2016-01-02 19:10:49
 from django.conf.urls import url
 from .views import (CreatePaymentView,
                     UpdatePaymentView,
                     DeletePaymentView,
                     CreatePaymModeView,
                     UpdatePaymModeView,
-                    DeletePaymModeView)
+                    DeletePaymModeView,
+                    PaymentsView)
 
 urlpatterns = [
     url(r'^payment/new/$', CreatePaymentView.as_view(), name='new-payment'),
@@ -24,4 +25,6 @@ urlpatterns = [
         UpdatePaymModeView.as_view(), name='update-paym'),
     url(r'^paym_mode/delete/(?P<pk>[-\w]+)/$',
         DeletePaymModeView.as_view(), name='delete-paym'),
+    url(r'^paym_mode/manage/$',
+        PaymentsView, name='manage-paym'),
 ]

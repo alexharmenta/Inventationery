@@ -3,9 +3,9 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:22:12
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-29 00:00:20
+# @Last Modified time: 2016-01-02 18:39:06
 # views.py
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
@@ -51,6 +51,7 @@ class VendorListView(ListView):
 
 # FBV: View for create new Vendor
 @login_required
+@permission_required('Compras')
 def createVendorView(request):
 
     vendor = VendorModel()
@@ -135,6 +136,7 @@ def createVendorView(request):
 
 # FBV: View for update an existing Vendor
 @login_required
+@permission_required('Compras')
 def updateVendorView(request, AccountNum):
     Vendor = get_object_or_404(VendorModel, AccountNum=AccountNum)
     Party = Vendor.Party
@@ -251,6 +253,7 @@ class DeleteVendorView(DeleteView):
 
 # FBV: Export to csv
 @login_required
+@permission_required('Compras')
 def export_csv(request):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
@@ -279,6 +282,7 @@ def export_csv(request):
 
 # FBV: Export to pdf
 @login_required
+@permission_required('Compras')
 def export_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     # pdf_name = "proveedores.pdf"  # llamado proveedores

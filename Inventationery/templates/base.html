@@ -80,7 +80,7 @@
                                 </li>
                             </ul>
                             <ul class="nav">
-                                <li><a href="{% url "company:data" %}"><i class="fa fa-credit-card-alt"></i>Pago</a></li>
+                                <li><a href="{% url "payment:manage-paym" %}"><i class="fa fa-credit-card-alt"></i>Pago</a></li>
                             </ul>
                             <ul class="nav side-menu">
                                 <li><a class="collapse-menu"> <i class="fa fa-cubes"></i> Inventario <span class="lnr lnr-chevron-down"></span></a>
@@ -135,7 +135,7 @@
                                             <li><a href="javascript:;">Perfil<i class="lnr lnr-user pull-right"></i></a>
                                             </li>
                                             <li>
-                                                <a href="javascript:;">
+                                                <a href="{% url "admin:index" %}">
                                                     <i class="lnr lnr-cog pull-right"></i>Configuración
                                                 </a>
                                             </li>

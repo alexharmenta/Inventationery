@@ -3,26 +3,153 @@
 {% load widget_tweaks %}
 
 {% block content %}
-	<div class="">
-		<div class="col-md-4 col-sm-4 col-xs-4">
-			<div class="col-md-4 col-sm-6">
-					  		{% for company in Company  %}
-					  			<img {% if company.CompanyImage %}src="{{ company.CompanyImage.url }}"{% endif %} class="img-responsive img-thumbnail" id="company_image"/>
-					  		{% endfor %}
-					  </div>
-	        <div class="x_panel tile">
-	            
-	            <div class="x_content">
-					<div class="row panel_no_space">
-					  
+	
+    <div class="x_panel tile">
+        <div class="x_content">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="row">
+					<div class="col-md-3 col-sm-3 col-xs-12 fadeIn">
+						{% for company in Company  %}
+				  			<a {% if company.URL %}
+				  				href="{{ company.URL }}" 
+				  			{% else %}
+				  				href="#" 
+				  			{% endif %} target="_blank" title="{{ company.Party.NameAlias }}"><img {% if company.CompanyImage %}src="{{ company.CompanyImage.url }}"{% endif %} class="img-responsive" id="company_image"/></a>
+				  		{% endfor %}
 					</div>
-	            </div>
+					<div class="counter col-md-2 col-sm-2 col-xs-12 fadeIn">
+					      <span class="lnr lnr-indent-increase fa-2x"></span>
+					      <h2 class="timer count-title" id="count-number" data-to="{{ PurchOrders.count }}" data-speed="1500" data-toggle="tooltip" data-placement="bottom" title="Abiertas: {{ Purch_open }} | En proceso: {{ Purch_process }} | Cerradas: {{ Purch_closed }}"></h2>
+					      <p class="count-text "><a href="{% url "purch:list" %}" target="_blank" class="">Ordenes de compra (OC)</a></p>
+					</div>
+					<div class="counter col-md-2 col-sm-2 col-xs-12 fadeIn">
+					      <i class="fa fa-money fa-2x"></i>
+					      <h2 class="timer count-title" id="count-number" data-to="{{ SalesOrders.count }}" data-speed="1500" data-toggle="tooltip" data-placement="bottom" title="Abiertas: {{ Sales_open }} | En proceso: {{ Sales_process }} | Cerradas: {{ Sales_closed }}"></h2>
+					      <p class="count-text "><a href="{% url "sales:list" %}" target="_blank" class="">Ordenes de venta (OV)</a></p>
+					</div>
+					<div class="counter col-md-2 col-sm-2 col-xs-12 fadeIn">
+					     <span class="lnr lnr-database fa-2x"></span>
+					      <h2 class="timer count-title" id="count-number" data-to="{{ Items.count }}" data-speed="1500" data-to="{{ SalesOrders.count }}" data-speed="1500" data-toggle="tooltip" data-placement="bottom" title="{{ ItemsSold }} | {{ ItemsPurchased }}"></h2>
+					      <p class="count-text "><a href="{% url "inventory:list" %}" target="_blank" class="">Artículos</a></p>
+					</div>
+				</div>
+		    </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12"> 
+	    <div class="x_panel tile">
+	    	<div class="x_title">
+                <h2>Reabastecimiento</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+        	</div>
+	        <div class="x_content" style="min-height: 250px;">
+        		<table border="0" cellpadding="0" cellspacing="0" class="table table-condensed table-hover table-striped">
+				    <thead>
+				        <tr>
+				            <th>Artículo</th>
+				            <th>Nombre</th>
+				            <th>Cantidad</th>
+				            <th>Recomendación</th>
+				        </tr>
+				    </thead>
+				    <tbody>
+				    	{% for item in Items %}
+				    		{% if item.GetInventoryTotalItems <= 5 %}
+				            <tr>
+					            <td>
+					            	<a class='btn btn-link btn-xs' href="{% url "inventory:update" ItemId=item.ItemId %}" target="_blank">
+										{{ item.ItemId }}
+									</a>
+					            </td>
+					            <td>{{ item.ItemName }}</td>
+					            	<td class="{% if item.GetInventoryTotalItems == 0 %} btn-danger {% else %} btn-warning {% endif %}">{{ item.GetInventoryTotalItems }}</td>
+								<td>Reabastecer</td>
+				            </tr>
+				            {% endif %}
+				    	{% endfor %}
+				    </tbody>
+				</table>
 	        </div>
 	    </div>
-	</div>
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12"> 
+	    <div class="x_panel tile">
+	    	<div class="x_title">
+                <h2>Ganancias</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+        	</div>
+	        <div class="x_content" style="min-height: 250px;">
+        		<div id="totalSales">
+        			<ul>
+        				<li>
+        					<div class="col">
+					          <div id="sales" class="progressBar"></div>
+					          <h3>${{ PurchTotal }}</h3>
+					          <span class="progressTitle">Ventas</span>
+					        </div>
+        				</li>
+        				<li>
+        					<div class="col">
+					          <div id="purchases" class="progressBar"></div>
+					          <h3>${{ SalesTotal }}</h3>
+					          <span class="progressTitle">Compras</span>
+					        </div>
+        				</li>
+        				<li>
+        					<div class="col">
+					          <div id="articles" class="progressBar"></div>
+					          <h3>36,834</h3>
+					          <span class="progressTitle">Artículos</span>
+					        </div>
+        				</li>
+        			</ul>
+			      </div>
+	        </div>
+	    </div>
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12"> 
+	    <div class="x_panel tile">
+	    	<div class="x_title">
+	            <h2>Estadisticas</h2>
+	            <ul class="nav navbar-right panel_toolbox">
+	                <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
+	                </li>
+	            </ul>
+	            <div class="clearfix"></div>
+	    	</div>
+	        <div class="x_content" style="min-height: 250px;">
+				<canvas id="canvas" height="350" width="600"></canvas>
+	        </div>
+	    </div>
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12"> 
+	    <div class="x_panel tile">
+	    	<div class="x_title">
+	            <h2>Polar</h2>
+	            <ul class="nav navbar-right panel_toolbox">
+	                <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
+	                </li>
+	            </ul>
+	            <div class="clearfix"></div>
+	    	</div>
+	        <div class="x_content" style="min-height: 250px;">
+				<h2>Area polar</h2>
+				<canvas id="chart-area" height="350" width="600"></canvas>
+	        </div>
+	    </div>
+    </div>
 
 {% endblock %}
-
 {% block ExtraJS %}
-<script type="text/javascript" charset="utf8" src="{% static "js/Inventory/Inventory.js" %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static "js/home/home.js" %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static "third-party/ChartJS/js/Chart.min.js" %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static "third-party/ProgressBar/js/progressbar.min.js" %}"></script>
 {% endblock ExtraJS %}

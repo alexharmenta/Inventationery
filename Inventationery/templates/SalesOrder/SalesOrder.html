@@ -65,7 +65,12 @@
 							<div class="form-group">
 								{{ sales_form.Customer.errors }}
 								<label for="{{ sales_form.Customer.id_for_label }}">*Cuenta de cliente</label>
-								{% render_field sales_form.Customer class+="form-control" %}
+								<div class="col-md-11 col-sm-11">
+									{% render_field sales_form.Customer class+="form-control" %}
+								</div>
+								<div class="col-md-1 col-sm-1">
+									<a href="{% url "customer:new" %}" target="_blank" class="btn btn-xs btn-success pull-right"><i class="fa fa-plus"></i></a>
+								</div>
 							</div>
 							<div class="form-group">
 								{{ sales_form.WorkerSalesPlacer.errors }}
@@ -215,7 +220,12 @@
 							<div class="form-group">
 								{{ sales_form.Location.errors }}
 								<label for="{{ sales_form.Location.id_for_label }}">Ubicación de inventario</label>
-								{% render_field sales_form.Location|append_attr:'required' class+="form-control" %}
+								<div class="col-md-11 col-sm-11">
+									{% render_field sales_form.Location|append_attr:'required' class+="form-control" %}
+								</div>
+								<div class="col-md-1 col-sm-1">
+									<a href="{% url "inventory:new-location" %}" target="_blank" class="btn btn-xs btn-success pull-right"><i class="fa fa-plus"></i></a>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -283,7 +293,7 @@
 					            <tr>
 									<td>{% render_field salesline_form.ItemId class+="form-control item-id" %}</td>
 									<td>{% render_field salesline_form.ItemName class+="form-control" %}</td>
-									<td>{% render_field salesline_form.SalesQty class+="sl_amount form-control sl_qty" %}</td>
+									<td class="sl_qty">{% render_field salesline_form.SalesQty class+="sl_amount form-control sl_qty" %}</td>
 									<td>{% render_field salesline_form.SalesUnit class+="form-control" %}</td>
 									<td>{% render_field salesline_form.SalesPrice class+="sl_amount form-control amount" %}</td>
 									<td>{% render_field salesline_form.LineDisc class+="sl_amount form-control sl_disc" %}</td>

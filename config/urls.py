@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
-# @Last Modified by:   harmenta
-# @Last Modified time: 2015-12-31 13:13:46
+# @Last Modified by:   Alex
+# @Last Modified time: 2016-01-02 18:00:15
 """Inventationery URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -24,6 +24,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.views import defaults as default_views
 
 urlpatterns = [
     # url(r'^admin/', include(admin.site.urls)),
@@ -39,6 +40,13 @@ urlpatterns = [
     url(r'^', include('Inventationery.apps.Customer.urls', namespace='customer')),
     url(r'^', include('Inventationery.apps.SalesOrder.urls', namespace='sales')),
 
+    url(r'^400/$', default_views.bad_request,
+        kwargs={'exception': Exception("Bad Request!")}),
+    url(r'^403/$', default_views.permission_denied,
+        kwargs={'exception': Exception("Permissin Denied")}),
+    url(r'^404/$', default_views.page_not_found,
+        kwargs={'exception': Exception("Page not Found")}),
+    url(r'^500/$', default_views.server_error),
     #(r'^search/', include('haystack.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -3,9 +3,9 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:22:12
 # @Last Modified by:   Alex
-# @Last Modified time: 2015-12-28 23:55:35
+# @Last Modified time: 2016-01-02 18:31:28
 # views.py
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.shortcuts import render_to_response, get_object_or_404
@@ -51,6 +51,7 @@ class CustomerListView(ListView):
 
 # FBV: View for create new Customer
 @login_required
+@permission_required('Ventas')
 def createCustomerView(request):
 
     customer = CustomerModel()
@@ -135,6 +136,7 @@ def createCustomerView(request):
 
 # FBV: View for update an existing Customer
 @login_required
+@permission_required('Ventas')
 def updateCustomerView(request, AccountNum):
     Customer = get_object_or_404(CustomerModel, AccountNum=AccountNum)
     Party = Customer.Party
@@ -252,6 +254,7 @@ class DeleteCustomerView(DeleteView):
 # FBV: Export to csv
 # ----------------------------------------------------------------------------
 @login_required
+@permission_required('Ventas')
 def export_csv(request):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
@@ -281,6 +284,7 @@ def export_csv(request):
 # FBV: Export to pdf
 # ----------------------------------------------------------------------------
 @login_required
+@permission_required('Ventas')
 def export_pdf(request):
     response = HttpResponse(content_type='application/pdf')
     # pdf_name = "proveedores.pdf"  # llamado proveedores
