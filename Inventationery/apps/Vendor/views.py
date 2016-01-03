@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:22:12
 # @Last Modified by:   Alex
-# @Last Modified time: 2016-01-02 18:39:06
+# @Last Modified time: 2016-01-03 15:34:16
 # views.py
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
@@ -36,7 +36,7 @@ from .forms import (VendorForm,
 # ----------------------------------------------------------------------------
 class VendorListView(ListView):
     model = VendorModel
-    template_name = 'vendor/VendorList.html'
+    template_name = 'Vendor/VendorList.html'
     context_object_name = 'vendors'
 
     def get_queryset(self):
@@ -126,7 +126,7 @@ def createVendorView(request):
             prefix='efs', instance=party)
         postal_formset = PostalFormSet(prefix='pfs', instance=party)
 
-    return render_to_response('vendor/CreateVendor.html',
+    return render_to_response('Vendor/CreateVendor.html',
                               {'vendor_form': vendor_form,
                                'party_form': party_form,
                                'electronic_formset': electronic_formset,
@@ -216,7 +216,7 @@ def updateVendorView(request, AccountNum):
         postal_formset = PostalFormSet(
             prefix='pfs', instance=Vendor.Party)
 
-    return render_to_response('vendor/UpdateVendor.html',
+    return render_to_response('Vendor/UpdateVendor.html',
                               {'vendor_form': vendor_form,
                                'party_form': party_form,
                                'electronic_formset': electronic_formset,
@@ -229,7 +229,7 @@ def updateVendorView(request, AccountNum):
 # ----------------------------------------------------------------------------
 class DeleteVendorView(DeleteView):
     model = DirPartyModel
-    template_name = 'vendor/DeleteVendor.html'
+    template_name = 'Vendor/DeleteVendor.html'
     success_url = '/vendor'
     success_message = 'Se ha eliminado el proveedor'
 

@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:22:12
 # @Last Modified by:   Alex
-# @Last Modified time: 2016-01-02 18:31:28
+# @Last Modified time: 2016-01-03 15:32:30
 # views.py
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
@@ -36,7 +36,7 @@ from .forms import (CustomerForm,
 # ----------------------------------------------------------------------------
 class CustomerListView(ListView):
     model = CustomerModel
-    template_name = 'customer/CustomerList.html'
+    template_name = 'Customer/CustomerList.html'
     context_object_name = 'customers'
 
     def get_queryset(self):
@@ -126,7 +126,7 @@ def createCustomerView(request):
             prefix='efs', instance=party)
         postal_formset = PostalFormSet(prefix='pfs', instance=party)
 
-    return render_to_response('customer/CreateCustomer.html',
+    return render_to_response('Customer/CreateCustomer.html',
                               {'customer_form': customer_form,
                                'party_form': party_form,
                                'electronic_formset': electronic_formset,
@@ -216,7 +216,7 @@ def updateCustomerView(request, AccountNum):
         postal_formset = PostalFormSet(
             prefix='pfs', instance=Customer.Party)
 
-    return render_to_response('customer/UpdateCustomer.html',
+    return render_to_response('Customer/UpdateCustomer.html',
                               {'customer_form': customer_form,
                                'party_form': party_form,
                                'electronic_formset': electronic_formset,
@@ -229,7 +229,7 @@ def updateCustomerView(request, AccountNum):
 # ----------------------------------------------------------------------------
 class DeleteCustomerView(DeleteView):
     model = DirPartyModel
-    template_name = 'customer/DeleteCustomer.html'
+    template_name = 'Customer/DeleteCustomer.html'
     success_url = '/customer'
     success_message = 'Se ha eliminado el proveedor'
 
