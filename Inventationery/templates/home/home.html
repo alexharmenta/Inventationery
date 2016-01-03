@@ -79,7 +79,7 @@
     <div class="col-md-6 col-sm-6 col-xs-12"> 
 	    <div class="x_panel tile">
 	    	<div class="x_title">
-                <h2>Ganancias</h2>
+                <h2>Movimientos</h2>
                 <ul class="nav navbar-right panel_toolbox">
                     <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
                     </li>
@@ -92,21 +92,21 @@
         				<li>
         					<div class="col">
 					          <div id="sales" class="progressBar"></div>
-					          <h3>${{ PurchTotal }}</h3>
+					          <h3 id="id_PurchMov">{{ PurchMovement }}</h3>
 					          <span class="progressTitle">Ventas</span>
 					        </div>
         				</li>
         				<li>
         					<div class="col">
 					          <div id="purchases" class="progressBar"></div>
-					          <h3>${{ SalesTotal }}</h3>
+					          <h3 id="id_SalesMov">{{ SalesMovement }}</h3>
 					          <span class="progressTitle">Compras</span>
 					        </div>
         				</li>
         				<li>
         					<div class="col">
 					          <div id="articles" class="progressBar"></div>
-					          <h3>36,834</h3>
+					          <h3 id="id_InvMov">{{ InventoryTotal }}</h3>
 					          <span class="progressTitle">Artículos</span>
 					        </div>
         				</li>

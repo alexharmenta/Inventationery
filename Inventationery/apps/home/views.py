@@ -3,11 +3,11 @@
 # @Author: Alex
 # @Date:   2015-11-14 15:29:39
 # @Last Modified by:   Alex
-# @Last Modified time: 2016-01-02 17:33:18
+# @Last Modified time: 2016-01-03 09:58:37
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Q
 from Inventationery.apps.Company.models import CompanyInfoModel
 from Inventationery.apps.PurchOrder.models import (
     PurchOrderModel, PurchLineModel)
@@ -55,6 +55,7 @@ def Home(request):
             Comprados=Sum('PurchQty'))
     except:
         ItemsPurchased = []
+
     # Get ItemModel
     try:
         Items = ItemModel.objects.all()
@@ -101,8 +102,9 @@ def Home(request):
                                'ItemsSold': ItemsSold,
                                'ItemsPurchased': ItemsPurchased,
                                'Items': Items,
-                               'PurchTotal': GetPurchTotals,
-                               'SalesTotal': GetSalesTotals, },
+                               'PurchMovement': GetPurchMovement(),
+                               'SalesMovement': GetSalesMovement(),
+                               'InventoryTotal': GetInventory(), },
                               context_instance=RequestContext(request))
 
 
@@ -164,25 +166,45 @@ def GetClosedSalesOrders():
     return Closed
 
 
-def GetPurchTotals():
+def GetPurchMovement():
     Total = 0
     try:
-        PurchOrders = PurchOrderModel.objects.all()
+        PurchOrders = PurchOrderModel.objects.filter(
+            Q(PurchStatus='REC') | Q(PurchStatus='RPA'))
         for order in PurchOrders:
-            Total += order.Total
+            PurchLines = PurchLineModel.objects.filter(PurchOrder=order)
+            for line in PurchLines:
+                Total += line.PurchQty
     except:
         Total = 0
 
     return Total
 
 
-def GetSalesTotals():
+def GetSalesMovement():
     Total = 0
     try:
-        SalesOrders = SalesOrderModel.objects.all()
+        SalesOrders = SalesOrderModel.objects.filter(
+            Q(SalesStatus='RED') | Q(SalesStatus='RCA'))
         for order in SalesOrders:
-            Total += order.Total
+            SalesLines = SalesLineModel.objects.filter(SalesOrder=order)
+            for line in SalesLines:
+                Total += line.SalesQty
     except:
+        Total = 0
+
+    return Total
+
+
+def GetInventory():
+    # Get ItemModel
+    Total = 0
+    try:
+        Inventory = InventoryModel.objects.all()
+        for inv in Inventory:
+            Total += inv.Qty
+    except:
+        Inventory = []
         Total = 0
 
     return Total
