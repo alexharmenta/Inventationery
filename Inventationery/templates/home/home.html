@@ -17,17 +17,17 @@
 				  			{% endif %} target="_blank" title="{{ company.Party.NameAlias }}"><img {% if company.CompanyImage %}src="{{ company.CompanyImage.url }}"{% endif %} class="img-responsive" id="company_image"/></a>
 				  		{% endfor %}
 					</div>
-					<div class="counter col-md-2 col-sm-2 col-xs-12 fadeIn">
+					<div class="counter col-md-3 col-sm-3 col-xs-12 fadeIn">
 					      <span class="lnr lnr-indent-increase fa-2x"></span>
 					      <h2 class="timer count-title" id="count-number" data-to="{{ PurchOrders.count }}" data-speed="1500" data-toggle="tooltip" data-placement="bottom" title="Abiertas: {{ Purch_open }} | En proceso: {{ Purch_process }} | Cerradas: {{ Purch_closed }}"></h2>
 					      <p class="count-text "><a href="{% url "purch:list" %}" target="_blank" class="">Ordenes de compra (OC)</a></p>
 					</div>
-					<div class="counter col-md-2 col-sm-2 col-xs-12 fadeIn">
+					<div class="counter col-md-3 col-sm-3 col-xs-12 fadeIn">
 					      <i class="fa fa-money fa-2x"></i>
 					      <h2 class="timer count-title" id="count-number" data-to="{{ SalesOrders.count }}" data-speed="1500" data-toggle="tooltip" data-placement="bottom" title="Abiertas: {{ Sales_open }} | En proceso: {{ Sales_process }} | Cerradas: {{ Sales_closed }}"></h2>
 					      <p class="count-text "><a href="{% url "sales:list" %}" target="_blank" class="">Ordenes de venta (OV)</a></p>
 					</div>
-					<div class="counter col-md-2 col-sm-2 col-xs-12 fadeIn">
+					<div class="counter col-md-3 col-sm-3 col-xs-12 fadeIn">
 					     <span class="lnr lnr-database fa-2x"></span>
 					      <h2 class="timer count-title" id="count-number" data-to="{{ Items.count }}" data-speed="1500" data-to="{{ SalesOrders.count }}" data-speed="1500" data-toggle="tooltip" data-placement="bottom" title="{{ ItemsSold }} | {{ ItemsPurchased }}"></h2>
 					      <p class="count-text "><a href="{% url "inventory:list" %}" target="_blank" class="">Artículos</a></p>
