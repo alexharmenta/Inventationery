@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 17:50:15
-# @Last Modified by:   harmenta
-# @Last Modified time: 2016-01-04 10:30:46
+# @Last Modified by:   Alex
+# @Last Modified time: 2016-01-04 14:56:02
 '''
 Local settings
 
@@ -17,7 +17,7 @@ from .common import *  # noqa
 
 # DEBUG
 # ------------------------------------------------------------------------------
-DEBUG = env.bool('DJANGO_DEBUG', default=False)
+DEBUG = env.bool('DJANGO_DEBUG', default=True)
 TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
 # You must set settings.ALLOWED_HOSTS if DEBUG is False
 ALLOWED_HOSTS = ['*']
@@ -52,12 +52,12 @@ INSTALLED_APPS += ('debug_toolbar', )
 
 INTERNAL_IPS = ('127.0.0.1', '10.0.2.2', '0.0.0.0')
 
-"""DEBUG_TOOLBAR_CONFIG = {
+DEBUG_TOOLBAR_CONFIG = {
     'DISABLE_PANELS': [
         'debug_toolbar.panels.redirects.RedirectsPanel',
     ],
     'SHOW_TEMPLATE_CONTEXT': True,
-}"""
+}
 
 """
 # django-extensions
