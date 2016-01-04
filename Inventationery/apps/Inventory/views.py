@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:10:36
-# @Last Modified by:   harmenta
-# @Last Modified time: 2016-01-04 10:00:53
+# @Last Modified by:   Alex
+# @Last Modified time: 2016-01-04 17:23:06
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator
@@ -472,6 +472,7 @@ class DeleteLocationView(DeleteView):
     slug_url_kwarg = 'LocationName'
     slug_field = 'LocationName'
     context_object_name = 'Location'
+    success_url = '/Location/'
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
