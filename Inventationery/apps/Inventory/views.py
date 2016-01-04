@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 19:10:36
-# @Last Modified by:   Alex
-# @Last Modified time: 2016-01-02 14:43:41
+# @Last Modified by:   harmenta
+# @Last Modified time: 2016-01-04 10:00:53
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator
@@ -381,10 +381,9 @@ def export_pdf(request):
     headings = ('Código', 'Nombre', 'Descripción',
                 'Unidad', 'Precio venta', 'Proveedor principal',
                 'Precio compra')
-    items = [(i.ItemId, i.ItemName, i.Description,
-              i.Price, i.Price, i.PrimaryVendor,
-              i.VendorPrice)
-             for i in ItemModel.objects.all().order_by('ItemId')]
+    items = [(i.Item.ItemId, i.Item.ItemName, i.Item.Description,
+              'pza.', i.Item.Price, i.Item.PrimaryVendor, i.VendorPrice)
+             for i in ItemVendorModel.objects.all().order_by('Item')]
 
     t = Table([headings] + items)
     t.setStyle(TableStyle(

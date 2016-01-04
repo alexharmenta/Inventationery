@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
-# @Last Modified by:   Alex
-# @Last Modified time: 2016-01-02 18:00:15
+# @Last Modified by:   harmenta
+# @Last Modified time: 2016-01-04 10:21:51
 """Inventationery URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -50,3 +50,4 @@ urlpatterns = [
     #(r'^search/', include('haystack.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+admin.site.site_header = 'Inventationery admin'

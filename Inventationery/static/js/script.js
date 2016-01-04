@@ -1,8 +1,8 @@
 /* 
  * @Author: Alex
  * @Date:   2015-11-16 18:59:28
- * @Last Modified by:   Alex
- * @Last Modified time: 2015-12-31 00:04:01
+ * @Last Modified by:   harmenta
+ * @Last Modified time: 2016-01-04 09:55:34
  */
 
 'use strict';
@@ -32,6 +32,12 @@ $(document).ready(function() {
     /* Custom filtering function which will search data in column four between two values */
     
     var purchTable = $('#PurchOrderListTableId').DataTable({
+        "order": [[ 0, "asc" ]],
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+        }
+    });
+    var salesTable = $('#SalesOrderListTableId').DataTable({
         "order": [[ 0, "asc" ]],
         "language": {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
