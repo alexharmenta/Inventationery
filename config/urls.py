@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
-# @Last Modified by:   harmenta
-# @Last Modified time: 2016-01-04 10:21:51
+# @Last Modified by:   Alex
+# @Last Modified time: 2016-01-04 15:35:51
 """Inventationery URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -25,6 +25,7 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.views import defaults as default_views
+from Inventationery.core.views import pdf_view
 
 urlpatterns = [
     # url(r'^admin/', include(admin.site.urls)),
@@ -39,6 +40,7 @@ urlpatterns = [
     url(r'^', include('Inventationery.apps.Company.urls', namespace='company')),
     url(r'^', include('Inventationery.apps.Customer.urls', namespace='customer')),
     url(r'^', include('Inventationery.apps.SalesOrder.urls', namespace='sales')),
+    url(r'^quick_guide/$', pdf_view, name='guide'),
 
     url(r'^400/$', default_views.bad_request,
         kwargs={'exception': Exception("Bad Request!")}),

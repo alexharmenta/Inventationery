@@ -132,7 +132,7 @@
                                             <span class=" fa fa-angle-down"></span>
                                         </a>
                                         <ul class="dropdown-menu dropdown-usermenu animated fadeIn pull-right">
-                                            <li><a href="javascript:;">Perfil<i class="lnr lnr-user pull-right"></i></a>
+                                            <li><a href="/admin/auth/user/">Perfil<i class="lnr lnr-user pull-right"></i></a>
                                             </li>
                                             <li>
                                                 <a href="{% url "admin:index" %}">
@@ -140,7 +140,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="javascript:;">Ayuda <i class="lnr lnr-question-circle pull-right"></i></a>
+                                                <a href="{% url "guide" %}" target="_blank">Ayuda <i class="lnr lnr-question-circle pull-right"></i></a>
                                             </li>
                                             <li class="divider"></li>
                                             <li><a href="{% url 'django.contrib.auth.views.logout' %}" style="color: #F64747;">Salir <i class="lnr lnr-cross-circle pull-right"></i></a>
