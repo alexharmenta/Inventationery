@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
 # @Last Modified by:   Alex
-# @Last Modified time: 2016-01-03 10:55:26
+# @Last Modified time: 2016-01-03 20:18:29
 """
 Django settings for Inventationery project.
 
@@ -29,6 +29,7 @@ env = environ.Env()
 # ------------------------------------------------------------------------------
 DJANGO_APPS = (
     # Default Django apps:
+    'django_admin_bootstrapped',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

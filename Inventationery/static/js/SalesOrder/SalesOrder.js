@@ -2,7 +2,7 @@
  * @Author: Alex
  * @Date:   2015-12-22 19:23:28
  * @Last Modified by:   Alex
- * @Last Modified time: 2016-01-02 23:54:08
+ * @Last Modified time: 2016-01-03 20:33:52
  */
 
 'use strict';
@@ -178,6 +178,16 @@ $(document).ready(function() {
                     $('#stock_info').text(data.on_stock);
                     $('#available_info').text(data.available);
                     $('#reserved_info').text(data.reserved);
+                    if(data.available < 0) {
+                        swal({
+                            title: "Sin stock suficiente para cumplir con todos los pedidos",
+                            text: "Realice una orden de compra para cumplir con la capacidad de venta",
+                            type: 'warning',
+                            showConfirmButton: true,
+                        });
+                        element.val(0);
+                    }
+
                 },
 
                 // handle a non-successful response
@@ -704,6 +714,52 @@ $(document).ready(function() {
         });
     });
     /* ----- Fill info selects Functions ----- */
+    // Check if there's available items to sell
+function GetItemsAvailable() {
+    var csrftoken = getCookie('csrftoken');
+    var element;
+    var sl_qty;
+    var id;
+    var item_pk;
+    var location = $('#id_Location').val();
+    var CanReduce = true;
+    $('.item-id').each( function(index) {
+        element = $(this);
+        id = element.attr('id');
+        item_pk = $('#'+id+' option:selected').val();
+        var SalesId = $('#id_SalesId').val();
+        if (item_pk) {
+            sl_qty = element.closest('td').siblings('.sl_qty').find('input').val();
+            $.ajax({
+                url: window.location.href, // the endpoint,commonly same url
+                type: "POST",
+                data: {
+                    item_pk: item_pk,
+                    location: location,
+                    sl_qty: sl_qty,
+                    SalesId, SalesId,
+                    csrfmiddlewaretoken: csrftoken,
+                    action: 'get_invent',
+                },
+                // handle a successful response
+                success: function(data) {
+                    if(parseInt(data.available) > 0) {
+                        CanReduce = true;
+                    } else {
+                        CanReduce = false;
+                    }
+                },
+                // handle a non-successful response
+                error: function(xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+
+            });
+        }
+    });
+
+    return CanReduce;
+}
 });
 
 /* ----- GLOBAL FUNCTIONS ----- */
@@ -866,52 +922,7 @@ function EnableDiscounts() {
     });
 }
 /* .---- Status control section ----- */
-// Check if there's available items to sell
-function GetItemsAvailable() {
-    var csrftoken = getCookie('csrftoken');
-    var element;
-    var sl_qty;
-    var id;
-    var item_pk;
-    var location = $('#id_Location').val();
-    var CanReduce = true;
-    $('.item-id').each( function(index) {
-        element = $(this);
-        id = element.attr('id');
-        item_pk = $('#'+id+' option:selected').val();
-        var SalesId = $('#id_SalesId').val();
-        if (item_pk) {
-            sl_qty = element.closest('td').siblings('.sl_qty').find('input').val();
-            $.ajax({
-                url: window.location.href, // the endpoint,commonly same url
-                type: "POST",
-                data: {
-                    item_pk: item_pk,
-                    location: location,
-                    sl_qty: sl_qty,
-                    SalesId, SalesId,
-                    csrfmiddlewaretoken: csrftoken,
-                    action: 'get_invent',
-                },
-                // handle a successful response
-                success: function(data) {
-                    if(parseInt(data.available) > 0) {
-                        CanReduce = true;
-                    } else {
-                        CanReduce = false;
-                    }
-                },
-                // handle a non-successful response
-                error: function(xhr, errmsg, err) {
-                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-                }
 
-            });
-        }
-    });
-
-    return CanReduce;
-}
 
 
 /* ----- LOCAL FUNCTIONS ----- */

@@ -204,7 +204,7 @@
 									{% render_field sales_form.Payment class+="form-control" %}
 								</div>
 								<div class="col-md-1 col-sm-1">
-									<a href="{% url "payment:new-payment" %}" target="_blank" class="btn btn-xs btn-success pull-right"><i class="fa fa-plus"></i></a>
+									<a href="{% url "payment:manage-paym" %}" target="_blank" class="btn btn-xs btn-success pull-right"><i class="fa fa-plus"></i></a>
 								</div>
 							</div>
 							<div class="form-group">
@@ -214,7 +214,7 @@
 									{% render_field sales_form.PaymMode class+="form-control" %}
 								</div>
 								<div class="col-md-1 col-sm-1">
-									<a href="{% url "payment:new-paym" %}" target="_blank" class="btn btn-xs btn-success pull-right"><i class="fa fa-plus"></i></a>
+									<a href="{% url "payment:manage-paym" %}" target="_blank" class="btn btn-xs btn-success pull-right"><i class="fa fa-plus"></i></a>
 								</div>
 							</div>
 							<div class="form-group">
@@ -238,6 +238,9 @@
 	            <div class="x_title">
 	                <h2>Lineas de la orden</h2>
 	                <ul class="nav navbar-right panel_toolbox">
+	                	<li><div class="col-md-1 col-sm-1">
+							<a href="{% url "inventory:new" %}" target="_blank" class="btn btn-xs btn-success pull-right"><i class="fa fa-plus"></i> Nuevo artículo</a>
+						</div></li>
 	                    <li><a class="collapse-link"><i class="lnr lnr-chevron-down"></i></a>
 	                    </li>
 	                </ul>

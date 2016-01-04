@@ -2,7 +2,7 @@
  * @Author: Alex
  * @Date:   2016-01-02 12:49:12
  * @Last Modified by:   Alex
- * @Last Modified time: 2016-01-03 10:27:40
+ * @Last Modified time: 2016-01-04 00:20:02
  */
 
 'use strict';
@@ -219,7 +219,6 @@ $(document).ready(function() {
 	    bar.setText((bar.value() * 100).toFixed(0) + "%");
 	  }
 	});
-	debugger;
 	var sale = parseFloat($('#id_SalesMov').text());
 	var purchase = parseFloat($('#id_PurchMov').text());
 	var invent = parseFloat($('#id_InvMov').text());
