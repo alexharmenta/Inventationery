@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 17:10:00
 # @Last Modified by:   Alex
-# @Last Modified time: 2016-01-03 20:18:29
+# @Last Modified time: 2016-01-04 00:31:26
 """
 Django settings for Inventationery project.
 
@@ -122,8 +122,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'inventationery',
-        'USER': 'inventationery',
-        'PASSWORD': 'inventationery',
+        'USER': 'root',
+        'PASSWORD': 'XY38po88$m',
         'HOST': 'localhost',
         'PORT': '3306',
     }
