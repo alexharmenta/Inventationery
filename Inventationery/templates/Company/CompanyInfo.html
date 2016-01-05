@@ -204,7 +204,7 @@
 						{% render_field companyInfoForm.CompanyImage class+="inputfile" %}
 						<label class="btn btn-info btn-block" for="id_CompanyImage">Seleccione una imagen</label>
                 		<div class="img_container pull-right">
-							<img {% if Company.CompanyImage %}src="{{ Company.CompanyImage.url }}"{% endif %} class="img-responsive img-thumbnail" id="company_image"/>
+							<img alt="" {% if Company.CompanyImage %}src="{{ Company.CompanyImage.url }}"{% endif %} class="img-responsive img-thumbnail" id="company_image"/>
 						</div>
 					</div>
             	</div>
@@ -216,5 +216,5 @@
 {% endblock %}
 
 {% block ExtraJS %}
-<script type="text/javascript" charset="utf8" src="{% static "js/Company/CompanyInfo.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "js/Company/CompanyInfo.js" %}"></script>
 {% endblock ExtraJS %}

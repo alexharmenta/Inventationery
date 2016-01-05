@@ -14,7 +14,7 @@
 				  				href="{{ company.URL }}" 
 				  			{% else %}
 				  				href="#" 
-				  			{% endif %} target="_blank" title="{{ company.Party.NameAlias }}"><img {% if company.CompanyImage %}src="{{ company.CompanyImage.url }}"{% endif %} class="img-responsive" id="company_image"/></a>
+				  			{% endif %} target="_blank" title="{{ company.Party.NameAlias }}"><img alt="{{ company.CompanyImage.url }}" {% if company.CompanyImage %}src="{{ company.CompanyImage.url }}"{% endif %} class="img-responsive" id="company_image"/></a>
 				  		{% endfor %}
 					</div>
 					<div class="counter col-md-3 col-sm-3 col-xs-12 fadeIn">
@@ -149,7 +149,7 @@
 
 {% endblock %}
 {% block ExtraJS %}
-<script type="text/javascript" charset="utf8" src="{% static "js/home/home.js" %}"></script>
-<script type="text/javascript" charset="utf8" src="{% static "third-party/ChartJS/js/Chart.min.js" %}"></script>
-<script type="text/javascript" charset="utf8" src="{% static "third-party/ProgressBar/js/progressbar.min.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "js/home/home.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "third-party/ChartJS/js/Chart.min.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "third-party/ProgressBar/js/progressbar.min.js" %}"></script>
 {% endblock ExtraJS %}

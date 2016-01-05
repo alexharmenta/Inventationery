@@ -86,7 +86,7 @@
 									<h2>Imagen</h2>
 				                	<div class="form-group file_upload">
 				                		<div class="img_container">
-											<img {% if Item.ItemImage %}src="{{ Item.ItemImage.url }}"{% endif %} class="img-responsive" id="item_image"/>
+											<img alt="" {% if Item.ItemImage %}src="{{ Item.ItemImage.url }}"{% endif %} class="img-responsive" id="item_image"/>
 										</div>
 										<label class="btn btn-info" for="id_ItemImage">Seleccione una imagen</label>
 										<br>
@@ -338,5 +338,5 @@
 {% endblock %}
 
 {% block ExtraJS %}
-<script type="text/javascript" charset="utf8" src="{% static "js/Inventory/Inventory.js" %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static "js/Inventory/Inventory.js" %}"></script>
 {% endblock ExtraJS %}
