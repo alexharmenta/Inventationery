@@ -247,7 +247,7 @@ body.nav-md .container.body .right_col {
         padding-right: 0
     }
     .right_col {
-        padding: 10px !important;
+        padding: 0px !important;
     }
 }
 
@@ -577,8 +577,8 @@ table.no-margin .progress {
 .col-lg-12 {
     position: inherit!important;
     min-height: 1px;
-    padding-right: 10px;
-    padding-left: 10px;
+    padding-right: 5px;
+    padding-left: 5px;
 }
 
 .row {
