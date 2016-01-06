@@ -2,7 +2,7 @@
  * @Author: Alex
  * @Date:   2016-01-02 12:49:12
  * @Last Modified by:   Alex
- * @Last Modified time: 2016-01-05 21:18:18
+ * @Last Modified time: 2016-01-05 21:20:15
  */
 
 'use strict';
@@ -224,9 +224,9 @@ $(document).ready(function() {
 	var invent = parseFloat($('#id_InvMov').text());
 	var salesPct = ((sale * 100) / invent).toFixed(1);
 	var purchasesPct = ((purchase * 100) / invent).toFixed(1);
-	var inventPct = parseFloat(100 + salesPct + purchasesPct);
+	var inventPct = parseFloat(salesPct + purchasesPct);
 	sales.animate(salesPct / 100);
 	purchases.animate(purchasesPct / 100);
 	articles.animate(inventPct / 100);
-	$('#id_InvMov').text(invent + sale + purchase);
+	$('#id_InvMov').text(sale + purchase);
 });
