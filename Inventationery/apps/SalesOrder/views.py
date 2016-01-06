@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2016-01-02 23:53:14
+# @Last Modified time: 2016-01-05 21:12:00
 # from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core import serializers
@@ -374,9 +374,10 @@ def updateSalesOrderView(request, SalesId):
                     if salesStatus == 'RED':
                         SalesOrder.SalesStatus = 'RCA'
                         SalesOrder.Enabled = False
+                        SalesOrder.DocumentState = 'Cerrado'
                     else:
                         SalesOrder.SalesStatus = 'CAS'
-                    SalesOrder.DocumentState = 'Proceso'
+                        SalesOrder.DocumentState = 'Proceso'
                     SalesOrder.save()
 
                     for salesline_form in salesline_formset:
@@ -409,9 +410,10 @@ def updateSalesOrderView(request, SalesId):
                     if salesStatus == 'CAS':
                         SalesOrder.SalesStatus = 'RCA'
                         SalesOrder.Enabled = False
+                        SalesOrder.DocumentState = 'Cerrado'
                     else:
                         SalesOrder.SalesStatus = 'RED'
-                    SalesOrder.DocumentState = 'Proceso'
+                        SalesOrder.DocumentState = 'Proceso'
                     SalesOrder.save()
 
                     for salesline_form in salesline_formset:

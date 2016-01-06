@@ -3,7 +3,7 @@
 # @Author: Alex
 # @Date:   2015-11-16 19:15:59
 # @Last Modified by:   Alex
-# @Last Modified time: 2016-01-02 23:49:55
+# @Last Modified time: 2016-01-05 21:13:21
 # from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core import serializers
@@ -367,9 +367,10 @@ def updatePurchOrderView(request, PurchId):
                     if purchStatus == 'REC':
                         PurchOrder.PurchStatus = 'RPA'
                         PurchOrder.Enabled = False
+                        PurchOrder.DocumentState = 'Cerrado'
                     else:
                         PurchOrder.PurchStatus = 'PAI'
-                    PurchOrder.DocumentState = 'Proceso'
+                        PurchOrder.DocumentState = 'Proceso'
                     PurchOrder.save()
 
                     for purchline_form in purchline_formset:
@@ -402,9 +403,10 @@ def updatePurchOrderView(request, PurchId):
                     if purchStatus == 'PAI':
                         PurchOrder.PurchStatus = 'RPA'
                         PurchOrder.Enabled = False
+                        PurchOrder.DocumentState = 'Cerrado'
                     else:
                         PurchOrder.PurchStatus = 'REC'
-                    PurchOrder.DocumentState = 'Proceso'
+                        PurchOrder.DocumentState = 'Proceso'
                     PurchOrder.save()
 
                     for purchline_form in purchline_formset:
