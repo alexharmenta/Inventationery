@@ -2,7 +2,7 @@
  * @Author: Alex
  * @Date:   2016-01-02 12:49:12
  * @Last Modified by:   Alex
- * @Last Modified time: 2016-01-05 21:21:57
+ * @Last Modified time: 2016-01-05 21:23:32
  */
 
 'use strict';
@@ -227,6 +227,6 @@ $(document).ready(function() {
 	var inventPct = parseFloat(salesPct + purchasesPct);
 	sales.animate(salesPct / 100);
 	purchases.animate(purchasesPct / 100);
-	articles.animate(inventPct / 100);
+	articles.animate(100 / 100);
 	$('#id_InvMov').text(sale + purchase);
 });
