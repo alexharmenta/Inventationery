@@ -2,7 +2,7 @@
  * @Author: Alex
  * @Date:   2016-01-02 12:49:12
  * @Last Modified by:   Alex
- * @Last Modified time: 2016-01-05 21:20:15
+ * @Last Modified time: 2016-01-05 21:21:57
  */
 
 'use strict';
@@ -221,7 +221,7 @@ $(document).ready(function() {
 	});
 	var sale = parseFloat($('#id_SalesMov').text());
 	var purchase = parseFloat($('#id_PurchMov').text());
-	var invent = parseFloat($('#id_InvMov').text());
+	var invent = sale + purchase;
 	var salesPct = ((sale * 100) / invent).toFixed(1);
 	var purchasesPct = ((purchase * 100) / invent).toFixed(1);
 	var inventPct = parseFloat(salesPct + purchasesPct);
